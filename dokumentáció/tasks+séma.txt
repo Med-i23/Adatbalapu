@@ -1,0 +1,35 @@
+Megvalósítható elemek:
+1. Felhasználók regisztrálása, profilok létrehozása
+2. Ne lehessen trágár kifejezést tartalmazó profilneveket megadni (T)
+3. Fényképek feltöltése, megjegyzés hozzáfűzése
+4. Ismerősök bejelölése, ismeretség visszaigazolása
+5. Rendszerüzenet küldése első, századik és ezredik ismeretség visszaigazolása esetén (T)
+6. Üzenet küldése ismerősöknek
+7. Klubok, csoportok alapítása
+8. Klubok tagjainak létszáma
+9. Ismeretlen tagok ajánlása ismerősnek közös ismerősök alapján
+10. Névnaposok, születésnaposok az adott hónapban
+11. Klubok ajánlása, ahol van közös ismerős
+13. Üzenetek küldése, fogadása
+14. Üzenetek kiírása üzenőfalra, válaszolás üzenőfalra írt üzenetre
+15. Fényképalbumok létrehozása, albumjellemzők (fényképek száma, felhasznált tárhely)
+
+
+Eldobhatóak:
+12. Ismerősök ajánlása munkahely vagy iskola alapján
+16. Meghívások kezelése, statisztika a meghívásokról (kinek hány olyan ismerőse van, akit ő
+hívott meg)
+
+
+Reláció séma:
+-Felhasználók (-id-, név, email, szülDátum, jelszó, állapot, /profilkép_id/, ROLE)
+-Ismerősök (/felh1_id/, /felh2_id/, baráti_állapot)
+-Posztok (-id-, /csoport_id/, szöveg, likes, time)
+-Kommentek (-id-, /poszt_id/, /felh_id/, szöveg, time)
+-Üzenetek (-id-, /kitől/, /kinek/, szöveg, time)
+-Csoportok (-id-, név, /létrehozó(felh_id)/)
+	-tagok(/csoport_id/, /felh_id/, csoport_role)
+-Fényképek (-id-, /felh_id/, /poszt_id/, fájl_név)
+-Albumok (-id-, /felh_id/, név)
+	-albumképei (/fénykép_id/, /album_id/)
+-Értesítések (-id-, /felh_id/, szöveg, time)
