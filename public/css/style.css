@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+nav{
+    background: #09a992;
+    margin:-6pt ;
+    padding-top: 10pt;
+    padding-bottom: 10pt;
+    position: fixed;
+    height: fit-content;
+    width: 100%;
+    z-index:20;
+    animation: down 1s forwards;
+    justify-content: unset;
+}
+
+nav a:not(#login-signup__pic-link){
+    transition: 1s;
+    box-shadow: turquoise 0 0 2pt 2pt;
+    color: white;
+}
+
+nav a:not(#login-signup__pic-link):hover {
+    background-color: gray;
+    transform: scale(1);
+    border-radius: 30pt;
+    display: block;
+    color: turquoise;
+}
+
+nav ul{
+    padding-left: 100pt;
+}
+
+nav ul li{
+    display: inline-block;
+    padding-bottom: 2.5pt;
+    padding-top: 2.5pt;
+    font-size: x-large;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    animation: down 1s forwards;
+    border-radius: 30pt;
+    margin-right: 40pt;
+}
+
+
+.container{
+    display: grid;
+    justify-content: space-around;
+    align-items: center;
+    height: 80vh;
+}
+
+.form-container {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 20px;
+    width: 300px;
+}
+
+#testForm{
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 20px;
+    width: 600px;
+    alignment: center;
+}
+
+
+h2 {
+    text-align: center;
+}
+
+input:not([type="radio"])  {
+    width: 93%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    background: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
