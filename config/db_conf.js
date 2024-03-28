@@ -1,12 +1,27 @@
-const Pool = require("pg").Pool;
+const {oracle} = require("node-oracledb");
 
-const dbConfig = new Pool({
-    host     : 'localhost',
-    user     : 'root',
-    database : 'moodletest',
-    port: 5432,
-    ssl: false
-});
+(async function() {
+    let connection;
+    try {
+        connection = await oracle.initDB({
+            username: 'C##C78DGC',
+            password: 'BDBc26cC',
+            connectString: "//orania2:1521/orania2"
+        });
 
-module.exports=dbConfig;
+        console.log("Successfully connected");
+    } catch(err) {
+        console.log(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log("Connection closed");
+            } catch (err) {
+                console.log("Error closing connection", err);
+            }
+        }
+    }
+})();
 
+module.exports = oracle;

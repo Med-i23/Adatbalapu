@@ -1,52 +1,35 @@
-const oracledb = require('oracledb');
+const db = require("../config/db_conf")
 
 class UsersDAO {
     async createUsers(name, username, password){
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'})
-        await connection.query('INSERT INTO user (name, username, password) VALUES (?, ?, ?)', [name, username, password])
-        connection.end();
-        return;
+        await db.executeQuery('INSERT INTO user (name, username, password) VALUES (?, ?, ?)', [name, username, password])
     }
 
 
     async deleteUser(id){
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'})
-        await connection.query('DELETE FROM user WHERE id=?', [id])
-        connection.end();
-        return;
+        await db.executeQuery('DELETE FROM user WHERE id=?', [id])
     }
-    async getUsers(){
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'})
-        const [result, query]= await connection.execute('SELECT * FROM user');
-        connection.end();
+    async getUsers(){const [result, query]= await db.executeQuery('SELECT * FROM user');
         return result;
     }
     async getUsersById(id) {
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'});
-        const query= await connection.execute('SELECT * FROM user WHERE id=? ', [id]);
-        connection.end();
+        const query= await db.executeQuery('SELECT * FROM user WHERE id=? ', [id]);
         return query[0][0];
     };
 
     async getUsersByUserName(username) {
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'});
-        const query= await connection.execute('SELECT * FROM user WHERE username = ? ', [username]);
-        connection.end();
+        const query= await db.executeQuery('SELECT * FROM user WHERE username = ? ', [username]);
         return query[0][0];
     };
 
     async modifyUserRole(id, role) {
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'});
-        await connection.query('UPDATE user SET role=? WHERE id = ?', [role, id]);
-        connection.end();
+        await db.executeQuery('UPDATE user SET role=? WHERE id = ?', [role, id]);
         return;
     };
 
 
     async changeUserLoggedin(username) {
-        const connection = await oracledb.createConnection({host:'localhost',user:'root',database:'moodletest'});
-        await connection.query('UPDATE user SET loggedin=!loggedin WHERE username=?', [username]);
-        connection.end();
+        await db.executeQuery('UPDATE user SET loggedin=!loggedin WHERE username=?', [username]);
         return;
     };
 
