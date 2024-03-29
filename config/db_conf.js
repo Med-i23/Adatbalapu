@@ -4,8 +4,8 @@ const {oracle} = require("node-oracledb");
     let connection;
     try {
         connection = await oracle.initDB({
-            username: 'C##C78DGC',
-            password: 'BDBc26cC',
+            username: 'C##HÉMEDI',
+            password: 'EzegyDummymertPublicArepo',
             connectString: "//orania2:1521/orania2"
         });
 
