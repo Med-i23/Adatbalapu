@@ -5,7 +5,7 @@ const routeUser = require('./routes/routes');
 const PORT = process.env.PORT || 8080;
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-app.set("view engine", "ejs");
+app.set("views engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
