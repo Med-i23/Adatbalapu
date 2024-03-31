@@ -64,7 +64,7 @@ router.post("/login", async(req, res) => {
     let {username} = req.body;
     let {password} = req.body;
 
-    const user = await new UsersDAO().getUsersByUserName(username);
+    const user = await UsersDAO.getUsersByUserName(username);
 
     if (user){
         bcrypt.compare(password, user.password).then(async function (result) {
@@ -82,7 +82,7 @@ router.post("/login", async(req, res) => {
                 res.cookie("jwt", token, {
                     httpOnly: true
                 });
-                await new UsersDAO().changeUserLoggedin(username);
+                //await new UsersDAO().changeUserLoggedin(username);
                 return res.redirect('/main')
             } else {
                 return res.render('index', {
@@ -113,7 +113,7 @@ router.get("/logout", async(req, res) => {
             current_username = decodedToken.username;
         });
     }
-    await new UsersDAO().changeUserLoggedin(current_username);
+   await UsersDAO.changeUserLoggedin(current_username);
 
     res.cookie("jwt", "", {
         maxAge: "1"
@@ -127,6 +127,9 @@ router.post("/register", async(req, res) => {
     let {birthday} = req.body;
     let {password} = req.body;
     let {password2} = req.body;
+
+    console.log(birthday);
+
 
     if (password!==password2){
         return res.render('index', {
@@ -145,7 +148,7 @@ router.post("/register", async(req, res) => {
     }
 
     bcrypt.hash(password, 10).then(async (hash) => {
-        await new UsersDAO().createUser(name, email, birthday, hash, "ACTIVE", "USER");
+        await UsersDAO.createUser(name, email, birthday, hash, "ACTIVE", "USER");
     });
     return res.render('index', {
         current_role: null,

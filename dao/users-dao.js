@@ -1,32 +1,28 @@
-const db = require("../config/db_conf")
 
-class UsersDAO {
-    async createUser(name, email, birthday, password, status, role){
-        await db.executeQuery('INSERT INTO FELHASZNALO (NEV, EMAIL, SZULDATUM, JELSZO, ALLAPOT, ROLE) VALUES (?, ?, ?, ?, ?, ?)', [name, email, birthday, password, status, role])
-    }
-
-    async deleteUser(id){
-        await db.executeQuery('DELETE FROM user WHERE id=?', [id])
-    }
-    async getUsers(){const [result, query]= await db.executeQuery('SELECT * FROM user');
-        return result;
-    }
-    async getUsersById(id) {
-        const query= await db.executeQuery('SELECT * FROM user WHERE id=? ', [id]);
-        return query[0][0];
-    };
-
-    async modifyUserRole(id, role) {
-        await db.executeQuery('UPDATE user SET role=? WHERE id = ?', [role, id]);
-        return;
-    };
+const query = require("./common.js").query;
 
 
-    async changeUserLoggedin(username) {
-        await db.executeQuery('UPDATE user SET loggedin=!loggedin WHERE username=?', [username]);
-        return;
-    };
-
+exports.createUser = async (name, email, birthday, password, status, role) => {
+    await query('INSERT INTO FELHASZNALO (NEV, EMAIL, SZULDATUM, JELSZO, ALLAPOT, ROLE) VALUES (:name, :email, DATE(:birtday), :password, :status, :role)', [name, email, birthday, password, status, role]);
 }
 
-module.exports = UsersDAO;
+exports.deleteUser = async (id) => {
+    await query('DELETE FROM user WHERE id= :id', [id])
+}
+exports.getUsers = async () => {
+   return await query('SELECT * FROM user');
+}
+
+exports.getUsersById = async (id) => {
+    const res = await query('SELECT * FROM user WHERE id= :id', [id]);
+    return res[0][0];
+};
+
+exports.modifyUserRole = async (id, role) => {
+    await query('UPDATE user SET role=:role WHERE id = :id', [role, id]);
+};
+
+
+exports.changeUserLoggedin = async (username) => {
+    await query('UPDATE user SET loggedin=!loggedin WHERE username=:username', [username]);
+};

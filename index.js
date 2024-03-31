@@ -1,5 +1,7 @@
 const express = require("express");
+const oracledb = require("oracledb");
 const path = require("path");
+const db_config = require("./config/db_conf.js")
 const app = express();
 const routeUser = require('./routes/routes');
 const PORT = process.env.PORT || 8080;
@@ -14,6 +16,9 @@ app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist
 app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
 app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 
+async function init(){
+    await oracledb.createPool(db_config);
+}
 
 app.listen(PORT, () => {
     console.log("Start successfull!");
