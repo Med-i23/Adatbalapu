@@ -10,20 +10,21 @@ const router = express.Router();
 //main region
 router.get("/", async (req, res) => {
     const token = req.cookies.jwt;
-    let current_username;
     let current_name;
+    let current_birthday;
     let current_role;
+    let current_status;
     let current_id;
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_username = decodedToken.username;
             current_name= decodedToken.name;
+            current_birthday= decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
+            current_status = decodedToken.status;
         });
     }
     return res.render('index', {
-        current_username: current_username,
         current_name:current_name,
         current_role: current_role,
         current_id: current_id,
@@ -72,8 +73,9 @@ router.post("/login", async(req, res) => {
                         user: user,
                         id: user.id,
                         name: user.name,
-                        username: user.username,
-                        role: user.role
+                        birthday: user.birthday,
+                        role: user.role,
+                        status: user.status,
                     },
                     jwtSecret.jwtSecret
                 );
@@ -121,42 +123,34 @@ router.get("/logout", async(req, res) => {
 
 router.post("/register", async(req, res) => {
     let {name} = req.body;
-    let {username} = req.body;
+    let {email} = req.body;
+    let {birthday} = req.body;
     let {password} = req.body;
     let {password2} = req.body;
 
-    const van_e_user = await new UsersDAO().getUsersByUserName(username);
-    if (van_e_user){
+    if (password!==password2){
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Username already taken"
+            hibaRegister:"Jelszó nem egyezik!"
         });
-    }if (password!==password2){
+    }if (name===""||password===""||password2==="" || birthday==="" || email===""){
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Passwords doesn't match"
+            hibaRegister:"Minden mezőt ki kell tölteni"
         });
-    }if (name===""||password===""||password2===""||username===""){
-        return res.render('index', {
-            current_role: null,
-            token: null,
-            hibaLogin: null,
-            hibaRegister:"Fill out everything"
-        });
-
     }
 
     bcrypt.hash(password, 10).then(async (hash) => {
-        await new UsersDAO().createUsers(name, username, hash, "ROLE_STUDENT");
+        await new UsersDAO().createUser(name, email, birthday, hash, "ACTIVE", "USER");
     });
     return res.render('index', {
         current_role: null,
         token: null,
-        hibaLogin: "Register successful!",
+        hibaLogin: "Sikeres Regisztráció!",
         hibaRegister:null
     });
 

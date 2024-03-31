@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Moodle</title>
+    <title>TrueFace</title>
     <link rel="stylesheet" type="text/css" href="../public/css/style.css">
     <link rel="icon" type="image/x-icon" href="/public/sources/icon.png">
     <style>
@@ -77,30 +77,31 @@
 </head>
 <body>
 <div class="col-md-6" id="welcome">
-    Welcome to your schools Moodle site!
+    TrueFace
 </div>
 <div class="container">
     <div class="form-container">
-        <h2>Register</h2>
+        <h2>Regisztráció</h2>
         <% if(hibaRegister){ %>
             <p class="hiba" style="padding-left: 1%"><%- hibaRegister %></p>
         <% } %>
         <form method="POST" id="register-form" action="/register">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="text" name="name" placeholder="Full Name" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="password2" placeholder="Confirm Password" required>
-            <button type="submit">Register</button>
+            <input type="text" name="name" placeholder="Teljes név" required>
+            <input type="text" name="email" placeholder="ateemail@cimed.hu" required>
+            <input type="date" name="birthday" placeholder="" required>
+            <input type="password" name="password" placeholder="Jelszó" required>
+            <input type="password" name="password2" placeholder="Jelszó megint" required>
+            <button type="submit">Regisztráció</button>
         </form>
     </div>
     <div class="form-container">
-        <h2>Login</h2>
+        <h2>Bejelentkezés</h2>
         <% if(hibaLogin){ %>
             <p class="hiba" style="padding-left: 1%"><%- hibaLogin %></p>
         <% } %>
         <form method="POST" id="login-form" action="/login">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="name" placeholder="Teljes név" required>
+            <input type="password" name="password" placeholder="Jelszó" required>
             <button type="submit">Login</button>
         </form>
     </div>
