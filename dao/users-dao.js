@@ -1,9 +1,8 @@
-
 const query = require("./common.js").query;
-
+let format = "yyyy-mm-dd"
 
 exports.createUser = async (name, email, birthday, password, status, role) => {
-    await query('INSERT INTO FELHASZNALO (NEV, EMAIL, SZULDATUM, JELSZO, ALLAPOT, ROLE) VALUES (:name, :email, DATE(:birtday), :password, :status, :role)', [name, email, birthday, password, status, role]);
+    await query('INSERT INTO FELHASZNALO (NEV, EMAIL, SZULDATUM, JELSZO, ALLAPOT, ROLE) VALUES (:name, :email, TO_DATE(:birthday,:format), :password, :status, :role)', [name, email,birthday, format, password, status, role]);
 }
 
 exports.deleteUser = async (id) => {
@@ -25,4 +24,6 @@ exports.modifyUserRole = async (id, role) => {
 
 exports.changeUserLoggedin = async (username) => {
     await query('UPDATE user SET loggedin=!loggedin WHERE username=:username', [username]);
+    //! ?
+
 };

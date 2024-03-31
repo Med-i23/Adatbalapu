@@ -128,8 +128,6 @@ router.post("/register", async(req, res) => {
     let {password} = req.body;
     let {password2} = req.body;
 
-    console.log(birthday);
-
 
     if (password!==password2){
         return res.render('index', {
@@ -148,7 +146,9 @@ router.post("/register", async(req, res) => {
     }
 
     bcrypt.hash(password, 10).then(async (hash) => {
-        await UsersDAO.createUser(name, email, birthday, hash, "ACTIVE", "USER");
+        await UsersDAO.createUser(name, email, new Date(birthday).toISOString().slice(0,10), hash, "ACTIVE", "USER");
+        //console.log(new Date(birthday))
+
     });
     return res.render('index', {
         current_role: null,
