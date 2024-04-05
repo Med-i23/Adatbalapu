@@ -146,6 +146,16 @@ router.post("/register", async(req, res) => {
             hibaRegister:"Minden mezőt ki kell tölteni"
         });
     }
+    for (let i = 0; i < password.length; i++) {
+        if(password.charAt(i) === "@" || password.charAt(i) === "'" || password.charAt(i) === "="){
+            return res.render('index', {
+                current_role: null,
+                token: null,
+                hibaLogin: null,
+                hibaRegister:"A jelszó nem tartalmazhat speciális karatert!"
+            });
+        }
+    }
 
     bcrypt.hash(password, 10).then(async (hash) => {
         await UsersDAO.createUser(name, email, new Date(birthday).toISOString().slice(0,10), hash, "ACTIVE", "USER");
@@ -156,7 +166,6 @@ router.post("/register", async(req, res) => {
         hibaLogin: "Sikeres Regisztráció!",
         hibaRegister:null
     });
-
 });
 
 
