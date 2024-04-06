@@ -68,9 +68,9 @@ router.post("/login", async(req, res) => {
     let {password} = req.body;
 
     const user = await UsersDAO.getUserByEmail(email);
-
+    const hashedPassword = user.rows[0][4];
     if (user){
-        bcrypt.compare(password, user.password).then(async function (result) {
+        bcrypt.compare(password, hashedPassword).then(async function (result) {
             if (result) {
                 const token = jwt.sign({
                         user: user,
@@ -109,13 +109,12 @@ router.post("/login", async(req, res) => {
 
 router.get("/logout", async(req, res) => {
     const token = req.cookies.jwt;
-    let current_username;
+    let current_email;
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_username = decodedToken.username;
+            current_email = decodedToken.email;
         });
     }
-   await UsersDAO.changeUserLoggedin(current_username);
 
     res.cookie("jwt", "", {
         maxAge: "1"

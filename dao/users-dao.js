@@ -24,7 +24,8 @@ exports.modifyUserRole = async (id, role) => {
 
 exports.getUserByEmail = async (email) => {
     const res = await query('SELECT * FROM FELHASZNALO WHERE EMAIL= :email', [email]);
-    return res[0][0];
+    console.log(res.rows[0][4]);
+    return res;
 }
 
 
