@@ -9,7 +9,7 @@ exports.deleteUser = async (id) => {
     await query('DELETE FROM user WHERE id= :id', [id])
 }
 exports.getUsers = async () => {
-   return await query('SELECT * FROM user');
+   return await query('SELECT * FROM FELHASZNALO');
 }
 
 exports.getUsersById = async (id) => {
@@ -26,11 +26,8 @@ exports.getUserByEmail = async (email) => {
     const res = await query('SELECT * FROM FELHASZNALO WHERE EMAIL= :email', [email]);
     console.log(res.rows[0][4]);
     return res;
-}
+};
 
-
-exports.changeUserLoggedin = async (username) => {
-    await query('UPDATE user SET loggedin=!loggedin WHERE username=:username', [username]);
-    //! ?
-
+exports.getUserEmail = async (email) => {
+    return await query('SELECT EMAIL FROM FELHASZNALOK WHERE EMAIL= :email', [email]);
 };

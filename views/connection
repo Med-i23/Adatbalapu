@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+
+<header>
+    <%- include('assets/header')%>
+</header>
+<body>
+<div class="main">
+   haii :3
+</div>
+</body>
+<%- include('assets/footer')%>
+</html>

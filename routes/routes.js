@@ -129,6 +129,15 @@ router.post("/register", async(req, res) => {
     let {password} = req.body;
     let {password2} = req.body;
 
+    const vanemail = UsersDAO.getUserEmail(email);
+    if(vanemail){
+        return res.render('index', {
+            current_role: null,
+            token: null,
+            hibaLogin: null,
+            hibaRegister:"Ezen az email-en már létezik fiók!"
+        });
+    }
 
     if (password!==password2){
         return res.render('index', {
