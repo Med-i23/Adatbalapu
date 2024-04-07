@@ -60,8 +60,9 @@ router.get("/main", async (req, res) => {
         current_status: current_status,
     });
 });
+//end-region
 
-//#region-users
+//region-users
 
 router.post("/login", async(req, res) => {
     let {email} = req.body;
@@ -129,7 +130,7 @@ router.post("/register", async(req, res) => {
     let {password} = req.body;
     let {password2} = req.body;
 
-    const vanemail = UsersDAO.getUserEmail(email);
+    const vanemail = await UsersDAO.getUserEmail(email);
     if(vanemail){
         return res.render('index', {
             current_role: null,
@@ -176,8 +177,49 @@ router.post("/register", async(req, res) => {
     });
 });
 
+//end-region
 
 
-//#end-region
+// connection-region
+router.get("/connection", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name= decodedToken.name;
+            current_birthday= decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    const users = await UsersDAO.getUsers();
+    if(users){
+        return res.render('connection', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            correctResult: 'Adatbázis csatlakoztatva'
+        });
+    }
+    return res.render('connection', {
+        current_name: current_name,
+        current_role: current_role,
+        current_id: current_id,
+        current_birthday: current_birthday,
+        current_status: current_status,
+        wrongResult: 'Adatbázis nem csatlakozik'
+    });
+});
+
+
+//end-region
 
 module.exports = router;

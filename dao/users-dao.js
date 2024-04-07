@@ -9,7 +9,8 @@ exports.deleteUser = async (id) => {
     await query('DELETE FROM user WHERE id= :id', [id])
 }
 exports.getUsers = async () => {
-   return await query('SELECT * FROM FELHASZNALO');
+   const res = await query('SELECT * FROM FELHASZNALO');
+   return res;
 }
 
 exports.getUsersById = async (id) => {

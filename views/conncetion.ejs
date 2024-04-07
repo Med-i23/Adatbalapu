@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>TrueFace</title>
+   <link rel="stylesheet" type="text/css" href="../public/css/style.css">
+   <link rel="icon" type="image/x-icon" href="/public/sources/icon.png">
+   <style>
+      body {
+         font-family: Arial, sans-serif;
+         background: #f4f4f4;
+         margin: 0;
+         padding: 0;
+      }
+
+      .correct{
+         background: green;
+         color: white;
+      }
+
+      .wrong{
+         background: #bf2b00;
+         color: white;
+      }
+
+   </style>
+</head>
+
+<header>
+    <%- include('assets/header')%>
+</header>
+<body>
+
+<% if (correctResult) {%>
+<div class="proof">
+   <div class="correct">
+      <%= correctResult %>
+   </div>
+   <%for (var i = 0; i < users.length; i++){%>
+   <tr <%if(answers[i].correct_incorrect === 'correct'){ %>style="background-color: rgba(0,157,0,0.87); color: white"><%} else{%>style="background-color: red; color: white"> <%}%>
+      <td><%= users[i].fullname %></td>
+      <td><%= users[i].email%></td>
+   </tr>
+   <% } %>
+</div>
+<% } %>
+
+<% if (wrongResult){%>
+
+<div class="wrong">
+      <%= wrongResult%>
+</div>
+
+<%}%>
+
+</body>
+<%- include('assets/footer')%>
+</html>
