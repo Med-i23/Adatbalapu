@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <%- include('assets/head') %>
    <meta charset="UTF-8">
    <title>TrueFace</title>
    <link rel="stylesheet" type="text/css" href="../public/css/style.css">
@@ -31,27 +32,28 @@
 </header>
 <body>
 
-<% if (correctResult) {%>
-<div class="proof">
-   <div class="correct">
-      <%= correctResult %>
-   </div>
-   <%for (var i = 0; i < users.length; i++){%>
-   <tr <%if(answers[i].correct_incorrect === 'correct'){ %>style="background-color: rgba(0,157,0,0.87); color: white"><%} else{%>style="background-color: red; color: white"> <%}%>
-      <td><%= users[i].fullname %></td>
-      <td><%= users[i].email%></td>
+<table>
+   <thead>
+   <tr>
+      <th>Név</th>
+      <th>Email</th>
    </tr>
+   </thead>
+   <tbody>
+   <% if (users && users.rows && users.rows.length > 0) { %>
+   <% users.rows.forEach(function(user) { %>
+      <tr>
+         <td><%= user[1] %></td>
+         <td><%= user[2] %></td>
+      </tr>
+   <% }); %>
+   <% } else { %>
+      <tr>
+         <td colspan="2">Adatbázis nem elérhető</td>
+      </tr>
    <% } %>
-</div>
-<% } %>
-
-<% if (wrongResult){%>
-
-<div class="wrong">
-      <%= wrongResult%>
-</div>
-
-<%}%>
+   </tbody>
+</table>
 
 </body>
 <%- include('assets/footer')%>

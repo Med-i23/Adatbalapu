@@ -21,5 +21,5 @@ async function init(){
 }
 
 app.listen(PORT, () => {
-    console.log("Start successfull!");
+    console.log("Start successfull! http://localhost:8080");
 });

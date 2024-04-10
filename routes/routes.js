@@ -69,18 +69,18 @@ router.post("/login", async(req, res) => {
     let {password} = req.body;
 
     const user = await UsersDAO.getUserByEmail(email);
+    console.log(user);
     const hashedPassword = user.rows[0][4];
-    if (user){
+    if (user.rows.length > 0){
         bcrypt.compare(password, hashedPassword).then(async function (result) {
             if (result) {
                 const token = jwt.sign({
-                        user: user,
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        birthday: user.birthday,
-                        status: user.status,
-                        role: user.role,
+                        id: user.rows[0][0],
+                        name: user.rows[0][1],
+                        email: user.rows[0][2],
+                        birthday: user.rows[0][3],
+                        status: user.rows[0][5],
+                        role: user.rows[0][6]
                     },
                     jwtSecret.jwtSecret
                 );
@@ -131,7 +131,7 @@ router.post("/register", async(req, res) => {
     let {password2} = req.body;
 
     const vanemail = await UsersDAO.getUserEmail(email);
-    if(vanemail){
+    if(vanemail.rows.length > 0){
         return res.render('index', {
             current_role: null,
             token: null,
@@ -155,17 +155,18 @@ router.post("/register", async(req, res) => {
             hibaRegister:"Minden mezőt ki kell tölteni"
         });
     }
-    for (let i = 0; i < password.length; i++) {
-        if(password.charAt(i) === "@" || password.charAt(i) === "'" || password.charAt(i) === "="){
+    let injectcheck = name + email + password;
+    console.log(injectcheck);
+    for (let i = 0; i < injectcheck.length; i++) {
+        if(injectcheck.charAt(i) === "'" || password.charAt(i) === "=" || injectcheck.charAt(i) === "?" || injectcheck.charAt(i) === "*"){
             return res.render('index', {
                 current_role: null,
                 token: null,
                 hibaLogin: null,
-                hibaRegister:"A jelszó nem tartalmazhat speciális karatert!"
+                hibaRegister:"A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
             });
         }
     }
-
     bcrypt.hash(password, 10).then(async (hash) => {
         await UsersDAO.createUser(name, email, new Date(birthday).toISOString().slice(0,10), hash, "ACTIVE", "USER");
     });
@@ -201,6 +202,7 @@ router.get("/connection", async (req, res) => {
     const users = await UsersDAO.getUsers();
     if(users){
         return res.render('connection', {
+            users: users,
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
@@ -210,6 +212,7 @@ router.get("/connection", async (req, res) => {
         });
     }
     return res.render('connection', {
+        users: users,
         current_name: current_name,
         current_role: current_role,
         current_id: current_id,

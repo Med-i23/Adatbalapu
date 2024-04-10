@@ -2,7 +2,7 @@ const query = require("./common.js").query;
 let format = "yyyy-mm-dd"
 
 exports.createUser = async (name, email, birthday, password, status, role) => {
-    await query('INSERT INTO FELHASZNALO (NEV, EMAIL, SZULDATUM, JELSZO, ALLAPOT, ROLE) VALUES (:name, :email, TO_DATE(:birthday,:format), :password, :status, :role)', [name, email,birthday, format, password, status, role]);
+    await query('INSERT INTO FELHASZNALO (NEV, EMAIL, SZULDATUM, JELSZO, ALLAPOT, ROLE) VALUES (:name, :email, TO_DATE(:birthday,:format), :password, :status, :role)', [name, email, birthday, format, password, status, role]);
 }
 
 exports.deleteUser = async (id) => {
@@ -15,7 +15,7 @@ exports.getUsers = async () => {
 
 exports.getUsersById = async (id) => {
     const res = await query('SELECT * FROM user WHERE id= :id', [id]);
-    return res[0][0];
+    return res;
 };
 
 exports.modifyUserRole = async (id, role) => {
@@ -25,10 +25,10 @@ exports.modifyUserRole = async (id, role) => {
 
 exports.getUserByEmail = async (email) => {
     const res = await query('SELECT * FROM FELHASZNALO WHERE EMAIL= :email', [email]);
-    console.log(res.rows[0][4]);
     return res;
 };
 
 exports.getUserEmail = async (email) => {
-    return await query('SELECT EMAIL FROM FELHASZNALOK WHERE EMAIL= :email', [email]);
+    const res = await query('SELECT EMAIL FROM FELHASZNALO WHERE EMAIL= :email', [email]);
+    return res;
 };
