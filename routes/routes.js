@@ -124,11 +124,7 @@ router.get("/logout", async(req, res) => {
 });
 
 router.post("/register", async(req, res) => {
-    let {name} = req.body;
-    let {email} = req.body;
-    let {birthday} = req.body;
-    let {password} = req.body;
-    let {password2} = req.body;
+    let { name, email, birthday, password, password2 } = req.body;
 
     const vanemail = await UsersDAO.getUserEmail(email);
     if(vanemail.rows.length > 0){
@@ -155,26 +151,27 @@ router.post("/register", async(req, res) => {
             hibaRegister:"Minden mezőt ki kell tölteni"
         });
     }
-    let injectcheck = name + email + password;
-    console.log(injectcheck);
-    for (let i = 0; i < injectcheck.length; i++) {
-        if(injectcheck.charAt(i) === "'" || password.charAt(i) === "=" || injectcheck.charAt(i) === "?" || injectcheck.charAt(i) === "*"){
-            return res.render('index', {
-                current_role: null,
-                token: null,
-                hibaLogin: null,
-                hibaRegister:"A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
-            });
-        }
+    const injectCheck = name + email + password;
+    const regex = /['=*?]/g;
+    if (regex.test(injectCheck)) {
+        return res.render('index', {
+            current_role: null,
+            token: null,
+            hibaLogin: null,
+            hibaRegister:"A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
+        });
     }
     bcrypt.hash(password, 10).then(async (hash) => {
         await UsersDAO.createUser(name, email, new Date(birthday).toISOString().slice(0,10), hash, "ACTIVE", "USER");
-    });
-    return res.render('index', {
-        current_role: null,
-        token: null,
-        hibaLogin: "Sikeres Regisztráció!",
-        hibaRegister:null
+        return res.render('index', {
+            current_role: null,
+            token: null,
+            hibaLogin: "Sikeres Regisztráció!",
+            hibaRegister:null
+        });
+    }).catch(err => {
+        console.error("Felhasználó létrehozás hiba:", err);
+        return res.status(500).send("Internal Server Error");
     });
 });
 

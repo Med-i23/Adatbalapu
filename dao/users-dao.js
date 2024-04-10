@@ -22,7 +22,6 @@ exports.modifyUserRole = async (id, role) => {
     await query('UPDATE user SET role=:role WHERE id = :id', [role, id]);
 };
 
-
 exports.getUserByEmail = async (email) => {
     const res = await query('SELECT * FROM FELHASZNALO WHERE EMAIL= :email', [email]);
     return res;
