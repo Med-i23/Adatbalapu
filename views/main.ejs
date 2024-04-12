@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <%- include('assets/head') %>
-
-    <style>
+<!--    <style>
         .main{
             display: grid;
             justify-content: space-around;
@@ -27,17 +24,16 @@
             background-color: #0055ad;
             border: 1px solid black;
         }
-    </style>
-</head>
+    </style>-->
 
-<header>
+
     <%- include('assets/header')%>
-</header>
 <body>
+<%- include('assets/head') %>
 <% if(current_role === 'ADMIN'){%>
 <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
-<div class="main">
+<div class="main" style="margin-left: 500px;margin-right: 500px">
     ⡴⠒⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⠉⠳⡆⠀
     ⣇⠰⠉⢙⡄⠀⠀⣴⠖⢦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣆⠁⠙⡆
     ⠘⡇⢠⠞⠉⠙⣾⠃⢀⡼⠀⠀⠀⠀⠀⠀⠀⢀⣼⡀⠄⢷⣄⣀⠀⠀⠀⠀⠀⠀⠀⠰⠒⠲⡄⠀⣏⣆⣀⡍
@@ -53,6 +49,7 @@
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣤⣞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢢⣀⣠⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠲⢤⣀⣀⠀⢀⣀⣀⠤⠒⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 </div>
-</body>
 <%- include('assets/footer')%>
+</body>
+
 </html>

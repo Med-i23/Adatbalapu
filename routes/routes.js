@@ -219,6 +219,19 @@ router.get("/connection", async (req, res) => {
     });
 });
 
+router.get("/profile", async (req, res) => {
+    const token = req.cookies.jwt;
+    console.log(token)
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+       return res.render('profile',{
+           current_name: decodedToken.name,
+           current_birthday: decodedToken.birthday,
+           current_role: decodedToken.role,
+           current_id: decodedToken.id,
+           current_status: decodedToken.status
+       })
+    });
+})
 
 //end-region
 
