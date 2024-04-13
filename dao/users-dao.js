@@ -31,3 +31,19 @@ exports.getUserEmail = async (email) => {
     const res = await query('SELECT EMAIL FROM FELHASZNALO WHERE EMAIL= :email', [email]);
     return res;
 };
+
+exports.getUserPosts = async () => {
+    const res = await query('SELECT * FROM POSZT');
+    return res;
+};
+
+exports.getUsersBirthday = async () => {
+    const res = await query('SELECT NEV, SZULDATUM FROM FELHASZNALO');
+    return res;
+}
+
+exports.getUsersFriendsById = async (id) => {
+    const res = await query('SELECT * FROM ISMEROS WHERE FELH1_ID= :id', [id]);
+    //console.log("the id: " +id);
+    return res;
+};
