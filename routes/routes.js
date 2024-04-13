@@ -43,6 +43,7 @@ router.get("/main", async (req, res) => {
     let current_id;
 
     if (token) {
+
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_name = decodedToken.name;
             current_birthday = decodedToken.birthday;

@@ -42,6 +42,7 @@ exports.getUsersBirthday = async () => {
     return res;
 }
 
+
 exports.getUsersFriendsById = async (id) => {
     const res = await query('SELECT * FROM ISMEROS WHERE FELH1_ID= :id', [id]);
     //console.log("the id: " +id);
