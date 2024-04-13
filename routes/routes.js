@@ -144,7 +144,7 @@ router.post("/register", async(req, res) => {
             hibaLogin: null,
             hibaRegister:"Jelszó nem egyezik!"
         });
-    }if (name===""||password===""||password2==="" || birthday==="" || email===""){
+    }if (name.trim()===""||password.trim()===""||password2.trim()==="" || birthday.trim()==="" || email.trim()===""){
         return res.render('index', {
             current_role: null,
             token: null,
