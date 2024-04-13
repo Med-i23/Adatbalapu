@@ -69,9 +69,10 @@ router.post("/login", async(req, res) => {
     let {password} = req.body;
 
     const user = await UsersDAO.getUserByEmail(email);
-    console.log(user);
-    const hashedPassword = user.rows[0][4];
+
+
     if (user.rows.length > 0){
+        const hashedPassword = user.rows[0][4];
         bcrypt.compare(password, hashedPassword).then(async function (result) {
             if (result) {
                 const token = jwt.sign({
@@ -152,13 +153,13 @@ router.post("/register", async(req, res) => {
         });
     }
     const injectCheck = name + email + password;
-    const regex = /['=*?]/g;
+    const regex = /['=*?#-]/g;
     if (regex.test(injectCheck)) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
+            hibaRegister:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"
         });
     }
     bcrypt.hash(password, 10).then(async (hash) => {
@@ -227,11 +228,83 @@ router.get("/profile", async (req, res) => {
            current_birthday: decodedToken.birthday,
            current_role: decodedToken.role,
            current_id: decodedToken.id,
-           current_status: decodedToken.status
+           current_status: decodedToken.status,
+           errors: []
        })
     });
 })
 
+router.post("/changeUserData", async (req,res)=>{
+
+    const token = req.cookies.jwt
+    let errors = [];
+    let {name, email, birthday, password, re_password } = req.body;
+    let current_email,current_name, beNev,beSzul,beMail, beJel;
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+        current_email = decodedToken.email
+        current_name = decodedToken.name
+        beSzul = new Date(decodedToken.birthday).toISOString().slice(0,10)
+
+        console.log(beSzul,decodedToken.birthday,birthday)
+    });
+    beNev = current_name
+    beMail = current_email
+    let currentUser = await UsersDAO.getUserByEmail(current_email);
+    if (currentUser.rows.length > 0){
+        beJel = currentUser.rows[0][4]
+    }
+    if (name.trim() !== ""){
+        beNev = name.trim()
+    }
+    if (birthday.trim() !== ""){
+        beSzul = new Date(birthday).toISOString().slice(0,10)
+    }
+    if (email.trim() !== ""){
+        beMail = email
+    }
+    const vanemail = await UsersDAO.getUserEmail(email);
+    if(vanemail.rows.length > 0){
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Ezen az email-en már létezik fiók!"})
+        }
+    }
+
+    if (password!==re_password && password.trim() !== ""){
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Jelszó nem egyezik!"})
+        }
+    }
+    const injectCheck = name + email + password;
+    const regex = /['=*?#-]/g;
+    if (regex.test(injectCheck)) {
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"})
+        }
+    }
+    if (errors.length === 0){
+        bcrypt.hash(password, 10).then( (hash) => {
+            if (password.trim() === ""){
+                hash = beJel
+            }
+            UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(()=>{
+                errors.push({success:"Sikeres adatmódosítás"})
+                return res.render("profile",{
+                    current_name: current_name,errors: errors
+                })
+            })
+        }).catch(err => {
+            if (errors.length === 0){
+                errors.push({hibaChanges:"Sikeretelen adatmódosítás"})
+            }
+            return res.status(500).send("Internal Server Error");
+        });
+    }else {
+        return res.render("profile",{
+            current_name: current_name,errors: errors
+        })
+    }
+
+})
 //end-region
 
 module.exports = router;

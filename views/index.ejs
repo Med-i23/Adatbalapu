@@ -10,7 +10,7 @@
     <div class="form-container">
         <h2>Regisztráció</h2>
         <% if(hibaRegister){ %>
-            <p class="hiba" style="padding-left: 1%"><%- hibaRegister %></p>
+            <p class="text-danger" style="padding-left: 1%"><%- hibaRegister %></p>
         <% } %>
         <form method="POST" id="register-form" action="/register">
             <input type="text" name="name" placeholder="Teljes név" required>
@@ -24,7 +24,7 @@
     <div class="form-container">
         <h2>Bejelentkezés</h2>
         <% if(hibaLogin){ %>
-            <p class="hiba" style="padding-left: 1%"><%- hibaLogin %></p>
+            <p class="text-danger" style="padding-left: 1%"><%- hibaLogin %></p>
         <% } %>
         <form method="POST" id="login-form" action="/login">
             <input type="text" name="email" placeholder="Email" required>

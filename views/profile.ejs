@@ -4,11 +4,25 @@
 
     <body class="">
     <%- include('assets/header')%>
-    <div>
+    <form method="post" action="/changeUserData">
+        <label for="name">Full name:</label>
+        <input type="text" name="name" id="name" placeholder="Teljes név" >
+        <label for="email">E-mail:</label>
+        <input type="text" name="email" id="email" placeholder="ateemail@cimed.hu" >
+        <label for="birthday"> Date of birth</label>
+        <input type="date" name="birthday" id="birthday">
+        <label for="password">Password:</label><input type="password" id="password" name="password" placeholder="******">
+        <label for="re_password">Password again:</label><input type="password" id="re_password" name="re_password" placeholder="******">
+        <button type="submit">Save changes</button>
+    </form>
 
-    </div>
-
-
+    <%if(typeof errors[0] !== "undefined"){
+        if(typeof errors[0].hibaChanges !== "undefined"){ %>
+            <p class="text-danger"><%= errors[0].hibaChanges %></p>
+        <%}else if (typeof errors[0].success !== "undefined"){ %>
+            <p class="text-success"><%= errors[0].success %></p>
+        <%}
+    } %>
     <%- include('assets/footer') %>
     </body>
 </html>
