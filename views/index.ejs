@@ -3,33 +3,40 @@
 <%- include('assets/head') %>
 
 <body>
-<div class="col-md-6" id="welcome">
+<div class="col-md-6  bg-primary w-100 text-light" id="welcome">
     TrueFace
 </div>
 <div class="container">
     <div class="form-container">
-        <h2>Regisztráció</h2>
-        <% if(hibaRegister){ %>
-            <p class="text-danger" style="padding-left: 1%"><%- hibaRegister %></p>
-        <% } %>
+
+
         <form method="POST" id="register-form" action="/register">
-            <input type="text" name="name" placeholder="Teljes név" required>
-            <input type="text" name="email" placeholder="ateemail@cimed.hu" required>
-            <input type="date" name="birthday" placeholder="" required>
-            <input type="password" name="password" placeholder="Jelszó" required>
-            <input type="password" name="password2" placeholder="Jelszó megint" required>
-            <button type="submit">Regisztráció</button>
+            <fieldset>
+                <legend class="fw-bold text-center">Regisztráció</legend>
+                <label for="name"></label><input class="form-control" type="text" name="name" id="name" placeholder="Teljes név" required>
+                <label for="email"></label><input class="form-control" type="text" name="email" id="email" placeholder="ateemail@cimed.hu" required>
+                <label for="birthday"></label><input class="form-control" type="date" name="birthday" id="birthday" placeholder="" required>
+                <label for="password"></label><input class="form-control" type="password" name="password" id="password" placeholder="Jelszó" required>
+                <label for="password2"></label><input class="form-control" type="password" name="password2" id="password2" placeholder="Jelszó megint" required>
+                <% if(hibaRegister){ %>
+                    <p class="text-danger" style="padding-left: 1%"><%- hibaRegister %></p>
+                <% } %>
+                <button type="submit" class="btn btn-primary mt-2">Regisztráció</button>
+            </fieldset>
+
         </form>
     </div>
     <div class="form-container">
-        <h2>Bejelentkezés</h2>
-        <% if(hibaLogin){ %>
-            <p class="text-danger" style="padding-left: 1%"><%- hibaLogin %></p>
-        <% } %>
         <form method="POST" id="login-form" action="/login">
-            <input type="text" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Jelszó" required>
-            <button type="submit">Login</button>
+            <fieldset>
+                <legend class="fw-bold text-center">Bejelentkezés</legend>
+                <label for="name"></label><input class="form-control" type="text" name="email" id="email" placeholder="Email" required>
+                <label for="password"></label><input class="form-control" type="password" name="password" id="password" placeholder="Jelszó" required>
+                <% if(hibaLogin){ %>
+                    <p class="text-danger" style="padding-left: 1%"><%- hibaLogin %></p>
+                <% } %>
+                <button type="submit" class="btn btn-primary mt-2">Login</button>
+            </fieldset>
         </form>
     </div>
 </div>
