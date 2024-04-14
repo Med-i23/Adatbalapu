@@ -30,7 +30,8 @@ router.get("/", async (req, res) => {
         current_id: current_id,
         token: token,
         hibaLogin:null,
-        hibaRegister:null
+        hibaRegister:null,
+        successRegister: null
     });
 });
 
@@ -94,7 +95,8 @@ router.post("/login", async(req, res) => {
                     current_role: null,
                     token: null,
                     hibaLogin: "Helytelen jelszó",
-                    hibaRegister: null
+                    hibaRegister: null,
+                    successRegister: null
                 });
             }
         });
@@ -104,7 +106,8 @@ router.post("/login", async(req, res) => {
             current_role: null,
             token: null,
             hibaLogin:"Email nem létezik",
-            hibaRegister:null
+            hibaRegister:null,
+            successRegister: null
         });
     }
 });
@@ -133,7 +136,8 @@ router.post("/register", async(req, res) => {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Ezen az email-en már létezik fiók!"
+            hibaRegister:"Ezen az email-en már létezik fiók!",
+            successRegister: null
         });
     }
 
@@ -142,14 +146,16 @@ router.post("/register", async(req, res) => {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Jelszó nem egyezik!"
+            hibaRegister:"Jelszó nem egyezik!",
+            successRegister: null
         });
     }if (name.trim()===""||password.trim()===""||password2.trim()==="" || birthday.trim()==="" || email.trim()===""){
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Minden mezőt ki kell tölteni"
+            hibaRegister:"Minden mezőt ki kell tölteni",
+            successRegister: null
         });
     }
     const injectCheck = name + email + password;
@@ -159,7 +165,8 @@ router.post("/register", async(req, res) => {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"
+            hibaRegister:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)",
+            successRegister: null
         });
     }
     bcrypt.hash(password, 10).then(async (hash) => {
@@ -167,8 +174,9 @@ router.post("/register", async(req, res) => {
         return res.render('index', {
             current_role: null,
             token: null,
-            hibaLogin: "Sikeres Regisztráció!",
-            hibaRegister:null
+            hibaLogin: null,
+            hibaRegister:null,
+            successRegister: "Sikeres regisztráció!"
         });
     }).catch(err => {
         console.error("Felhasználó létrehozás hiba:", err);
