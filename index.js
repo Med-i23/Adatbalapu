@@ -15,7 +15,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(routeUser);
 app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
-app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
+app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
+app.use('/js', express.static(path.join(__dirname, 'node_modules/@popperjs/core/dist/umd')));
 
 async function init(){
     await oracledb.createPool(db_config)
@@ -23,4 +24,5 @@ async function init(){
 
 app.listen(PORT, () => {
     console.log("Start successfull! http://localhost:8080");
+    console.log(__dirname)
 });

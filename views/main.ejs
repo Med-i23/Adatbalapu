@@ -1,34 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--    <style>
-        .main{
-            display: grid;
-            justify-content: space-around;
-            align-items: center;
-            height: 100vh;
-            alignment: center;
-            text-align: center;
-        }
-
-        .mainbuttons{
-            display: inline-block;
-            padding: 20px 50px;
-            text-decoration: none;
-            background-color: #007bff;
-            color: white;
-            border: 1px solid black;
-            transition: background-color 0.2s;
-        }
-
-        .mainbuttons:hover{
-            background-color: #0055ad;
-            border: 1px solid black;
-        }
-    </style>-->
-
 <%- include('assets/head') %>
-
-<body>
+<body class="m-0 p-0 w-100">
 <%- include('assets/header')%>
 <% if(current_role === 'ADMIN'){%>
 <div class="connectionLink"><a href="/connection">Connection proof</a></div>

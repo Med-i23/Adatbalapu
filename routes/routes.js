@@ -49,16 +49,16 @@ router.get("/main", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+        return res.render('main', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+        });
+    }else {
+        return res.render("/")
     }
-
-
-    return res.render('main', {
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-    });
 });
 //end-region
 

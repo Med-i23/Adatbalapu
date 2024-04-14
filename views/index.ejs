@@ -3,13 +3,13 @@
 <%- include('assets/head') %>
 
 <body>
-<div class="col-md-6  bg-primary w-100 text-light" id="welcome">
-    TrueFace
-</div>
+<header id="header" style=" padding-bottom: 70px;">
+    <nav class="navbar bg-primary navbar-expand-sm bg-primary border-bottom border-body position-fixed w-100" data-bs-theme="dark" >
+        <a class="navbar-brand border-end border-light p-1" href="#">TrueFace</a>
+    </nav>
+</header>
 <div class="container">
     <div class="form-container">
-
-
         <form method="POST" id="register-form" action="/register">
             <fieldset>
                 <legend class="fw-bold text-center">Regisztráció</legend>
@@ -30,8 +30,8 @@
         <form method="POST" id="login-form" action="/login">
             <fieldset>
                 <legend class="fw-bold text-center">Bejelentkezés</legend>
-                <label for="name"></label><input class="form-control" type="text" name="email" id="email" placeholder="Email" required>
-                <label for="password"></label><input class="form-control" type="password" name="password" id="password" placeholder="Jelszó" required>
+                <label for="email2"></label><input class="form-control" type="text" name="email" id="email2" placeholder="Email" required>
+                <label for="passwordag"></label><input class="form-control" type="password" name="password" id="passwordag" placeholder="Jelszó" required>
                 <% if(hibaLogin){ %>
                     <p class="text-danger" style="padding-left: 1%"><%- hibaLogin %></p>
                 <% } %>
