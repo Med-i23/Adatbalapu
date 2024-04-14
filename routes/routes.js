@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 
 const UsersDAO = require('../dao/users-dao');
+const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
 const jwtSecret = require("./../config/auth.js");
@@ -131,6 +132,15 @@ router.post("/register", async(req, res) => {
     let { name, email, birthday, password, password2 } = req.body;
 
     const vanemail = await UsersDAO.getUserEmail(email);
+    if(!common.isDateValid(birthday)){
+        return res.render('index', {
+            current_role: null,
+            token: null,
+            hibaLogin: null,
+            hibaRegister:"Érvényes születési dátumot adj meg!",
+            successRegister: null
+        });
+    }
     if(vanemail.rows.length > 0){
         return res.render('index', {
             current_role: null,
@@ -252,12 +262,11 @@ router.post("/changeUserData", async (req,res)=>{
         current_email = decodedToken.email
         current_name = decodedToken.name
         beSzul = new Date(decodedToken.birthday).toISOString().slice(0,10)
-
-        console.log(beSzul,decodedToken.birthday,birthday)
     });
     beNev = current_name
     beMail = current_email
     let currentUser = await UsersDAO.getUserByEmail(current_email);
+
     if (currentUser.rows.length > 0){
         beJel = currentUser.rows[0][4]
     }
@@ -271,12 +280,16 @@ router.post("/changeUserData", async (req,res)=>{
         beMail = email
     }
     const vanemail = await UsersDAO.getUserEmail(email);
+    if(!common.isDateValid(beSzul)){
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Érvényes születési dátumot adj meg!"})
+        }
+    }
     if(vanemail.rows.length > 0){
         if (errors.length === 0){
             errors.push({hibaChanges:"Ezen az email-en már létezik fiók!"})
         }
     }
-
     if (password!==re_password && password.trim() !== ""){
         if (errors.length === 0){
             errors.push({hibaChanges:"Jelszó nem egyezik!"})
