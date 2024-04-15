@@ -54,9 +54,14 @@ router.get("/main", async (req, res) => {
         });
 
         const posts = await UsersDAO.getPosts();
-        //console.log(posts[1]);
         const birthdays = await UsersDAO.getUsersBirthday();
         const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
+
+        let listeduserfriends = [];
+        for (let i = 0; i < usersfriends.rows.length; i++) {
+            listeduserfriends[i] = await UsersDAO.getUsersFriendsNameById(usersfriends.rows[i]);
+        }
+        //ezt valoszinuleg sokkal szebben meg lehetne oldani
 
         return res.render('main', {
             current_name: current_name,
@@ -66,7 +71,8 @@ router.get("/main", async (req, res) => {
             current_status: current_status,
             posts: posts,
             birthdays: birthdays,
-            usersfriends: usersfriends
+            //usersfriends: usersfriends,
+            listeduserfriends: listeduserfriends
         });
     }else {
         return res.render("/")
@@ -75,8 +81,6 @@ router.get("/main", async (req, res) => {
 //end-region
 
 //region-users
-
-
 
 router.post("/login", async (req, res) => {
     let {email} = req.body;
@@ -346,46 +350,27 @@ router.post("/changeUserData", async (req,res)=>{
 router.post("/post-add-new", async (req, res) => {
 
     const token = req.cookies.jwt;
-    // let current_name;
-    // let current_birthday;
-    // let current_role;
-    // let current_status;
     let current_id;
 
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            // current_name = decodedToken.name;
-            // current_birthday = decodedToken.birthday;
-            // current_role = decodedToken.role;
             current_id = decodedToken.id;
-            // current_status = decodedToken.status;
         });
     }
 
     let posztSzoveg = req.body.posztSzoveg;
-    console.log(posztSzoveg);
-
-    console.log("userid: " + current_id);
-    //return res.redirect('/main');
-
     if (posztSzoveg.length === 0){
         return res.redirect('/main');
     }
 
     await UsersDAO.createPostNoGroup(posztSzoveg, current_id);
-    console.log("Sikeres poszt létrehozás");
-
-
     return res.redirect('/main');
 
 
 });
 router.post("/post-like", async (req, res) => {
     let postId = req.body.postId;
-    //console.log("A poszt idje: " + postId);
     await UsersDAO.postAddLike(postId);
-    //console.log("Sikeres poszt kedvelés");
-
     return res.redirect('/main');
 
 });
@@ -393,10 +378,7 @@ router.post("/post-like", async (req, res) => {
 router.post("/post-modify", async (req, res) => {
     let postId = req.body.postId;
     let postSzoveg = req.body.modifySzoveg;
-    //console.log("A poszt idje: " + postId);
     await UsersDAO.postModify(postSzoveg, postId);
-    console.log("Sikeres poszt módosítás");
-
     return res.redirect('/main');
 
 });
