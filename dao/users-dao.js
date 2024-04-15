@@ -28,6 +28,7 @@ exports.getUserByEmail = async (email) => {
     return await query('SELECT * FROM FELHASZNALO WHERE EMAIL= :email', [email]);
 };
 
+
 exports.getUserEmail = async (email) => {
     return await query('SELECT EMAIL FROM FELHASZNALO WHERE EMAIL= :email', [email]);
 };
