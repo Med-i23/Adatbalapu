@@ -6,9 +6,47 @@
 <% if(current_role === 'ADMIN'){%>
 <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
+
+
 <div class="main" style="margin-left: 500px;margin-right: 500px">
-push teszt
+
+    <div class="center-panel">
+        <div class="scrollable-content">
+            <!-- Posztok -->
+            <h2>Posztok</h2>
+            <div class="post">
+                <h3>Poszt létrehozása</h3>
+                <form action="/post-add-new" method="post">
+                    <textarea name="posztSzoveg" id="posztSzoveg" cols="40" rows="5"></textarea>
+                    <button type="submit" class="btn btn-primary mt-2">Létrehozás</button>
+                </form>
+            </div>
+            <% posts.rows.forEach(function(posts) { %>
+            <div class="post" style=" border-bottom: 1px solid #ccc; padding: 10px 0;"><h3> <%= posts[2] %> </h3>
+                <p>Kedvelések száma: <%= posts[3] %></p>
+                <form style="margin-bottom: 10px" action="/post-like" method="post">
+                    <input type="hidden" name="postId" value="<%= posts[0] %>">
+                    <button type="submit" class="btn btn-primary">Kedvelés</button>
+                    <!--                        Ha a jelenlegi felh. id === a poszt idvel, akkor lehet törölni-->
+                </form>
+                <% if(current_id == posts[5]){ %>
+                    <form action="/post-delete" method="post">
+                        <input type="hidden" name="postId" value="<%= posts[0] %>">
+                        <button type="submit" class="btn btn-primary">Törlés</button>
+                    </form>
+                <% } %>
+
+                <% }); %>
+
+                <!-- további posztok... -->
+            </div>
+        </div>
+    </div>
+
+
 </div>
+
+
 <%- include('assets/footer')%>
 </body>
 

@@ -33,7 +33,7 @@ exports.getUserEmail = async (email) => {
     return await query('SELECT EMAIL FROM FELHASZNALO WHERE EMAIL= :email', [email]);
 };
 
-exports.getUserPosts = async () => {
+exports.getPosts = async () => {
     const res = await query('SELECT * FROM POSZT ORDER BY POSZT.TIME DESC');
     return res;
 };

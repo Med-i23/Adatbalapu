@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 
 const UsersDAO = require('../dao/users-dao');
+const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
 const jwtSecret = require("./../config/auth.js");
@@ -30,7 +31,8 @@ router.get("/", async (req, res) => {
         current_id: current_id,
         token: token,
         hibaLogin: null,
-        hibaRegister: null
+        hibaRegister: null,
+        successRegister: null
     });
 });
 
@@ -43,90 +45,36 @@ router.get("/main", async (req, res) => {
     let current_id;
 
     if (token) {
-
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name = decodedToken.name;
-            current_birthday = decodedToken.birthday;
+            current_name= decodedToken.name;
+            current_birthday= decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+
+        const posts = await UsersDAO.getPosts();
+        //console.log(posts[1]);
+        const birthdays = await UsersDAO.getUsersBirthday();
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
+
+        return res.render('main', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            posts: posts,
+            birthdays: birthdays,
+            usersfriends: usersfriends
+        });
+    }else {
+        return res.render("/")
     }
-
-    const posts = await UsersDAO.getUserPosts();
-    const birthdays = await UsersDAO.getUsersBirthday();
-    const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
-    //console.log(usersfriends[0]);
-    //console.log(usersfriends);
-    //console.log(birthdays);
-
-    return res.render('main', {
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        posts: posts,
-        birthdays: birthdays,
-        usersfriends: usersfriends
-    });
 });
 //end-region
 
 //region-users
-
-
-router.post("/post-add-new", async (req, res) => {
-
-    const token = req.cookies.jwt;
-    let current_name;
-    let current_birthday;
-    let current_role;
-    let current_status;
-    let current_id;
-    if (token) {
-        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name = decodedToken.name;
-            current_birthday = decodedToken.birthday;
-            current_role = decodedToken.role;
-            current_id = decodedToken.id;
-            current_status = decodedToken.status;
-        });
-    }
-
-    let posztSzoveg = req.body.posztSzoveg;
-    console.log(posztSzoveg);
-
-
-    console.log("userid: " + current_id);
-    //return res.redirect('/main');
-
-    if (posztSzoveg.length == 0){
-        return res.redirect('/main');
-    }
-    await UsersDAO.createPostNoGroup(posztSzoveg, current_id);
-    console.log("Sikeres poszt létrehozás");
-
-
-    return res.redirect('/main');
-
-
-});
-router.post("/post-like", async (req, res) => {
-    let postId = req.body.postId;
-    //console.log("A poszt idje: " + postId);
-    await UsersDAO.postAddLike(postId);
-    //console.log("Sikeres poszt kedvelés");
-
-    return res.redirect('/main');
-
-});
-
-router.post("/post-delete", async (req, res) => {
-    let postId = req.body.postId;
-    await UsersDAO.postDelete(postId);
-    return res.redirect('/main');
-});
 
 
 
@@ -135,9 +83,8 @@ router.post("/login", async (req, res) => {
     let {password} = req.body;
 
     const user = await UsersDAO.getUserByEmail(email);
-    console.log(user);
-    const hashedPassword = user.rows[0][4];
     if (user.rows.length > 0) {
+        const hashedPassword = user.rows[0][4];
         bcrypt.compare(password, hashedPassword).then(async function (result) {
             if (result) {
                 const token = jwt.sign({
@@ -168,8 +115,9 @@ router.post("/login", async (req, res) => {
         return res.render('index', {
             current_role: null,
             token: null,
-            hibaLogin: "Email nem létezik",
-            hibaRegister: null
+            hibaLogin:"Email nem létezik",
+            hibaRegister:null,
+            successRegister: null
         });
     }
 });
@@ -193,39 +141,51 @@ router.post("/register", async (req, res) => {
     let {name, email, birthday, password, password2} = req.body;
 
     const vanemail = await UsersDAO.getUserEmail(email);
-    if (vanemail.rows.length > 0) {
+    if(!common.isDateValid(birthday)){
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister: "Ezen az ewmail-en már létezik fiók!"
+            hibaRegister:"Érvényes születési dátumot adj meg!",
+            successRegister: null
         });
     }
-
-    if (password !== password2) {
+    if(vanemail.rows.length > 0){
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister: "Jelszó nem egyezik!"
+            hibaRegister:"Ezen az email-en már létezik fiók!",
+            successRegister: null
         });
     }
-    if (name === "" || password === "" || password2 === "" || birthday === "" || email === "") {
+    if (password!==password2){
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister: "Minden mezőt ki kell tölteni"
+            hibaRegister:"Jelszó nem egyezik!",
+            successRegister: null
+        });
+    }
+    if (name.trim()===""||password.trim()===""||password2.trim()==="" || birthday.trim()==="" || email.trim()===""){
+        return res.render('index', {
+            current_role: null,
+            token: null,
+            hibaLogin: null,
+            hibaRegister:"Minden mezőt ki kell tölteni",
+            successRegister: null
         });
     }
     const injectCheck = name + email + password;
-    const regex = /['=*?]/g;
+    const regex = /['=*?#-]/g;
     if (regex.test(injectCheck)) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister: "A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
+            hibaRegister:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)",
+            successRegister: null
         });
     }
     bcrypt.hash(password, 10).then(async (hash) => {
@@ -233,8 +193,9 @@ router.post("/register", async (req, res) => {
         return res.render('index', {
             current_role: null,
             token: null,
-            hibaLogin: "Sikeres Regisztráció!",
-            hibaRegister: null
+            hibaLogin: null,
+            hibaRegister:null,
+            successRegister: "Sikeres regisztráció!"
         });
     }).catch(err => {
         console.error("Felhasználó létrehozás hiba:", err);
@@ -289,15 +250,150 @@ router.get("/connection", async (req, res) => {
 router.get("/profile", async (req, res) => {
     const token = req.cookies.jwt;
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-       return res.render('profile',{
-           current_name: decodedToken.name,
-           current_birthday: decodedToken.birthday,
-           current_role: decodedToken.role,
-           current_id: decodedToken.id,
-           current_status: decodedToken.status
-       })
+        return res.render('profile',{
+            current_name: decodedToken.name,
+            current_birthday: decodedToken.birthday,
+            current_role: decodedToken.role,
+            current_id: decodedToken.id,
+            current_status: decodedToken.status,
+            errors: []
+        })
     });
 })
+
+
+router.post("/changeUserData", async (req,res)=>{
+
+    const token = req.cookies.jwt
+    let errors = [];
+    let {name, email, birthday, password, re_password } = req.body;
+    let current_email,current_name, beNev,beSzul,beMail, beJel;
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+        current_email = decodedToken.email
+        current_name = decodedToken.name
+        beSzul = new Date(decodedToken.birthday).toISOString().slice(0,10)
+    });
+    beNev = current_name
+    beMail = current_email
+    let currentUser = await UsersDAO.getUserByEmail(current_email);
+
+    if (currentUser.rows.length > 0){
+        beJel = currentUser.rows[0][4]
+    }
+    if (name.trim() !== ""){
+        beNev = name.trim()
+    }
+    if (birthday.trim() !== ""){
+        beSzul = new Date(birthday).toISOString().slice(0,10)
+    }
+    if (email.trim() !== ""){
+        beMail = email
+    }
+    const vanemail = await UsersDAO.getUserEmail(email);
+    if(!common.isDateValid(beSzul)){
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Érvényes születési dátumot adj meg!"})
+        }
+    }
+    if(vanemail.rows.length > 0){
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Ezen az email-en már létezik fiók!"})
+        }
+    }
+    if (password!==re_password && password.trim() !== ""){
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Jelszó nem egyezik!"})
+        }
+    }
+    const injectCheck = name + email + password;
+    const regex = /['=*?#-]/g;
+    if (regex.test(injectCheck)) {
+        if (errors.length === 0){
+            errors.push({hibaChanges:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"})
+        }
+    }
+    if (errors.length === 0){
+        bcrypt.hash(password, 10).then( (hash) => {
+            if (password.trim() === ""){
+                hash = beJel
+            }
+            UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(()=>{
+                errors.push({success:"Sikeres adatmódosítás"})
+                return res.render("profile",{
+                    current_name: current_name,errors: errors
+                })
+            })
+        }).catch(err => {
+            if (errors.length === 0){
+                errors.push({hibaChanges:"Sikeretelen adatmódosítás"})
+            }
+            return res.status(500).send("Internal Server Error");
+        });
+    }else {
+        return res.render("profile",{
+            current_name: current_name,errors: errors
+        })
+    }
+
+})
+//end-region
+
+//region-posts
+
+
+router.post("/post-add-new", async (req, res) => {
+
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    let posztSzoveg = req.body.posztSzoveg;
+    console.log(posztSzoveg);
+
+
+    console.log("userid: " + current_id);F
+    //return res.redirect('/main');
+
+    if (posztSzoveg.length === 0){
+        return res.redirect('/main');
+    }
+
+    await UsersDAO.createPostNoGroup(posztSzoveg, current_id);
+    console.log("Sikeres poszt létrehozás");
+
+
+    return res.redirect('/main');
+
+
+});
+router.post("/post-like", async (req, res) => {
+    let postId = req.body.postId;
+    //console.log("A poszt idje: " + postId);
+    await UsersDAO.postAddLike(postId);
+    //console.log("Sikeres poszt kedvelés");
+
+    return res.redirect('/main');
+
+});
+
+router.post("/post-delete", async (req, res) => {
+    let postId = req.body.postId;
+    await UsersDAO.postDelete(postId);
+    return res.redirect('/main');
+});
+
 
 //end-region
 
