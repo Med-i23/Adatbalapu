@@ -2,9 +2,9 @@
 <html lang="en">
 <%- include('assets/head') %>
 <body class="m-0 p-0 w-100">
-<%- include('assets/header')%>
-<% if(current_role === 'ADMIN'){%>
-<div class="connectionLink"><a href="/connection">Connection proof</a></div>
+<%- include('assets/header') %>
+<% if(current_role === 'ADMIN'){ %>
+    <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
 
 <div class="flex-grid">
@@ -36,27 +36,25 @@
             </div>
             <% posts.rows.forEach(function(posts) { %>
             <div class="post" style=" border-bottom: 1px solid #ccc; padding: 10px 0;"><h3> <%= posts[2] %> </h3>
-                <p>Kedvelések száma: <%= posts[3] %></p>
+                <h3><%= posts[3] %></h3>
+                <p>Kedvelések száma: <%= posts[4] %></p>
                 <form style="margin-bottom: 10px" action="/post-like" method="post">
                     <input type="hidden" name="postId" value="<%= posts[0] %>">
                     <button type="submit" class="btn btn-primary">Kedvelés</button>
-                    <!--                        Ha a jelenlegi felh. id === a poszt idvel, akkor lehet törölni-->
                 </form>
                 <% if(current_id == posts[1]){ %>
                     <form action="/post-delete" method="post">
-                        <input type="hidden" name="postId" value="<%= posts[0] %>">
                         <button type="submit" class="btn btn-primary">Törlés</button>
                     </form>
                 <% } %>
 
                 <% }); %>
 
-                <!-- további posztok... -->
             </div>
         </div>
         <div class="right-panel">
             <div class="scrollable-content">
-                <!-- Barátok listája -->
+
                 <h2>Barátok</h2>
                 <ul>
                     <% usersfriends.rows.forEach(function (friend) { %>
@@ -70,7 +68,7 @@
 </div>
 
 
-<%- include('assets/footer')%>
+<%- include('assets/footer') %>
 </body>
 
 </html>

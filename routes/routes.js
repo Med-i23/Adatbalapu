@@ -341,27 +341,29 @@ router.post("/changeUserData", async (req,res)=>{
 //region-posts
 
 
+
+
 router.post("/post-add-new", async (req, res) => {
 
     const token = req.cookies.jwt;
-    let current_name;
-    let current_birthday;
-    let current_role;
-    let current_status;
+    // let current_name;
+    // let current_birthday;
+    // let current_role;
+    // let current_status;
     let current_id;
+
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name = decodedToken.name;
-            current_birthday = decodedToken.birthday;
-            current_role = decodedToken.role;
+            // current_name = decodedToken.name;
+            // current_birthday = decodedToken.birthday;
+            // current_role = decodedToken.role;
             current_id = decodedToken.id;
-            current_status = decodedToken.status;
+            // current_status = decodedToken.status;
         });
     }
 
     let posztSzoveg = req.body.posztSzoveg;
     console.log(posztSzoveg);
-
 
     console.log("userid: " + current_id);
     //return res.redirect('/main');
