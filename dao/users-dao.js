@@ -48,3 +48,7 @@ exports.getUsersFriendsById = async (id) => {
     //console.log("the id: " +id);
     return res;
 };
+
+exports.createPostNoGroup = async (szoveg) => {
+    await query('INSERT INTO POSZT (SZOVEG, LIKES, TIME) VALUES (:szoveg, 0, sysdate)', [szoveg]);
+}

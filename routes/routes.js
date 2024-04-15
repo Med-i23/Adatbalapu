@@ -17,20 +17,20 @@ router.get("/", async (req, res) => {
     let current_id;
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name= decodedToken.name;
-            current_birthday= decodedToken.birthday;
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
     }
     return res.render('index', {
-        current_name:current_name,
+        current_name: current_name,
         current_role: current_role,
         current_id: current_id,
         token: token,
-        hibaLogin:null,
-        hibaRegister:null
+        hibaLogin: null,
+        hibaRegister: null
     });
 });
 
@@ -41,16 +41,24 @@ router.get("/main", async (req, res) => {
     let current_role;
     let current_status;
     let current_id;
+
     if (token) {
+
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name= decodedToken.name;
-            current_birthday= decodedToken.birthday;
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
     }
 
+    const posts = await UsersDAO.getUserPosts();
+    const birthdays = await UsersDAO.getUsersBirthday();
+    const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
+    //console.log(usersfriends[0]);
+    //console.log(usersfriends);
+    //console.log(birthdays);
 
     return res.render('main', {
         current_name: current_name,
@@ -58,20 +66,23 @@ router.get("/main", async (req, res) => {
         current_id: current_id,
         current_birthday: current_birthday,
         current_status: current_status,
+        posts: posts,
+        birthdays: birthdays,
+        usersfriends: usersfriends
     });
 });
 //end-region
 
 //region-users
 
-router.post("/login", async(req, res) => {
+router.post("/login", async (req, res) => {
     let {email} = req.body;
     let {password} = req.body;
 
     const user = await UsersDAO.getUserByEmail(email);
     console.log(user);
     const hashedPassword = user.rows[0][4];
-    if (user.rows.length > 0){
+    if (user.rows.length > 0) {
         bcrypt.compare(password, hashedPassword).then(async function (result) {
             if (result) {
                 const token = jwt.sign({
@@ -98,17 +109,17 @@ router.post("/login", async(req, res) => {
             }
         });
 
-    }else {
+    } else {
         return res.render('index', {
             current_role: null,
             token: null,
-            hibaLogin:"Email nem létezik",
-            hibaRegister:null
+            hibaLogin: "Email nem létezik",
+            hibaRegister: null
         });
     }
 });
 
-router.get("/logout", async(req, res) => {
+router.get("/logout", async (req, res) => {
     const token = req.cookies.jwt;
     let current_email;
     if (token) {
@@ -123,32 +134,33 @@ router.get("/logout", async(req, res) => {
     res.redirect("/")
 });
 
-router.post("/register", async(req, res) => {
-    let { name, email, birthday, password, password2 } = req.body;
+router.post("/register", async (req, res) => {
+    let {name, email, birthday, password, password2} = req.body;
 
     const vanemail = await UsersDAO.getUserEmail(email);
-    if(vanemail.rows.length > 0){
+    if (vanemail.rows.length > 0) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Ezen az email-en már létezik fiók!"
+            hibaRegister: "Ezen az ewmail-en már létezik fiók!"
         });
     }
 
-    if (password!==password2){
+    if (password !== password2) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Jelszó nem egyezik!"
+            hibaRegister: "Jelszó nem egyezik!"
         });
-    }if (name===""||password===""||password2==="" || birthday==="" || email===""){
+    }
+    if (name === "" || password === "" || password2 === "" || birthday === "" || email === "") {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Minden mezőt ki kell tölteni"
+            hibaRegister: "Minden mezőt ki kell tölteni"
         });
     }
     const injectCheck = name + email + password;
@@ -158,16 +170,16 @@ router.post("/register", async(req, res) => {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
+            hibaRegister: "A jelszó nem tartalmazhat speciális karatert! (', =, ?, *)"
         });
     }
     bcrypt.hash(password, 10).then(async (hash) => {
-        await UsersDAO.createUser(name, email, new Date(birthday).toISOString().slice(0,10), hash, "ACTIVE", "USER");
+        await UsersDAO.createUser(name, email, new Date(birthday).toISOString().slice(0, 10), hash, "ACTIVE", "USER");
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: "Sikeres Regisztráció!",
-            hibaRegister:null
+            hibaRegister: null
         });
     }).catch(err => {
         console.error("Felhasználó létrehozás hiba:", err);
@@ -188,8 +200,8 @@ router.get("/connection", async (req, res) => {
     let current_id;
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name= decodedToken.name;
-            current_birthday= decodedToken.birthday;
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
@@ -197,7 +209,7 @@ router.get("/connection", async (req, res) => {
     }
 
     const users = await UsersDAO.getUsers();
-    if(users){
+    if (users) {
         return res.render('connection', {
             users: users,
             current_name: current_name,
