@@ -33,7 +33,7 @@ exports.getUserEmail = async (email) => {
 };
 
 exports.getUserPosts = async () => {
-    const res = await query('SELECT * FROM POSZT');
+    const res = await query('SELECT * FROM POSZT ORDER BY POSZT.TIME DESC');
     return res;
 };
 
@@ -49,6 +49,21 @@ exports.getUsersFriendsById = async (id) => {
     return res;
 };
 
-exports.createPostNoGroup = async (szoveg) => {
-    await query('INSERT INTO POSZT (SZOVEG, LIKES, TIME) VALUES (:szoveg, 0, sysdate)', [szoveg]);
+exports.createPostNoGroup = async (szoveg, felh_id) => {
+    await query('INSERT INTO POSZT (SZOVEG, LIKES, TIME, FELH_ID) VALUES (:szoveg, 0, SYSTIMESTAMP, :felh_id)', [szoveg, felh_id]);
+}
+exports.postAddLike = async (postId) => {
+    // let res = await query("SELECT * FROM POSZT WHERE ID = :postId", [postId]);
+    // console.log(res);
+    await query("UPDATE POSZT SET LIKES = LIKES + 1 WHERE ID = :postId", [postId]);
+}
+
+/*exports.postIsMadeByUser = async (postId) => {
+    // let res = await query("SELECT * FROM POSZT WHERE ID = :postId", [postId]);
+    // console.log(res);
+    await query("UPDATE POSZT SET LIKES = LIKES + 1 WHERE ID = :postId", [postId]);
+}*/
+
+exports.postDelete = async (postId) => {
+    await query('DELETE FROM POSZT WHERE ID = :postId', [postId]);
 }
