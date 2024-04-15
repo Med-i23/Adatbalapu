@@ -59,6 +59,7 @@ exports.postAddLike = async (postId) => {
     await query("UPDATE POSZT SET LIKES = LIKES + 1 WHERE ID = :postId", [postId]);
 }
 
+
 /*exports.postIsMadeByUser = async (postId) => {
     // let res = await query("SELECT * FROM POSZT WHERE ID = :postId", [postId]);
     // console.log(res);
@@ -67,4 +68,18 @@ exports.postAddLike = async (postId) => {
 
 exports.postDelete = async (postId) => {
     await query('DELETE FROM POSZT WHERE ID = :postId', [postId]);
+}
+
+// exports.getUsersFriendsNameById = async (id) => {
+//     const res = await query('SELECT FELH_2 ID FROM ISMEROS WHERE FELH1_ID= :id', [id]);
+//     const res2 = await query('SELECT NEV FROM FELHASZNALO WHERE ID = :res');
+//     return res2
+//     //console.log("the id: " +id);
+//     //return res;
+// };
+
+exports.postModify = async (szoveg, postId) => {
+    // let res = await query("SELECT * FROM POSZT WHERE ID = :postId", [postId]);
+    // console.log(res);
+    await query("UPDATE POSZT SET SZOVEG = :szoveg WHERE ID = :postId", [szoveg, postId]);
 }

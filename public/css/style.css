@@ -25,7 +25,7 @@ nav a:not(#login-signup__pic-link){
 }
 
 nav a:not(#login-signup__pic-link):hover {
-    background-color: gray;
+    background-color: grey;
     transform: scale(1);
     border-radius: 30pt;
     display: block;

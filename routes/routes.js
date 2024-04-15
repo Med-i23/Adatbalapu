@@ -390,6 +390,18 @@ router.post("/post-like", async (req, res) => {
 
 });
 
+router.post("/post-modify", async (req, res) => {
+    let postId = req.body.postId;
+    let postSzoveg = req.body.modifySzoveg;
+    //console.log("A poszt idje: " + postId);
+    await UsersDAO.postModify(postSzoveg, postId);
+    console.log("Sikeres poszt módosítás");
+
+    return res.redirect('/main');
+
+});
+
+
 router.post("/post-delete", async (req, res) => {
     let postId = req.body.postId;
     await UsersDAO.postDelete(postId);

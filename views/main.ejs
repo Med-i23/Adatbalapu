@@ -7,66 +7,165 @@
     <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
 
+<style>
+    /* Flex container */
+    .flex-grid {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: nowrap;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Individual flex panels */
+
+    .flex-grid-center {
+        flex: 0.5;
+    }
+
+
+    /* Styling for posts */
+    .post {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+
+    }
+
+    .post h3 {
+        margin-top: 0;
+    }
+
+    .post p {
+        margin-bottom: 5px;
+    }
+
+    .flex-grid-center-post-inside {
+        display: flex;
+        gap: 10px;
+
+    }
+
+    .btn-post-hold {
+        background-color: red;
+        border: 1px red solid;
+    }
+
+    .btn-post-hold:hover {
+        background-color: darkred;
+        border: 1px darkred solid;
+    }
+
+    .btn-middle{
+        display: flex;
+    }
+
+    .btn-post-modify{
+        background-color: darkcyan;
+        border: 1px darkcyan solid;
+    }
+
+    .btn-post-modify:hover{
+        background-color: darkslategrey;
+        border: 1px darkslategrey solid;
+    }
+    .post-modify-popup {
+        display: none;
+        /* Additional styling for the popup */
+    }
+
+</style>
+
+
 <div class="flex-grid">
-    <div class="left-panel">
-        <div class="scrollable-content">
-            <!-- Születésnapok -->
-            <h2>Születésnapok</h2>
-            <ul>
 
-                <% birthdays.rows.forEach(function (birthday) { %>
-                    <% let date = new Date(birthday[1]); %>
-                    <% let months = ['Január', 'Február', 'Március', 'Április', 'Május', 'Június', 'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December']; %>
-                    <li><%= birthday[0] %>, <%= months[date.getMonth()] %>:<%= date.getDate() %></li>
-                <% }); %>
+    <div class="flex-grid-left">
+        <h2>Születésnapok</h2>
+        <ul>
 
-            </ul>
-        </div>
+            <% birthdays.rows.forEach(function (birthday) { %>
+                <% let date = new Date(birthday[1]); %>
+                <% let months = ['Január', 'Február', 'Március', 'Április', 'Május', 'Június', 'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December']; %>
+                <li><%= birthday[0] %>, <%= months[date.getMonth()] %>:<%= date.getDate() %></li>
+            <% }); %>
+
+        </ul>
     </div>
-    <div class="center-panel">
-        <div class="scrollable-content">
-            <!-- Posztok -->
-            <h2>Posztok</h2>
+
+    <div class="flex-grid-center">
+        <h2>Posztok</h2>
+
+        <h3>Poszt létrehozása</h3>
+        <div class="post">
+            <form action="/post-add-new" method="post">
+                <textarea name="posztSzoveg" id="posztSzoveg" cols="40" rows="5"></textarea>
+                <button type="submit" class="btn-middle btn btn-primary mt-2">Létrehozás</button>
+            </form>
+        </div>
+        <% posts.rows.forEach(function(posts) { %>
             <div class="post">
-                <h3>Poszt létrehozása</h3>
-                <form action="/post-add-new" method="post">
-                    <textarea name="posztSzoveg" id="posztSzoveg" cols="40" rows="5"></textarea>
-                    <button type="submit" class="btn btn-primary mt-2">Létrehozás</button>
-                </form>
-            </div>
-            <% posts.rows.forEach(function(posts) { %>
-            <div class="post" style=" border-bottom: 1px solid #ccc; padding: 10px 0;"><h3> <%= posts[2] %> </h3>
+                <h3> <%= posts[2] %> </h3>
                 <h3><%= posts[3] %></h3>
                 <p>Kedvelések száma: <%= posts[4] %></p>
-                <form style="margin-bottom: 10px" action="/post-like" method="post">
-                    <input type="hidden" name="postId" value="<%= posts[0] %>">
-                    <button type="submit" class="btn btn-primary">Kedvelés</button>
-                </form>
-                <% if(current_id == posts[1]){ %>
-                    <form action="/post-delete" method="post">
-                        <button type="submit" class="btn btn-primary">Törlés</button>
+                <div class="flex-grid-center-post-inside">
+                    <form style="margin-bottom: 10px" action="/post-like" method="post">
+                        <input type="hidden" name="postId" value="<%= posts[0] %>">
+                        <button type="submit" class="btn btn-primary">Kedvelés</button>
                     </form>
-                <% } %>
+                    <% if(current_id === posts[1]){ %>
+                        <button class="btn btn-primary btn-post-modify">Módosítás</button>
 
-                <% }); %>
+                        <div class="post-modify-popup flex-modify-popup">
+                            <form action="/post-modify" method="post">
+                                <textarea name="modifySzoveg" id="modifySzoveg" cols="30" rows="10"></textarea>
+                                <input type="hidden" name="postId" value="<%= posts[0] %>">
+                                <button type="submit" class="btn btn-primary">Mentés</button>
+                            </form>
+                        </div>
 
+                    <% } %>
+                    <% if(current_id === posts[1]){ %>
+                        <form action="/post-delete" method="post">
+                            <input type="hidden" name="postId" value="<%= posts[0] %>">
+                            <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
+                        </form>
+                    <% } %>
+                </div>
             </div>
-        </div>
-        <div class="right-panel">
-            <div class="scrollable-content">
 
-                <h2>Barátok</h2>
-                <ul>
-                    <% usersfriends.rows.forEach(function (friend) { %>
-                        <li><%= friend %></li>
-                    <% }); %>
+        <% }); %>
 
-                </ul>
-            </div>
-        </div>
     </div>
+
+    <div class="flex-grid-right">
+        <h2>Barátok</h2>
+        <ul>
+            <% usersfriends.rows.forEach(function (friend) { %>
+                <li><%= friend %></li>
+            <% }); %>
+
+        </ul>
+    </div>
+
+
 </div>
 
+<script>// Get the button and popup elements
+    const modifyButton = document.querySelector('.btn-post-modify');
+    const modifyPopup = document.querySelector('.post-modify-popup');
+
+    // Add event listener to the button
+    modifyButton.addEventListener('click', function(event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        // Show the popup
+        modifyPopup.style.display = 'block';
+    });
+</script>
 
 <%- include('assets/footer') %>
 </body>
