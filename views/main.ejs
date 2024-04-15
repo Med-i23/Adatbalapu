@@ -7,7 +7,12 @@
     <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
 
+
 <style>
+/*
+probaltam kirakni head.ejs/style.css-be (helyes utvonalat adtam meg), sehogy nem akarta a modositasokat
+vegrehajtani, bongeszo cachet is uritettem
+*/
     .flex-grid {
         display: flex;
         flex-direction: row;
@@ -56,19 +61,20 @@
         border: 1px darkred solid;
     }
 
-    .btn-middle{
+    .btn-middle {
         display: flex;
     }
 
-    .btn-post-modify{
+    .btn-post-modify {
         background-color: darkcyan;
         border: 1px darkcyan solid;
     }
 
-    .btn-post-modify:hover{
+    .btn-post-modify:hover {
         background-color: darkslategrey;
         border: 1px darkslategrey solid;
     }
+
     .post-modify-popup {
         display: none;
     }
@@ -105,7 +111,7 @@
             <div class="post">
                 <h3> <%= posts[2] %> </h3>
                 <h3><%= posts[3] %></h3>
-                <p>Kedvelések száma: <%= posts[4] %></p>
+                <p style="font-size: 1.75vh">Kedvelések száma: <%= posts[4] %></p>
                 <div class="flex-grid-center-post-inside">
                     <form style="margin-bottom: 10px" action="/post-like" method="post">
                         <input type="hidden" name="postId" value="<%= posts[0] %>">
@@ -116,7 +122,7 @@
 
                         <div class="post-modify-popup">
                             <form action="/post-modify" method="post">
-                                <textarea name="modifySzoveg" id="modifySzoveg" cols="30" rows="10"></textarea>
+                                <textarea name="modifySzoveg" id="modifySzoveg" cols="40" rows="5"><%= posts[3] %></textarea>
                                 <input type="hidden" name="postId" value="<%= posts[0] %>">
                                 <button type="submit" class="btn btn-primary">Mentés</button>
                             </form>
@@ -149,17 +155,29 @@
 
 </div>
 
-<script>// Get the button and popup elements
+
+<script>
+    // ki kell majd kulon .js fajlba rakni
+    // a modositasnak "popup" textarea
     const modifyButton = document.querySelector('.btn-post-modify');
     const modifyPopup = document.querySelector('.post-modify-popup');
+    let textareaSzoveg = document.querySelector('#modifySzoveg');
+    let temp = textareaSzoveg.value;
+    let szamlalo = 0; // paraszt megoldas
 
-    // Add event listener to the button
-    modifyButton.addEventListener('click', function(event) {
-        // Prevent the default form submission behavior
+    modifyButton.addEventListener('click', function (event) {
         event.preventDefault();
-
-        // Show the popup
         modifyPopup.style.display = 'block';
+
+        if (szamlalo % 2 === 0) {
+            szamlalo += 1;
+            modifyPopup.style.display = 'block';
+        }else{
+            szamlalo+=1;
+            modifyPopup.style.display  = 'none';
+            textareaSzoveg.value = temp;
+        }
+
     });
 </script>
 

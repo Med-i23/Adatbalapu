@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 
 const UsersDAO = require('../dao/users-dao');
+const PostsDAO = require('../dao/posts-dao');
 const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
@@ -53,7 +54,7 @@ router.get("/main", async (req, res) => {
             current_status = decodedToken.status;
         });
 
-        const posts = await UsersDAO.getPosts();
+        const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday();
         const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
 
@@ -363,14 +364,14 @@ router.post("/post-add-new", async (req, res) => {
         return res.redirect('/main');
     }
 
-    await UsersDAO.createPostNoGroup(posztSzoveg, current_id);
+    await PostsDAO.postCreateNoGroup(posztSzoveg, current_id);
     return res.redirect('/main');
 
 
 });
 router.post("/post-like", async (req, res) => {
     let postId = req.body.postId;
-    await UsersDAO.postAddLike(postId);
+    await PostsDAO.postAddLike(postId);
     return res.redirect('/main');
 
 });
@@ -378,7 +379,7 @@ router.post("/post-like", async (req, res) => {
 router.post("/post-modify", async (req, res) => {
     let postId = req.body.postId;
     let postSzoveg = req.body.modifySzoveg;
-    await UsersDAO.postModify(postSzoveg, postId);
+    await PostsDAO.postModify(postSzoveg, postId);
     return res.redirect('/main');
 
 });
@@ -386,7 +387,7 @@ router.post("/post-modify", async (req, res) => {
 
 router.post("/post-delete", async (req, res) => {
     let postId = req.body.postId;
-    await UsersDAO.postDelete(postId);
+    await PostsDAO.postDelete(postId);
     return res.redirect('/main');
 });
 
