@@ -28,7 +28,6 @@ exports.getUserByEmail = async (email) => {
     return await query('SELECT * FROM FELHASZNALO WHERE EMAIL= :email', [email]);
 };
 
-
 exports.getUserEmail = async (email) => {
     return await query('SELECT EMAIL FROM FELHASZNALO WHERE EMAIL= :email', [email]);
 };
@@ -51,8 +50,9 @@ exports.getUsersFriendsById = async (id) => {
 };
 
 exports.createPostNoGroup = async (szoveg, felh_id) => {
-    await query('INSERT INTO POSZT (SZOVEG, LIKES, TIME, FELH_ID) VALUES (:szoveg, 0, SYSTIMESTAMP, :felh_id)', [szoveg, felh_id]);
+    await query('INSERT INTO POSZT (SZOVEG, LIKES, TIME, LETREHOZO) VALUES (:szoveg, 0, SYSTIMESTAMP, :felh_id)', [szoveg, felh_id]);
 }
+
 exports.postAddLike = async (postId) => {
     // let res = await query("SELECT * FROM POSZT WHERE ID = :postId", [postId]);
     // console.log(res);

@@ -1,6 +1,6 @@
 module.exports={
-    username: 'C##nev',
-    password: 'jelszo',
+    username: 'C##KAZRXM',
+    password: 'Tuf@aming1243',
     connectString: "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=9999))(CONNECT_DATA=(SERVER=DEDICATED)(SID=orania2)))"
 }
 

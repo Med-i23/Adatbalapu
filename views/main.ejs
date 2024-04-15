@@ -7,9 +7,22 @@
 <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
 
+<div class="flex-grid">
+    <div class="left-panel">
+        <div class="scrollable-content">
+            <!-- Születésnapok -->
+            <h2>Születésnapok</h2>
+            <ul>
 
-<div class="main" style="margin-left: 500px;margin-right: 500px">
+                <% birthdays.rows.forEach(function (birthday) { %>
+                    <% let date = new Date(birthday[1]); %>
+                    <% let months = ['Január', 'Február', 'Március', 'Április', 'Május', 'Június', 'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December']; %>
+                    <li><%= birthday[0] %>, <%= months[date.getMonth()] %>:<%= date.getDate() %></li>
+                <% }); %>
 
+            </ul>
+        </div>
+    </div>
     <div class="center-panel">
         <div class="scrollable-content">
             <!-- Posztok -->
@@ -29,7 +42,7 @@
                     <button type="submit" class="btn btn-primary">Kedvelés</button>
                     <!--                        Ha a jelenlegi felh. id === a poszt idvel, akkor lehet törölni-->
                 </form>
-                <% if(current_id == posts[5]){ %>
+                <% if(current_id == posts[1]){ %>
                     <form action="/post-delete" method="post">
                         <input type="hidden" name="postId" value="<%= posts[0] %>">
                         <button type="submit" class="btn btn-primary">Törlés</button>
@@ -41,9 +54,19 @@
                 <!-- további posztok... -->
             </div>
         </div>
+        <div class="right-panel">
+            <div class="scrollable-content">
+                <!-- Barátok listája -->
+                <h2>Barátok</h2>
+                <ul>
+                    <% usersfriends.rows.forEach(function (friend) { %>
+                        <li><%= friend %></li>
+                    <% }); %>
+
+                </ul>
+            </div>
+        </div>
     </div>
-
-
 </div>
 
 

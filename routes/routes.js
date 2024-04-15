@@ -363,7 +363,7 @@ router.post("/post-add-new", async (req, res) => {
     console.log(posztSzoveg);
 
 
-    console.log("userid: " + current_id);F
+    console.log("userid: " + current_id);
     //return res.redirect('/main');
 
     if (posztSzoveg.length === 0){
