@@ -161,23 +161,17 @@ vegrehajtani, bongeszo cachet is uritettem
     // a modositasnak "popup" textarea
     const modifyButton = document.querySelector('.btn-post-modify');
     const modifyPopup = document.querySelector('.post-modify-popup');
-    let textareaSzoveg = document.querySelector('#modifySzoveg');
-    let temp = textareaSzoveg.value;
-    let szamlalo = 0; // paraszt megoldas
+    const textareaSzoveg = document.querySelector('#modifySzoveg');
+    const temp = textareaSzoveg.value;
 
     modifyButton.addEventListener('click', function (event) {
         event.preventDefault();
-        modifyPopup.style.display = 'block';
-
-        if (szamlalo % 2 === 0) {
-            szamlalo += 1;
-            modifyPopup.style.display = 'block';
-        }else{
-            szamlalo+=1;
-            modifyPopup.style.display  = 'none';
+        if (modifyPopup.style.display === 'block') {
+            modifyPopup.style.display = 'none';
             textareaSzoveg.value = temp;
+        } else {
+            modifyPopup.style.display = 'block';
         }
-
     });
 </script>
 
