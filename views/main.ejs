@@ -55,7 +55,7 @@
                             </form>
                         </div>
                     <% } %>
-                    <% if(current_id === posts[1]){ %>
+                    <% if(current_id === posts[1] || current_role === 'ADMIN'){ %>
                         <form action="/post-delete" method="post">
                             <input type="hidden" name="postId" value="<%= posts[0] %>">
                             <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
