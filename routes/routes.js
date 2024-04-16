@@ -375,6 +375,13 @@ router.get("/connection", async (req, res) => {
         wrongResult: 'Adatbázis nem csatlakozik'
     });
 });
+
+router.post("/deleteUser/:id", async (req, res) => {
+    let id = req.params.id;
+    await UsersDAO.deleteUser(id);
+    return res.redirect('/connection');
+});
+
 //end-region
 
 //region-posts
