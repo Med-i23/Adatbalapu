@@ -343,9 +343,6 @@ router.get("/connection", async (req, res) => {
 
 //region-posts
 
-
-
-
 router.post("/post-add-new", async (req, res) => {
 
     const token = req.cookies.jwt;

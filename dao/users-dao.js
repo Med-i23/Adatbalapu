@@ -36,7 +36,7 @@ exports.getUsersBirthday = async () => {
     const res = await query('SELECT NEV, SZULDATUM FROM FELHASZNALO');
     return res;
 }
-
+//esetleg majd atnevezni? meg egyszerusiteni
 exports.getUsersFriendsById = async (id) => {
     const res = await query('SELECT FELH2_ID FROM ISMEROS WHERE FELH1_ID= :id', [id]);
     return res;

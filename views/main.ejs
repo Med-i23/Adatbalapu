@@ -91,7 +91,7 @@ vegrehajtani, bongeszo cachet is uritettem
             <% birthdays.rows.forEach(function (birthday) { %>
                 <% let date = new Date(birthday[1]); %>
                 <% let months = ['Január', 'Február', 'Március', 'Április', 'Május', 'Június', 'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December']; %>
-                <li><%= birthday[0] %>, <%= months[date.getMonth()] %>:<%= date.getDate() %></li>
+                <li style="font-size: 2vh;"><%= birthday[0] %>,  <%= months[date.getMonth()] %> <%= date.getDate() %>.</li>
             <% }); %>
 
         </ul>
@@ -146,7 +146,7 @@ vegrehajtani, bongeszo cachet is uritettem
         <h2>Barátok</h2>
         <ul>
             <% listeduserfriends.forEach(function (friend) { %>
-                <li><%= friend.rows[0] %></li>
+                <li style="font-size: 2vh"><%= friend.rows[0] %></li>
             <% }); %>
 
         </ul>
