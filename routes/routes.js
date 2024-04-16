@@ -216,9 +216,24 @@ router.get("/profile", async (req, res) => {
     });
 })
 
+router.get("/changeUserDataOf", async (req, res) => {
+    const token = req.cookies.jwt;
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+        return res.render('changeUserDataOf',{
+            current_name: decodedToken.name,
+            current_birthday: decodedToken.birthday,
+            current_role: decodedToken.role,
+            current_id: decodedToken.id,
+            current_status: decodedToken.status,
+            errors: []
+        })
+    });
+})
 
-router.post("/changeUserData", async (req,res)=>{
 
+
+router.post("/changeUserDataOf:name", async (req,res)=>{
+    console.log(req.params.name)
     const token = req.cookies.jwt
     let errors = [];
     let {name, email, birthday, password, re_password } = req.body;
@@ -244,7 +259,7 @@ router.post("/changeUserData", async (req,res)=>{
     if (email.trim() !== ""){
         beMail = email
     }
-    const vanemail = await UsersDAO.getUserEmail(email);
+    const vanemail = await UsersDAO.getUserEmail(email)
     if(!common.isDateValid(beSzul)){
         if (errors.length === 0){
             errors.push({hibaChanges:"Érvényes születési dátumot adj meg!"})
@@ -274,7 +289,26 @@ router.post("/changeUserData", async (req,res)=>{
             }
             UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(()=>{
                 errors.push({success:"Sikeres adatmódosítás"})
-                return res.render("profile",{
+                console.log(currentUser,current_email)
+                res.clearCookie('jwt')
+                const token = jwt.sign({
+                        id: currentUser.rows[0][0],
+                        name: currentUser.rows[0][1],
+                        email: currentUser.rows[0][2],
+                        birthday: currentUser.rows[0][3],
+                        status: currentUser.rows[0][5],
+                        role: currentUser.rows[0][6]
+                    },
+                    jwtSecret.jwtSecret
+                );
+                res.cookie("jwt", token, {
+                    httpOnly: true
+                });
+                jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+                    current_email = decodedToken.email
+                    current_name = decodedToken.name
+                });
+                return res.render("changeUserDataOf",{
                     current_name: current_name,errors: errors
                 })
             })
@@ -285,7 +319,7 @@ router.post("/changeUserData", async (req,res)=>{
             return res.status(500).send("Internal Server Error");
         });
     }else {
-        return res.render("profile",{
+        return res.render("changeUserDataOf",{
             current_name: current_name,errors: errors
         })
     }
