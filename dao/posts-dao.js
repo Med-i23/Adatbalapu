@@ -2,8 +2,7 @@ const query = require("./common.js").query;
 let format = "yyyy-mm-dd"
 
 exports.getPosts = async () => {
-    const res = await query('SELECT * FROM POSZT ORDER BY POSZT.TIME DESC');
-    return res;
+    return await query('SELECT * FROM POSZT ORDER BY POSZT.TIME DESC');
 };
 
 exports.postCreateNoGroup = async (szoveg, felh_id) => {

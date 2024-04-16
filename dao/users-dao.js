@@ -33,16 +33,9 @@ exports.getUserEmail = async (email) => {
 };
 
 exports.getUsersBirthday = async () => {
-    const res = await query('SELECT NEV, SZULDATUM FROM FELHASZNALO');
-    return res;
-}
-//esetleg majd atnevezni? meg egyszerusiteni
-exports.getUsersFriendsById = async (id) => {
-    const res = await query('SELECT FELH2_ID FROM ISMEROS WHERE FELH1_ID= :id', [id]);
-    return res;
+    return await query('SELECT NEV, SZULDATUM FROM FELHASZNALO');
 };
 
-exports.getUsersFriendsNameById = async (usersID) => {
-    const res = await query('SELECT NEV FROM FELHASZNALO WHERE id = :usersID', usersID);
-    return res;
+exports.getUsersFriendsById = async (id) => {
+    return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id', [id]);
 };

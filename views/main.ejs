@@ -8,80 +8,6 @@
 <% } %>
 
 
-<style>
-/*
-probaltam kirakni head.ejs/style.css-be (helyes utvonalat adtam meg), sehogy nem akarta a modositasokat
-vegrehajtani, bongeszo cachet is uritettem
-*/
-    .flex-grid {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        flex-wrap: nowrap;
-        gap: 10px;
-        align-items: flex-start;
-    }
-
-
-    .flex-grid-center {
-        flex: 0.5;
-    }
-
-
-    .post {
-        background-color: #f9f9f9;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 10px;
-
-    }
-
-    .post h3 {
-        margin-top: 0;
-    }
-
-    .post p {
-        margin-bottom: 5px;
-    }
-
-    .flex-grid-center-post-inside {
-        display: flex;
-        gap: 10px;
-
-    }
-
-    .btn-post-hold {
-        background-color: red;
-        border: 1px red solid;
-    }
-
-    .btn-post-hold:hover {
-        background-color: darkred;
-        border: 1px darkred solid;
-    }
-
-    .btn-middle {
-        display: flex;
-    }
-
-    .btn-post-modify {
-        background-color: darkcyan;
-        border: 1px darkcyan solid;
-    }
-
-    .btn-post-modify:hover {
-        background-color: darkslategrey;
-        border: 1px darkslategrey solid;
-    }
-
-    .post-modify-popup {
-        display: none;
-    }
-
-</style>
-
-
 <div class="flex-grid">
 
     <div class="flex-grid-left">
@@ -145,8 +71,8 @@ vegrehajtani, bongeszo cachet is uritettem
     <div class="flex-grid-right">
         <h2>Barátok</h2>
         <ul>
-            <% listeduserfriends.forEach(function (friend) { %>
-                <li style="font-size: 2vh"><%= friend.rows[0] %></li>
+            <% usersfriends.rows.forEach(function (friend) { %>
+                <li style="font-size: 2vh"><%= friend[1] %></li>
             <% }); %>
 
         </ul>
@@ -156,24 +82,24 @@ vegrehajtani, bongeszo cachet is uritettem
 </div>
 
 
-<script>
-    // ki kell majd kulon .js fajlba rakni
-    // a modositasnak "popup" textarea
-    const modifyButton = document.querySelector('.btn-post-modify');
-    const modifyPopup = document.querySelector('.post-modify-popup');
-    const textareaSzoveg = document.querySelector('#modifySzoveg');
-    const temp = textareaSzoveg.value;
+<!--<script>-->
+<!--    // ki kell majd kulon .js fajlba rakni-->
+<!--    // a modositasnak "popup" textarea-->
+<!--    const modifyButton = document.querySelector('.btn-post-modify');-->
+<!--    const modifyPopup = document.querySelector('.post-modify-popup');-->
+<!--    const textareaSzoveg = document.querySelector('#modifySzoveg');-->
+<!--    const temp = textareaSzoveg.value;-->
 
-    modifyButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        if (modifyPopup.style.display === 'block') {
-            modifyPopup.style.display = 'none';
-            textareaSzoveg.value = temp;
-        } else {
-            modifyPopup.style.display = 'block';
-        }
-    });
-</script>
+<!--    modifyButton.addEventListener('click', function (event) {-->
+<!--        event.preventDefault();-->
+<!--        if (modifyPopup.style.display === 'block') {-->
+<!--            modifyPopup.style.display = 'none';-->
+<!--            textareaSzoveg.value = temp;-->
+<!--        } else {-->
+<!--            modifyPopup.style.display = 'block';-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
 
 <%- include('assets/footer') %>
 </body>

@@ -58,12 +58,6 @@ router.get("/main", async (req, res) => {
         const birthdays = await UsersDAO.getUsersBirthday();
         const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
 
-        let listeduserfriends = [];
-        for (let i = 0; i < usersfriends.rows.length; i++) {
-            listeduserfriends[i] = await UsersDAO.getUsersFriendsNameById(usersfriends.rows[i]);
-        }
-        //ezt valoszinuleg sokkal szebben meg lehetne oldani
-
         return res.render('main', {
             current_name: current_name,
             current_role: current_role,
@@ -72,8 +66,7 @@ router.get("/main", async (req, res) => {
             current_status: current_status,
             posts: posts,
             birthdays: birthdays,
-            //usersfriends: usersfriends,
-            listeduserfriends: listeduserfriends
+            usersfriends: usersfriends
         });
     }else {
         return res.render("/")
