@@ -35,8 +35,8 @@
         </div>
         <% posts.rows.forEach(function(posts) { %>
             <div class="post">
-                <h3> <%= posts[2] %> </h3>
-                <h3><%= posts[3] %></h3>
+                <h3> <%= posts[6] %> </h3>
+                <h4><%= posts[3] %></h4>
                 <p style="font-size: 1.75vh">Kedvelések száma: <%= posts[4] %></p>
                 <div class="flex-grid-center-post-inside">
                     <form style="margin-bottom: 10px" action="/post-like" method="post">
@@ -54,7 +54,6 @@
                                 <button type="submit" class="btn btn-primary">Mentés</button>
                             </form>
                         </div>
-
                     <% } %>
                     <% if(current_id === posts[1]){ %>
                         <form action="/post-delete" method="post">
