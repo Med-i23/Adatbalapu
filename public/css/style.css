@@ -101,7 +101,9 @@
 /*button:hover {*/
 /*    background: #0056b3;*/
 /*}*/
-
+body{
+    position: relative;
+}
 /*main-be a posztokhoz*/
 .flex-grid {
     display: flex;
