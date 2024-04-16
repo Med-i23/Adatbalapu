@@ -208,49 +208,6 @@ router.post("/register", async (req, res) => {
     });
 });
 
-//end-region
-
-
-// connection-region
-router.get("/connection", async (req, res) => {
-    const token = req.cookies.jwt;
-    let current_name;
-    let current_birthday;
-    let current_role;
-    let current_status;
-    let current_id;
-    if (token) {
-        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name = decodedToken.name;
-            current_birthday = decodedToken.birthday;
-            current_role = decodedToken.role;
-            current_id = decodedToken.id;
-            current_status = decodedToken.status;
-        });
-    }
-
-    const users = await UsersDAO.getUsers();
-    if (users) {
-        return res.render('connection', {
-            users: users,
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            correctResult: 'Adatbázis csatlakoztatva'
-        });
-    }
-    return res.render('connection', {
-        users: users,
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        wrongResult: 'Adatbázis nem csatlakozik'
-    });
-});
 
 router.get("/profile", async (req, res) => {
     const token = req.cookies.jwt;
@@ -341,6 +298,47 @@ router.post("/changeUserData", async (req,res)=>{
     }
 
 })
+
+// connection-region
+router.get("/connection", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    const users = await UsersDAO.getUsers();
+    if (users) {
+        return res.render('connection', {
+            users: users,
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            correctResult: 'Adatbázis csatlakoztatva'
+        });
+    }
+    return res.render('connection', {
+        users: users,
+        current_name: current_name,
+        current_role: current_role,
+        current_id: current_id,
+        current_birthday: current_birthday,
+        current_status: current_status,
+        wrongResult: 'Adatbázis nem csatlakozik'
+    });
+});
 //end-region
 
 //region-posts
