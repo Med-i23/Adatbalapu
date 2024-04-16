@@ -294,9 +294,9 @@ router.post("/changeUserDataOf:name", async (req,res)=>{
                 res.clearCookie('jwt')
                 const token = jwt.sign({
                         id: currentUser.rows[0][0],
-                        name: currentUser.rows[0][1],
-                        email: currentUser.rows[0][2],
-                        birthday: currentUser.rows[0][3],
+                        name: beNev,
+                        email: beMail,
+                        birthday: beSzul,
                         status: currentUser.rows[0][5],
                         role: currentUser.rows[0][6]
                     },
@@ -305,12 +305,9 @@ router.post("/changeUserDataOf:name", async (req,res)=>{
                 res.cookie("jwt", token, {
                     httpOnly: true
                 });
-                jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-                    current_email = decodedToken.email
-                    current_name = decodedToken.name
-                });
+
                 return res.render("changeUserDataOf",{
-                    current_name: current_name,errors: errors
+                    current_name: beNev,errors: errors
                 })
             })
         }).catch(err => {
@@ -321,11 +318,22 @@ router.post("/changeUserDataOf:name", async (req,res)=>{
         });
     }else {
         return res.render("changeUserDataOf",{
-            current_name: current_name,errors: errors
+            current_name: beNev,errors: errors
         })
     }
 
 })
+
+router.get("/user-delete", async (req, res) => {
+    const token = req.cookies.jwt
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+        UsersDAO.deleteUser(decodedToken.id).then(()=>{
+            res.clearCookie('jwt')
+            res.redirect('/')
+        })
+    });
+})
+
 
 // connection-region
 router.get("/connection", async (req, res) => {
