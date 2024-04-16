@@ -71,6 +71,9 @@
 
     <div class="flex-grid-right">
         <h2>Barátok</h2>
+        <% if(usersfriends.rows.length == 0){%>
+        Nincs barátod, sadge :'(
+        <%}%>
         <ul>
             <% usersfriends.rows.forEach(function (friend) { %>
                 <li style="font-size: 2vh"><%= friend[1] %></li>

@@ -104,7 +104,8 @@ router.post("/login", async (req, res) => {
                     current_role: null,
                     token: null,
                     hibaLogin: "Helytelen jelszó",
-                    hibaRegister: null
+                    hibaRegister: null,
+                    successRegister: null
                 });
             }
         });
