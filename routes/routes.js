@@ -69,7 +69,7 @@ router.get("/main", async (req, res) => {
             usersfriends: usersfriends
         });
     }else {
-        return res.render("/")
+        return res.redirect("/")
     }
 });
 //end-region
