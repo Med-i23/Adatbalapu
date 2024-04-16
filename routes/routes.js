@@ -348,11 +348,12 @@ router.post("/post-add-new", async (req, res) => {
     }
 
     let posztSzoveg = req.body.posztSzoveg;
+
     if (posztSzoveg.length === 0){
         return res.redirect('/main');
     }
 
-    await PostsDAO.postCreateNoGroup(posztSzoveg, current_id);
+    await PostsDAO.postCreate(null, posztSzoveg, current_id);
     return res.redirect('/main');
 
 

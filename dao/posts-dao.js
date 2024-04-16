@@ -5,8 +5,8 @@ exports.getPosts = async () => {
     return await query('SELECT * FROM POSZT ORDER BY POSZT.TIME DESC');
 };
 
-exports.postCreateNoGroup = async (szoveg, felh_id) => {
-    await query('INSERT INTO POSZT (SZOVEG, LIKES, TIME, LETREHOZO) VALUES (:szoveg, 0, SYSTIMESTAMP, :felh_id)', [szoveg, felh_id]);
+exports.postCreate = async (csoport_id, szoveg, felh_id) => {
+    await query('INSERT INTO POSZT (CSOPORT_ID, SZOVEG, LIKES, TIME, LETREHOZO) VALUES (:csoport_id, :szoveg, 0, SYSTIMESTAMP, :felh_id)', [csoport_id, szoveg, felh_id]);
 }
 
 exports.postAddLike = async (postId) => {

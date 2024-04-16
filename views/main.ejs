@@ -7,7 +7,6 @@
     <div class="connectionLink"><a href="/connection">Connection proof</a></div>
 <% } %>
 
-
 <div class="flex-grid">
 
     <div class="flex-grid-left">
@@ -17,7 +16,8 @@
             <% birthdays.rows.forEach(function (birthday) { %>
                 <% let date = new Date(birthday[1]); %>
                 <% let months = ['Január', 'Február', 'Március', 'Április', 'Május', 'Június', 'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December']; %>
-                <li style="font-size: 2vh;"><%= birthday[0] %>,  <%= months[date.getMonth()] %> <%= date.getDate() %>.</li>
+                <li style="font-size: 2vh;"><%= birthday[0] %>, <%= months[date.getMonth()] %> <%= date.getDate() %>.
+                </li>
             <% }); %>
 
         </ul>
@@ -48,7 +48,8 @@
 
                         <div class="post-modify-popup">
                             <form action="/post-modify" method="post">
-                                <textarea name="modifySzoveg" id="modifySzoveg" cols="40" rows="5"><%= posts[3] %></textarea>
+                                <textarea name="modifySzoveg" id="modifySzoveg" cols="40"
+                                          rows="5"><%= posts[3] %></textarea>
                                 <input type="hidden" name="postId" value="<%= posts[0] %>">
                                 <button type="submit" class="btn btn-primary">Mentés</button>
                             </form>
