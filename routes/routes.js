@@ -8,6 +8,7 @@ const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
 const jwtSecret = require("./../config/auth.js");
+const {getGroups} = require("../dao/groups-dao");
 const router = express.Router();
 
 //main region
@@ -452,43 +453,85 @@ router.get("/groups_all", async (req, res) => {
             current_status = decodedToken.status;
         });
 
-        //const posts = await PostsDAO.getPosts();
-        const birthdays = await UsersDAO.getUsersBirthday();
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
         const groups = await GroupsDAO.getGroups();
-        //console.log(groups.rows[0][0]);
+        const isThisOwnGroups = false;
 
-        return res.render('groups_all', {
+        return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
             current_birthday: current_birthday,
             current_status: current_status,
             //posts: posts,
-            birthdays: birthdays,
-            usersfriends: usersfriends,
-            groups: groups
+            groups: groups,
+            isThisOwnGroups: isThisOwnGroups
         });
     }else {
-        return res.redirect("/")
+        return res.redirect("/groups_all")
     }
 });
 
+router.get("/groups_own", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name= decodedToken.name;
+            current_birthday= decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const groups = await GroupsDAO.getGroupsById(current_id);
+        const isThisOwnGroups = true;
+
+        return res.render('groups', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            groups: groups,
+            isThisOwnGroups: isThisOwnGroups
+        });
+    }else {
+        return res.redirect("/groups_own")
+    }
+});
+router.post("/group-create-new", async (req, res) => {
+
+    const token = req.cookies.jwt;
+    let current_id;
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_id = decodedToken.id;
+        });
+    }
+
+    let csoportNeve = req.body.csoportNeve;
+
+    if (csoportNeve.length === 0){
+        return res.redirect('/groups_own');
+    }
+
+    await GroupsDAO.groupCreate(csoportNeve, current_id);
+    return res.redirect('/groups_own');
+
+
+});
+router.post("/group-delete", async (req, res) => {
+    let groupId = req.body.groupId;
+    await GroupsDAO.groupDelete(groupId);
+    return res.redirect('/groups_own');
+});
+
+
 //end-region
-
-// router.get("/groups_all", async (req, res) => {
-//     const token = req.cookies.jwt;
-//     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-//         return res.render('groups_all',{
-//             current_name: decodedToken.name,
-//             current_birthday: decodedToken.birthday,
-//             current_role: decodedToken.role,
-//             current_id: decodedToken.id,
-//             current_status: decodedToken.status,
-//             errors: []
-//         })
-//     });
-// });
-
 
 module.exports = router;

@@ -114,6 +114,16 @@ body{
     align-items: flex-start;
 }
 
+/*Csoportokhoz*/
+
+ .flex-grid-groups{
+     display: flex;
+     flex-direction: row;
+     justify-content: space-around;
+     flex-wrap: nowrap;
+     gap: 10px;
+     align-items: flex-start;
+ }
 
 .flex-grid-center {
     flex: 0.5;
