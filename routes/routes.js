@@ -107,7 +107,7 @@ router.post("/login", async (req, res) => {
                 return res.render('index', {
                     current_role: null,
                     token: null,
-                    hibaLogin: "Helytelen jelszó",
+                    hibaLogin: "Helytelen email vagy jelszó",
                     hibaRegister: null,
                     successRegister: null
                 });
@@ -118,7 +118,7 @@ router.post("/login", async (req, res) => {
         return res.render('index', {
             current_role: null,
             token: null,
-            hibaLogin: "Email nem létezik",
+            hibaLogin: "Helytelen email vagy jelszó",
             hibaRegister: null,
             successRegister: null
         });
@@ -222,12 +222,10 @@ router.get("/profile", async (req, res) => {
     });
 });
 
-router.get("/otherProfile/:id", async (req, res) => {
+router.get("/otherProfile:id", async (req, res) => {
     const token = req.cookies.jwt;
     let id = req.params.id;
-    const otheruser = UsersDAO.getUsersById(id);
-    console.log(id);
-    console.log(otheruser);
+    const otheruser = await UsersDAO.getUsersById(id);
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
         return res.render('otherProfile', {
             otheruser: otheruser,

@@ -3,12 +3,18 @@
     <%- include('assets/head') %>
 
     <body class="w-100 h-100 d-flex flex-column min-vh-100">
-    <%- include('assets/header')%>
+    <%- include('assets/header') %>
     <div class="container form-container">
-        <%= otheruser[2] %>
-        <%if (otheruser[0] !== current_id){%>
-        <a href="/friend-add"><button class="btn btn-primary">Jelölés</button></a>
-        <%}%>
+        <% if (otheruser && otheruser.rows && otheruser.rows.length > 0) { %>
+            <% const user = otheruser.rows[0]; %>
+            <p>Name: <%= user[1] %></p>
+            <p>Email: <%= user[2] %></p>
+            <% if (user[0] !== current_id) { %>
+                <a href="/addFriend<%= user[0]%>"><button class="btn btn-primary">Jelölés</button></a>
+            <% } %>
+        <% } else { %>
+            <p>User not found</p>
+        <% } %>
     </div>
     <%- include('assets/footer') %>
     </body>
