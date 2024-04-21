@@ -60,7 +60,7 @@ router.get("/main", async (req, res) => {
 
         const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday();
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
 
         return res.render('main', {
             current_name: current_name,
@@ -226,17 +226,44 @@ router.get("/otherProfile:id", async (req, res) => {
     const token = req.cookies.jwt;
     let id = req.params.id;
     const otheruser = await UsersDAO.getUsersById(id);
-    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+    const aretheyfriends = await FriendsDAO.areTheyFriends(current_id, id);
+    if (aretheyfriends){
         return res.render('otherProfile', {
             otheruser: otheruser,
-            current_name: decodedToken.name,
-            current_birthday: decodedToken.birthday,
-            current_role: decodedToken.role,
-            current_id: decodedToken.id,
-            current_status: decodedToken.status,
-            errors: []
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            friends: true
         })
-    });
+    } else {
+        return res.render('otherProfile', {
+            otheruser: otheruser,
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            friends: null
+        })
+    }
+
+
 });
 
 router.get("/changeUserDataOf", async (req, res) => {
@@ -585,8 +612,13 @@ router.get("/people", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
-        const users = await UsersDAO.getActualUsers(current_id)
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
+        const users = await UsersDAO.getUsers(current_id)
+        for (let i = 0; i < users.rows.length; i++) {
+            let friends =  await FriendsDAO.areTheyFriends(current_id, users.rows[i][0]);
+            users.rows[i].push(friends);
+        }
+        console.log(users.rows);
         return res.render('people', {
             current_name: current_name,
             current_role: current_role,
@@ -649,7 +681,7 @@ router.get("/messages", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         return res.render('messages', {
             current_name: current_name,
@@ -686,7 +718,7 @@ router.get("/openChat:id", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
             if (value.rows.length > 0){
@@ -740,7 +772,7 @@ router.post("/sendMessage:id", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
             if (value.rows.length > 0){

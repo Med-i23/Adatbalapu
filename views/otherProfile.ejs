@@ -9,7 +9,7 @@
             <% const user = otheruser.rows[0]; %>
             <p>Name: <%= user[1] %></p>
             <p>Email: <%= user[2] %></p>
-            <% if (user[0] !== current_id) { %>
+            <% if (user[0] !== current_id && !friends) { %>
                 <a href="/addFriend<%= user[0]%>"><button class="btn btn-primary">Jelölés</button></a>
             <% } %>
         <% } else { %>

@@ -11,3 +11,7 @@ exports.areTheyFriends = async (felh1_id,felh2_id) => {
     let friendz = await query('SELECT * FROM ISMEROS where FELH1_ID = :felh1_id and FELH2_ID = :felh2_id', [felh1_id,felh2_id]);
     return friendz.rows.length > 0;
 };
+
+exports.getUsersFriendsById = async (id) => {
+    return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id', [id]);
+};

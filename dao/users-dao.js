@@ -40,7 +40,5 @@ exports.getUsersBirthday = async () => {
     return await query('SELECT NEV, SZULDATUM FROM FELHASZNALO');
 };
 
-exports.getUsersFriendsById = async (id) => {
-    return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id', [id]);
-};
+
 
