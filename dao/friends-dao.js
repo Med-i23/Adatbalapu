@@ -9,6 +9,5 @@ exports.addFriend = async (felh1_id,felh2_id) => {
 
 exports.areTheyFriends = async (felh1_id,felh2_id) => {
     let friendz = await query('SELECT * FROM ISMEROS where FELH1_ID = :felh1_id and FELH2_ID = :felh2_id', [felh1_id,felh2_id]);
-    console.log()
     return friendz.rows.length > 0;
 };

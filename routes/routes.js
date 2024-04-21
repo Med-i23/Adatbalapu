@@ -5,6 +5,7 @@ const UsersDAO = require('../dao/users-dao');
 const PostsDAO = require('../dao/posts-dao');
 const FriendsDAO = require('../dao/friends-dao');
 const GroupsDAO = require('../dao/groups-dao');
+const MessagesDAO = require('../dao/messages-dao');
 const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
@@ -50,8 +51,8 @@ router.get("/main", async (req, res) => {
 
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name= decodedToken.name;
-            current_birthday= decodedToken.birthday;
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
@@ -71,7 +72,7 @@ router.get("/main", async (req, res) => {
             birthdays: birthdays,
             usersfriends: usersfriends
         });
-    }else {
+    } else {
         return res.redirect("/")
     }
 });
@@ -117,8 +118,8 @@ router.post("/login", async (req, res) => {
         return res.render('index', {
             current_role: null,
             token: null,
-            hibaLogin:"Email nem létezik",
-            hibaRegister:null,
+            hibaLogin: "Email nem létezik",
+            hibaRegister: null,
             successRegister: null
         });
     }
@@ -143,39 +144,39 @@ router.post("/register", async (req, res) => {
     let {name, email, birthday, password, password2} = req.body;
 
     const vanemail = await UsersDAO.getUserEmail(email);
-    if(!common.isDateValid(birthday)){
+    if (!common.isDateValid(birthday)) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Érvényes születési dátumot adj meg!",
+            hibaRegister: "Érvényes születési dátumot adj meg!",
             successRegister: null
         });
     }
-    if(vanemail.rows.length > 0){
+    if (vanemail.rows.length > 0) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Ezen az email-en már létezik fiók!",
+            hibaRegister: "Ezen az email-en már létezik fiók!",
             successRegister: null
         });
     }
-    if (password!==password2){
+    if (password !== password2) {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Jelszó nem egyezik!",
+            hibaRegister: "Jelszó nem egyezik!",
             successRegister: null
         });
     }
-    if (name.trim()===""||password.trim()===""||password2.trim()==="" || birthday.trim()==="" || email.trim()===""){
+    if (name.trim() === "" || password.trim() === "" || password2.trim() === "" || birthday.trim() === "" || email.trim() === "") {
         return res.render('index', {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Minden mezőt ki kell tölteni",
+            hibaRegister: "Minden mezőt ki kell tölteni",
             successRegister: null
         });
     }
@@ -186,7 +187,7 @@ router.post("/register", async (req, res) => {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)",
+            hibaRegister: "Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)",
             successRegister: null
         });
     }
@@ -196,7 +197,7 @@ router.post("/register", async (req, res) => {
             current_role: null,
             token: null,
             hibaLogin: null,
-            hibaRegister:null,
+            hibaRegister: null,
             successRegister: "Sikeres regisztráció!"
         });
     }).catch(err => {
@@ -210,7 +211,7 @@ router.post("/register", async (req, res) => {
 router.get("/profile", async (req, res) => {
     const token = req.cookies.jwt;
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        return res.render('profile',{
+        return res.render('profile', {
             current_name: decodedToken.name,
             current_birthday: decodedToken.birthday,
             current_role: decodedToken.role,
@@ -228,7 +229,7 @@ router.get("/otherProfile/:id", async (req, res) => {
     console.log(id);
     console.log(otheruser);
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        return res.render('otherProfile',{
+        return res.render('otherProfile', {
             otheruser: otheruser,
             current_name: decodedToken.name,
             current_birthday: decodedToken.birthday,
@@ -243,7 +244,7 @@ router.get("/otherProfile/:id", async (req, res) => {
 router.get("/changeUserDataOf", async (req, res) => {
     const token = req.cookies.jwt;
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        return res.render('changeUserDataOf',{
+        return res.render('changeUserDataOf', {
             current_name: decodedToken.name,
             current_birthday: decodedToken.birthday,
             current_role: decodedToken.role,
@@ -254,64 +255,64 @@ router.get("/changeUserDataOf", async (req, res) => {
     });
 });
 
-router.post("/changeUserDataOf:name", async (req,res)=>{
+router.post("/changeUserDataOf:name", async (req, res) => {
     console.log(req.params.name)
     const token = req.cookies.jwt
     let errors = [];
-    let {name, email, birthday, password, re_password } = req.body;
-    let current_email,current_name, beNev,beSzul,beMail, beJel;
+    let {name, email, birthday, password, re_password} = req.body;
+    let current_email, current_name, beNev, beSzul, beMail, beJel;
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
         current_email = decodedToken.email
         current_name = decodedToken.name
-        beSzul = new Date(decodedToken.birthday).toISOString().slice(0,10)
+        beSzul = new Date(decodedToken.birthday).toISOString().slice(0, 10)
     });
     beNev = current_name
     beMail = current_email
     let currentUser = await UsersDAO.getUserByEmail(current_email);
 
-    if (currentUser.rows.length > 0){
+    if (currentUser.rows.length > 0) {
         beJel = currentUser.rows[0][4]
     }
-    if (name.trim() !== ""){
+    if (name.trim() !== "") {
         beNev = name.trim()
     }
-    if (birthday.trim() !== ""){
-        beSzul = new Date(birthday).toISOString().slice(0,10)
+    if (birthday.trim() !== "") {
+        beSzul = new Date(birthday).toISOString().slice(0, 10)
     }
-    if (email.trim() !== ""){
+    if (email.trim() !== "") {
         beMail = email
     }
     const vanemail = await UsersDAO.getUserEmail(email)
-    if(!common.isDateValid(beSzul)){
-        if (errors.length === 0){
-            errors.push({hibaChanges:"Érvényes születési dátumot adj meg!"})
+    if (!common.isDateValid(beSzul)) {
+        if (errors.length === 0) {
+            errors.push({hibaChanges: "Érvényes születési dátumot adj meg!"})
         }
     }
-    if(vanemail.rows.length > 0){
-        if (errors.length === 0){
-            errors.push({hibaChanges:"Ezen az email-en már létezik fiók!"})
+    if (vanemail.rows.length > 0) {
+        if (errors.length === 0) {
+            errors.push({hibaChanges: "Ezen az email-en már létezik fiók!"})
         }
     }
-    if (password!==re_password && password.trim() !== ""){
-        if (errors.length === 0){
-            errors.push({hibaChanges:"Jelszó nem egyezik!"})
+    if (password !== re_password && password.trim() !== "") {
+        if (errors.length === 0) {
+            errors.push({hibaChanges: "Jelszó nem egyezik!"})
         }
     }
     const injectCheck = name + email + password;
     const regex = /['=*?#-]/g;
     if (regex.test(injectCheck)) {
-        if (errors.length === 0){
-            errors.push({hibaChanges:"Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"})
+        if (errors.length === 0) {
+            errors.push({hibaChanges: "Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"})
         }
     }
-    if (errors.length === 0){
-        bcrypt.hash(password, 10).then( (hash) => {
-            if (password.trim() === ""){
+    if (errors.length === 0) {
+        bcrypt.hash(password, 10).then((hash) => {
+            if (password.trim() === "") {
                 hash = beJel
             }
-            UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(()=>{
-                errors.push({success:"Sikeres adatmódosítás"})
-                console.log(currentUser,current_email)
+            UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(() => {
+                errors.push({success: "Sikeres adatmódosítás"})
+                console.log(currentUser, current_email)
                 res.clearCookie('jwt')
                 const token = jwt.sign({
                         id: currentUser.rows[0][0],
@@ -327,19 +328,19 @@ router.post("/changeUserDataOf:name", async (req,res)=>{
                     httpOnly: true
                 });
 
-                return res.render("changeUserDataOf",{
-                    current_name: beNev,errors: errors
+                return res.render("changeUserDataOf", {
+                    current_name: beNev, errors: errors
                 })
             })
         }).catch(err => {
-            if (errors.length === 0){
-                errors.push({hibaChanges:"Sikeretelen adatmódosítás"})
+            if (errors.length === 0) {
+                errors.push({hibaChanges: "Sikeretelen adatmódosítás"})
             }
             return res.status(500).send("Internal Server Error");
         });
-    }else {
-        return res.render("changeUserDataOf",{
-            current_name: beNev,errors: errors
+    } else {
+        return res.render("changeUserDataOf", {
+            current_name: beNev, errors: errors
         })
     }
 
@@ -348,7 +349,7 @@ router.post("/changeUserDataOf:name", async (req,res)=>{
 router.get("/user-delete", async (req, res) => {
     const token = req.cookies.jwt
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        UsersDAO.deleteUser(decodedToken.id).then(()=>{
+        UsersDAO.deleteUser(decodedToken.id).then(() => {
             res.clearCookie('jwt')
             res.redirect('/')
         })
@@ -421,7 +422,7 @@ router.post("/post-add-new", async (req, res) => {
 
     let posztSzoveg = req.body.posztSzoveg;
 
-    if (posztSzoveg.length === 0){
+    if (posztSzoveg.length === 0) {
         return res.redirect('/main');
     }
 
@@ -467,8 +468,8 @@ router.get("/groups_all", async (req, res) => {
 
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name= decodedToken.name;
-            current_birthday= decodedToken.birthday;
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
@@ -487,7 +488,7 @@ router.get("/groups_all", async (req, res) => {
             groups: groups,
             isThisOwnGroups: isThisOwnGroups
         });
-    }else {
+    } else {
         return res.redirect("/groups_all")
     }
 });
@@ -502,8 +503,8 @@ router.get("/groups_own", async (req, res) => {
 
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name= decodedToken.name;
-            current_birthday= decodedToken.birthday;
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
             current_role = decodedToken.role;
             current_id = decodedToken.id;
             current_status = decodedToken.status;
@@ -520,7 +521,7 @@ router.get("/groups_own", async (req, res) => {
             groups: groups,
             isThisOwnGroups: isThisOwnGroups
         });
-    }else {
+    } else {
         return res.redirect("/groups_own")
     }
 });
@@ -537,7 +538,7 @@ router.post("/group-create-new", async (req, res) => {
 
     let csoportNeve = req.body.csoportNeve;
 
-    if (csoportNeve.length === 0){
+    if (csoportNeve.length === 0) {
         return res.redirect('/groups_own');
     }
 
@@ -597,7 +598,7 @@ router.get("/people", async (req, res) => {
             usersfriends: usersfriends,
             users: users
         });
-    }else {
+    } else {
         return res.redirect("/logout")
     }
 });
@@ -620,12 +621,158 @@ router.get("/addFriend:id", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        FriendsDAO.areTheyFriends(parseInt(them[0]),parseInt(them[1]))
-            .then(r=>{
-                r ? res.redirect("people") : FriendsDAO.addFriend(parseInt(them[0]),parseInt(them[1])).then(r=>res.redirect("/people"))
+        FriendsDAO.areTheyFriends(parseInt(them[0]), parseInt(them[1]))
+            .then(r => {
+                r ? res.redirect("people") : FriendsDAO.addFriend(parseInt(them[0]), parseInt(them[1])).then(r => res.redirect("/people"))
             })
 
-    }else {
+    } else {
+        return res.redirect("/logout")
+    }
+})
+
+//end-region
+
+//messages-region
+
+router.get("/messages", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const users = await UsersDAO.getActualUsers(current_id)
+        return res.render('messages', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            usersfriends: usersfriends.rows,
+            users: users,
+            current_chat: '',
+            current_chat_with: ''
+        });
+    } else {
+        return res.redirect("/logout")
+    }
+});
+
+router.get("/openChat:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let them;
+    let current_chat = '';
+    let current_chat_with = '';
+    if (token) {
+        them = req.params.id.split("&")
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const users = await UsersDAO.getActualUsers(current_id)
+        await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
+            if (value.rows.length > 0){
+                current_chat = value.rows[0]
+            }else {
+                current_chat = []
+            }
+
+
+        })
+        await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
+            current_chat_with = value1.rows[0]
+        })
+        console.log(current_chat, current_chat_with);
+        return res.render('messages', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            usersfriends: usersfriends.rows,
+            users: users,
+            current_chat: current_chat,
+            current_chat_with: current_chat_with
+        });
+
+
+
+
+    } else {
+        return res.redirect("/logout")
+    }
+})
+
+router.post("/sendMessage:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let them;
+    let current_chat = '';
+    let current_chat_with = '';
+    if (token) {
+        them = req.params.id.split("&")
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const users = await UsersDAO.getActualUsers(current_id)
+        await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
+            if (value.rows.length > 0){
+                current_chat = value.rows[0]
+            }else {
+                current_chat = []
+            }
+
+
+        })
+        await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
+            current_chat_with = value1.rows[0]
+        })
+        console.log(current_chat, current_chat_with);
+        return res.render('messages', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            usersfriends: usersfriends.rows,
+            users: users,
+            current_chat: current_chat,
+            current_chat_with: current_chat_with
+        });
+
+
+
+
+    } else {
         return res.redirect("/logout")
     }
 })

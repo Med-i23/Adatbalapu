@@ -9,7 +9,7 @@
     <% for (let i = 0; i < users.length; i++){ %>
         <div>
             <div><%= users[i][1] %></div>
-            <a href="/addFriend<%= users[i][0] %>&<%= current_id %>"><button>ADD FRIEND</button></a>
+            <a href="/addFriend<%= users[i][0] %>&<%= current_id %>"><button class="btn btn-outline-success">ADD FRIEND</button></a>
         </div>
     <% } %>
 
