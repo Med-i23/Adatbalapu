@@ -6,6 +6,7 @@ const PostsDAO = require('../dao/posts-dao');
 const FriendsDAO = require('../dao/friends-dao');
 const GroupsDAO = require('../dao/groups-dao');
 const MessagesDAO = require('../dao/messages-dao');
+const NotificationsDAO = require('../dao/notifications-dao');
 const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
@@ -282,7 +283,6 @@ router.get("/changeUserDataOf", async (req, res) => {
 });
 
 router.post("/changeUserDataOf:name", async (req, res) => {
-    console.log(req.params.name)
     const token = req.cookies.jwt
     let errors = [];
     let {name, email, birthday, password, re_password} = req.body;
@@ -338,7 +338,6 @@ router.post("/changeUserDataOf:name", async (req, res) => {
             }
             UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(() => {
                 errors.push({success: "Sikeres adatmódosítás"})
-                console.log(currentUser, current_email)
                 res.clearCookie('jwt')
                 const token = jwt.sign({
                         id: currentUser.rows[0][0],
@@ -619,7 +618,6 @@ router.get("/people", async (req, res) => {
             let friends =  await FriendsDAO.areTheyFriends(current_id, users[i][0]);
             users[i].push(friends);
         }
-        console.log(users);
         return res.render('people', {
             current_name: current_name,
             current_role: current_role,
@@ -733,7 +731,6 @@ router.get("/openChat:id", async (req, res) => {
         await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
             current_chat_with = value1.rows[0]
         })
-        console.log(current_chat, current_chat_with);
         return res.render('messages', {
             current_name: current_name,
             current_role: current_role,
@@ -785,7 +782,6 @@ router.post("/sendMessage:id", async (req, res) => {
             current_chat_with = value1.rows[0]
         })
         MessagesDAO.addMessage(parseInt(them[1]), parseInt(them[0]),textMessage,new Date()).then(async _ => {
-            console.log(current_chat, current_chat_with);
             await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
                 if (value.rows.length > 0) {
                     current_chat = value.rows
@@ -810,5 +806,43 @@ router.post("/sendMessage:id", async (req, res) => {
 
 //end-region
 
+//notifications-region
+router.get("/notifications", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const notifs = await NotificationsDAO.getNotifacationsOfUser(current_id);
 
+        return res.render('notifications', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            notifs: notifs
+        });
+    } else {
+        return res.redirect("/logout")
+    }
+});
+
+router.post("/deleteNotif:id", async (req, res) => {
+    let id = req.params.id;
+    await NotificationsDAO.deleteNotification(id);
+    return res.redirect('/notifications');
+});
+
+
+//end-region
 module.exports = router;

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('assets/head') %>
+
+<body class="w-100 h-100 d-flex flex-column min-vh-100">
+<%- include('assets/header') %>
+
+<div>
+    <% notifs.rows.forEach(function(notifs) { %>
+        <%= notifs[2] %>
+        <%= notifs[3] %>
+        <form action="/deleteNotif<%= notifs[0]%>" method="post">
+            <input type="hidden" name="postId" value="<%= notifs[0]%>">
+            <button type="submit" class="btn btn-primary btn-post-hold">törlés</button>
+        </form>
+    <% }); %>
+</div>
+
+
+<%- include('assets/footer') %>
+</body>
+</html>
