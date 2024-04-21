@@ -175,7 +175,7 @@ router.post("/register", async (req, res) => {
             hibaLogin: null,
             hibaRegister:"Minden mezőt ki kell tölteni",
             successRegister: null
-        });
+        })
     }
     const injectCheck = name + email + password;
     const regex = /['=*?#-]/g;
