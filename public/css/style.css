@@ -180,3 +180,6 @@ body{
 .post-modify-popup {
     display: none;
 }
+.make_max{
+    max-width: 100vh;
+}

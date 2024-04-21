@@ -11,6 +11,7 @@ const common = require("../dao/common")
 const jwt = require('jsonwebtoken')
 const jwtSecret = require("./../config/auth.js");
 const {getGroups} = require("../dao/groups-dao");
+const {TIMESTAMP2} = require("mysql/lib/protocol/constants/types");
 const router = express.Router();
 
 //main region
@@ -61,7 +62,7 @@ router.get("/main", async (req, res) => {
         const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday();
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
-
+        //Átírni a szüliket-> csak friendek láthassák + ne látszódjon a saját, DELETED_USER
         return res.render('main', {
             current_name: current_name,
             current_role: current_role,
@@ -226,44 +227,17 @@ router.get("/otherProfile:id", async (req, res) => {
     const token = req.cookies.jwt;
     let id = req.params.id;
     const otheruser = await UsersDAO.getUsersById(id);
-    let current_name;
-    let current_birthday;
-    let current_role;
-    let current_status;
-    let current_id;
-    if (token) {
-        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name = decodedToken.name;
-            current_birthday = decodedToken.birthday;
-            current_role = decodedToken.role;
-            current_id = decodedToken.id;
-            current_status = decodedToken.status;
-        });
-    }
-    const aretheyfriends = await FriendsDAO.areTheyFriends(current_id, id);
-    if (aretheyfriends){
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
         return res.render('otherProfile', {
             otheruser: otheruser,
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            friends: true
+            current_name: decodedToken.name,
+            current_birthday: decodedToken.birthday,
+            current_role: decodedToken.role,
+            current_id: decodedToken.id,
+            current_status: decodedToken.status,
+            errors: []
         })
-    } else {
-        return res.render('otherProfile', {
-            otheruser: otheruser,
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            friends: null
-        })
-    }
-
-
+    });
 });
 
 router.get("/changeUserDataOf", async (req, res) => {
@@ -612,13 +586,8 @@ router.get("/people", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
-        const users = await UsersDAO.getUsers(current_id)
-        for (let i = 0; i < users.rows.length; i++) {
-            let friends =  await FriendsDAO.areTheyFriends(current_id, users.rows[i][0]);
-            users.rows[i].push(friends);
-        }
-        console.log(users.rows);
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const users = await UsersDAO.getActualUsers(current_id)
         return res.render('people', {
             current_name: current_name,
             current_role: current_role,
@@ -681,7 +650,7 @@ router.get("/messages", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         return res.render('messages', {
             current_name: current_name,
@@ -721,9 +690,9 @@ router.get("/openChat:id", async (req, res) => {
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
-            if (value.rows.length > 0){
-                current_chat = value.rows[0]
-            }else {
+            if (value.rows.length > 0) {
+                current_chat = value.rows
+            } else {
                 current_chat = []
             }
 
@@ -744,8 +713,6 @@ router.get("/openChat:id", async (req, res) => {
             current_chat: current_chat,
             current_chat_with: current_chat_with
         });
-
-
 
 
     } else {
@@ -764,6 +731,7 @@ router.post("/sendMessage:id", async (req, res) => {
     let current_chat = '';
     let current_chat_with = '';
     if (token) {
+        let textMessage = req.body.message
         them = req.params.id.split("&")
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_name = decodedToken.name;
@@ -775,33 +743,34 @@ router.post("/sendMessage:id", async (req, res) => {
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
-            if (value.rows.length > 0){
-                current_chat = value.rows[0]
-            }else {
+            if (value.rows.length > 0) {
+                current_chat = value.rows
+            } else {
                 current_chat = []
             }
-
-
         })
         await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
             current_chat_with = value1.rows[0]
         })
-        console.log(current_chat, current_chat_with);
-        return res.render('messages', {
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            usersfriends: usersfriends.rows,
-            users: users,
-            current_chat: current_chat,
-            current_chat_with: current_chat_with
-        });
-
-
-
-
+        MessagesDAO.addMessage(parseInt(them[1]), parseInt(them[0]),textMessage,new Date()).then(async _ => {
+            console.log(current_chat, current_chat_with);
+            await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
+                if (value.rows.length > 0) {
+                    current_chat = value.rows
+                }
+            })
+            return res.render('messages', {
+                current_name: current_name,
+                current_role: current_role,
+                current_id: current_id,
+                current_birthday: current_birthday,
+                current_status: current_status,
+                usersfriends: usersfriends.rows,
+                users: users,
+                current_chat: current_chat,
+                current_chat_with: current_chat_with
+            });
+        })
     } else {
         return res.redirect("/logout")
     }

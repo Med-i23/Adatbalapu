@@ -6,5 +6,5 @@ exports.addMessage = async (kitol,kinek,szoveg,time) => {
 };
 
 exports.messagesOf = async (kitol,kinek) => {
-    return await query('SELECT * FROM UZENET where KITOL = :kitol and KINEK = :kinek', [kitol,kinek]);
+    return await query('SELECT * FROM UZENET where (KITOL = :kitol and KINEK = :kinek) OR (KITOL = :kinek and KINEK = :kitol) ORDER BY TIME', [kitol,kinek,kinek,kitol]);
 };
