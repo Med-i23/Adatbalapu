@@ -17,7 +17,7 @@ exports.getUsers = async () => {
 }
 
 exports.getUsersById = async (id) => {
-    return await query('SELECT * FROM user WHERE id= :id', [id]);
+    return await query('SELECT * FROM FELHASZNALO WHERE id= :id', [id]);
 };
 
 exports.modifyUserRole = async (id, role) => {

@@ -219,6 +219,25 @@ router.get("/profile", async (req, res) => {
     });
 });
 
+router.get("/otherProfile/:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let id = req.params.id;
+    const otheruser = UsersDAO.getUsersById(id);
+    console.log(id);
+    console.log(otheruser);
+    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+        return res.render('otherProfile',{
+            otheruser: otheruser,
+            current_name: decodedToken.name,
+            current_birthday: decodedToken.birthday,
+            current_role: decodedToken.role,
+            current_id: decodedToken.id,
+            current_status: decodedToken.status,
+            errors: []
+        })
+    });
+});
+
 router.get("/changeUserDataOf", async (req, res) => {
     const token = req.cookies.jwt;
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
