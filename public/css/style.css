@@ -183,3 +183,11 @@ body{
 .make_max{
     max-width: 100vh;
 }
+svg {
+    fill: #ffff;
+    transition: fill 0.25s ease;
+}
+
+svg:hover {
+    fill: lightgray;
+}
