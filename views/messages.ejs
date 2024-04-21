@@ -4,33 +4,38 @@
 
 <body class="w-100 h-100 d-flex flex-column min-vh-100">
 <%- include('assets/header') %>
-<div class="container form-container flex-column">
+<div class="flex-grid">
+    <div class="container form-container flex-column">
 
-    <% for (let i = 0; i < usersfriends.length; i++) {%>
-        <div>
-            <a href="/openChat<%= usersfriends[i][0] %>&<%= current_id %>"><button class="btn btn-outline-primary"><%= usersfriends[i][1] %></button></a>
-        </div>
-    <%}%>
+        <% for (let i = 0; i < usersfriends.length; i++) {%>
+            <div>
+                <a href="/openChat<%= usersfriends[i][0] %>&<%= current_id %>"><button class="btn btn-outline-primary"><%= usersfriends[i][1] %></button></a>
+            </div>
+        <%}%>
 
-</div>
-<div class="">
-    <%if (current_chat !== '' ){%>
-        <div class="card">
-            <div class="card-header">From: <%= current_chat_with[1]%></div>
-            <div class="card-body">
-                <% for (let i = 0; i < current_chat.length; i++) {%>
-                    <div></div>
-                <%}%>
+    </div>
+    <div class="flex-grid-center-post-inside justify-content-around">
+        <%if (current_chat !== '' ){%>
+            <div class="card">
+                <div class="card-header">Chatting with: <%= current_chat_with[1]%></div>
+                <div class="card-body" >
+                    <% for (let i = 0; i < current_chat.length; i++) { %>
+                        <div class="card">
+                            <div class="card-header <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>"> <%= current_chat[i][1] === current_id ? current_name : current_chat_with[1]%></div>
+                            <div class="card-text make_max <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>"><%= current_chat[i][3]%></div>
+                        </div>
+                    <%}%>
+                </div>
+                <div class="card-footer">
+                    <form method="post" action="/sendMessage<%= current_chat_with[0] %>&<%= current_id %>">
+                        <label for="message">Your message: </label>
+                        <textarea type="text" id="message" name="message" class="form-control"></textarea>
+                        <button class="btn btn-outline-primary" type="submit">Send message</button>
+                    </form>
+                </div>
             </div>
-            <div class="card-footer">
-                <form method="post" action="/sendMessage<%= current_chat_with[0] %>&<%= current_id %>">
-                    <label for="message">Your message: </label>
-                    <textarea type="text" id="message" name="message" class="form-control"></textarea>
-                    <button class="btn btn-outline-primary" type="submit">Send message</button>
-                </form>
-            </div>
-        </div>
-    <% }%>
+        <% }%>
+    </div>
 </div>
 <%- include('assets/footer') %>
 </body>
