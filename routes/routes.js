@@ -603,7 +603,7 @@ router.get("/people", async (req, res) => {
     let current_birthday;
     let current_role;
     let current_status;
-    let current_id;
+    let current_id
 
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
