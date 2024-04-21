@@ -587,7 +587,12 @@ router.get("/people", async (req, res) => {
             current_status = decodedToken.status;
         });
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
-        const users = await UsersDAO.getActualUsers(current_id)
+        const users = await UsersDAO.getUsers(current_id)
+        for (let i = 0; i < users.rows.length; i++) {
+            let friends =  await FriendsDAO.areTheyFriends(current_id, users.rows[i][0]);
+            users.rows[i].push(friends);
+        }
+        console.log(users.rows);
         return res.render('people', {
             current_name: current_name,
             current_role: current_role,
