@@ -586,7 +586,7 @@ router.get("/people", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         return res.render('people', {
             current_name: current_name,
@@ -650,7 +650,7 @@ router.get("/messages", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        const usersfriends = await UsersDAO.getUsersFriendsById(current_id)
+        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         const users = await UsersDAO.getActualUsers(current_id)
         return res.render('messages', {
             current_name: current_name,
