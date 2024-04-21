@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const UsersDAO = require('../dao/users-dao');
 const PostsDAO = require('../dao/posts-dao');
+const FriendsDAO = require('../dao/friends-dao');
 const GroupsDAO = require('../dao/groups-dao');
 const common = require("../dao/common")
 
@@ -203,7 +204,8 @@ router.post("/register", async (req, res) => {
     });
 });
 
-
+//end-region
+//profile-region
 router.get("/profile", async (req, res) => {
     const token = req.cookies.jwt;
     jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
@@ -231,7 +233,6 @@ router.get("/changeUserDataOf", async (req, res) => {
         })
     });
 });
-
 
 router.post("/changeUserDataOf:name", async (req,res)=>{
     console.log(req.params.name)
@@ -334,6 +335,7 @@ router.get("/user-delete", async (req, res) => {
     });
 })
 
+// end-region
 
 // connection-region
 router.get("/connection", async (req, res) => {
@@ -489,6 +491,68 @@ router.get("/groups_all", async (req, res) => {
 //         })
 //     });
 // });
+//people-region
 
+router.get("/people", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const usersfriends = await UsersDAO.getUsersFriendsById(current_id);
+        const users = await UsersDAO.getActualUsers(current_id)
+        return res.render('people', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            usersfriends: usersfriends,
+            users: users
+        });
+    }else {
+        return res.redirect("/logout")
+    }
+});
+
+router.get("/addFriend:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let them;
+
+    if (token) {
+        them = req.params.id.split("&")
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        FriendsDAO.areTheyFriends(parseInt(them[0]),parseInt(them[1]))
+            .then(r=>{
+                r ? res.redirect("people") : FriendsDAO.addFriend(parseInt(them[0]),parseInt(them[1])).then(r=>res.redirect("/people"))
+            })
+
+    }else {
+        return res.redirect("/logout")
+    }
+})
+
+//end-region
 
 module.exports = router;

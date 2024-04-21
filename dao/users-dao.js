@@ -15,13 +15,17 @@ exports.deleteUser = async (id) => {
 exports.getUsers = async () => {
     return await query('SELECT * FROM FELHASZNALO');
 }
-
+exports.getActualUsers = async (current_id) => {
+    let users = await query('SELECT * FROM FELHASZNALO')
+    users.rows = users.rows.filter((filter)=>(filter[0] !== 1 && filter[0] !== current_id))
+    return users.rows;
+}
 exports.getUsersById = async (id) => {
-    return await query('SELECT * FROM user WHERE id= :id', [id]);
+    return await query('SELECT * FROM FELHASZNALO WHERE id= :id', [id]);
 };
 
 exports.modifyUserRole = async (id, role) => {
-    await query('UPDATE user SET role=:role WHERE id = :id', [role, id]);
+    await query('UPDATE FELHASZNALO SET role=:role WHERE id = :id', [role, id]);
 };
 
 exports.getUserByEmail = async (email) => {
@@ -39,3 +43,4 @@ exports.getUsersBirthday = async () => {
 exports.getUsersFriendsById = async (id) => {
     return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id', [id]);
 };
+
