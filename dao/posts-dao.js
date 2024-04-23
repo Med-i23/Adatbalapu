@@ -2,7 +2,7 @@ const query = require("./common.js").query;
 let format = "yyyy-mm-dd"
 
 exports.getPosts = async () => {
-    return await query('SELECT POSZT.*, FELHASZNALO.NEV FROM POSZT INNER JOIN FELHASZNALO ON FELHASZNALO.ID = POSZT.LETREHOZO ORDER BY POSZT.TIME DESC');
+    return await query('SELECT POSZT.*, FELHASZNALO.NEV FROM POSZT INNER JOIN FELHASZNALO ON FELHASZNALO.ID = POSZT.LETREHOZO WHERE CSOPORT_ID IS NULL ORDER BY POSZT.TIME DESC');
 };
 
 exports.postCreate = async (csoport_id, szoveg, felh_id) => {

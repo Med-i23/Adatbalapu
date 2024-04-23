@@ -16,3 +16,6 @@ exports.groupCreate = async (nev, felh_id) => {
 exports.groupDelete = async (groupId) => {
     await query('DELETE FROM CSOPORT WHERE ID = :groupId', [groupId]);
 }
+exports.getGroupsPosts = async (groupId) => {
+    return await query('SELECT * FROM POSZT WHERE CSOPORT_ID = :groupId', [groupId]);
+};

@@ -502,7 +502,8 @@ router.get("/groups_all", async (req, res) => {
 
         const groups = await GroupsDAO.getGroups();
         const isThisOwnGroups = false;
-
+        const groupCheckOut = false;
+        const groupPosts = [];
         return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
@@ -511,7 +512,9 @@ router.get("/groups_all", async (req, res) => {
             current_status: current_status,
             //posts: posts,
             groups: groups,
-            isThisOwnGroups: isThisOwnGroups
+            isThisOwnGroups: isThisOwnGroups,
+            groupCheckOut: groupCheckOut,
+            groupPosts: groupPosts
         });
     } else {
         return res.redirect("/groups_all")
@@ -536,6 +539,8 @@ router.get("/groups_own", async (req, res) => {
         });
         const groups = await GroupsDAO.getGroupsById(current_id);
         const isThisOwnGroups = true;
+        const groupCheckOut = false;
+        const groupPosts = [];
 
         return res.render('groups', {
             current_name: current_name,
@@ -544,7 +549,9 @@ router.get("/groups_own", async (req, res) => {
             current_birthday: current_birthday,
             current_status: current_status,
             groups: groups,
-            isThisOwnGroups: isThisOwnGroups
+            isThisOwnGroups: isThisOwnGroups,
+            groupCheckOut: groupCheckOut,
+            groupPosts: groupPosts
         });
     } else {
         return res.redirect("/groups_own")
@@ -578,6 +585,135 @@ router.post("/group-delete", async (req, res) => {
     return res.redirect('/groups_own');
 });
 
+
+router.get("/group-refresh", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const groups = await GroupsDAO.getGroupsById(current_id);
+        const isThisOwnGroups = true;
+        const groupCheckOut = true;
+        const currentGroupId = req.query.currentGroupId;
+        console.log(currentGroupId);
+        const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId)
+        // console.log(currentGroupId);
+        // console.log(groupPosts.rows);
+
+        return res.render('groups', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            groups: groups,
+            isThisOwnGroups: isThisOwnGroups,
+            groupCheckOut: groupCheckOut,
+            groupPosts: groupPosts,
+            currentGroupId: currentGroupId
+        });
+    } else {
+        return res.redirect("/group-checkout")
+    }
+});
+
+
+router.post("/group-checkout", async (req, res) => {
+    let currentGroupId = req.body.groupId;
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        const groups = await GroupsDAO.getGroupsById(current_id);
+        const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId);
+        //console.log(groupPosts.rows);
+        const isThisOwnGroups = true;
+        const groupCheckOut = true;
+        //console.log(currentGroupId);
+        return res.render('groups', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            groups: groups,
+            isThisOwnGroups: isThisOwnGroups,
+            groupCheckOut: groupCheckOut,
+            currentGroupId: currentGroupId,
+            groupPosts: groupPosts
+        });
+    } else {
+        return res.redirect("/group-refresh")
+    }
+});
+
+
+
+router.post("/post-add-new-into-roup", async (req, res) => {
+    let currentGroupId = req.body.currentGroupId;
+    const token = req.cookies.jwt;
+    let current_id;
+
+    //console.log(currentGroupId);
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_id = decodedToken.id;
+        });
+    }
+
+    let posztSzoveg = req.body.posztSzoveg;
+    if (posztSzoveg.length === 0) {
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    }
+
+    await PostsDAO.postCreate(currentGroupId, posztSzoveg, current_id);
+    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+});
+
+router.post("/post-like-group", async (req, res) => {
+    let postId = req.body.postId;
+    let currentGroupId = req.body.currentGroupId;
+    await PostsDAO.postAddLike(postId);
+    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+
+});
+
+router.post("/post-modify-group", async (req, res) => {
+    let postId = req.body.postId;
+    let postSzoveg = req.body.modifySzoveg;
+    let currentGroupId = req.body.currentGroupId;
+    await PostsDAO.postModify(postSzoveg, postId);
+    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+});
+
+router.post("/post-delete-group", async (req, res) => {
+    let postId = req.body.postId;
+    let currentGroupId = req.body.currentGroupId;
+    await PostsDAO.postDelete(postId);
+    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+
+});
 
 //end-region
 
