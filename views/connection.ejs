@@ -41,7 +41,7 @@
       <tr>
          <td><%= user[1] %></td>
          <td><%= user[2] %></td>
-         <td><form action="/deleteUser/<%= user[0]%>" method="post">
+         <td><form action="/deleteUser<%= user[0]%>" method="post">
             <input type="hidden" name="postId" value="<%= user[0]%>">
             <button type="submit" class="btn btn-primary btn-post-hold">Felhasználó törlése</button>
          </form>
@@ -55,6 +55,11 @@
    <% } %>
    </tbody>
 </table>
+
+<% if(adminHiba){%>
+   <p class="text-danger" style="padding-left: 1%"><%- adminHiba %></p>
+<% } %>
+
 <%- include('assets/footer')%>
 </body>
 

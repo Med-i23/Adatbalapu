@@ -410,7 +410,7 @@ router.get("/connection", async (req, res) => {
             current_id: current_id,
             current_birthday: current_birthday,
             current_status: current_status,
-            correctResult: 'Adatbázis csatlakoztatva'
+            adminHiba: null
         });
     }
     return res.render('connection', {
@@ -420,14 +420,47 @@ router.get("/connection", async (req, res) => {
         current_id: current_id,
         current_birthday: current_birthday,
         current_status: current_status,
-        wrongResult: 'Adatbázis nem csatlakozik'
+        adminHiba: null
     });
 });
 
-router.post("/deleteUser/:id", async (req, res) => {
+router.post("/deleteUser:id", async (req, res) => {
+    const token = req.cookies.jwt;
     let id = req.params.id;
-    await UsersDAO.deleteUser(id);
-    return res.redirect('/connection');
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    const users = await UsersDAO.getUsers();
+    const roleArray = await UsersDAO.adminCheck(id);
+    const role = roleArray[0];
+    console.log(role);
+    if(role === "ADMIN"){
+        return res.render('connection', {
+            users: users,
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            adminHiba: "Admin törlése nem megengedett"
+        });
+    }
+    else{
+        await UsersDAO.deleteUser(id);
+        return res.redirect('/connection');
+    }
 });
 
 //end-region

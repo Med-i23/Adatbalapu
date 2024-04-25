@@ -12,6 +12,13 @@ exports.updateUser = async (name, email, birthday, password, current_email) => {
 exports.deleteUser = async (id) => {
     await query('DELETE FROM FELHASZNALO WHERE id= :id', [id])
 }
+
+
+exports.adminCheck = async (id) => {
+    const res = await query('SELECT check_admin_role(:id) FROM dual', [id]);
+    return res.rows[0];
+}
+
 exports.getUsers = async () => {
     return await query('SELECT * FROM FELHASZNALO');
 }
