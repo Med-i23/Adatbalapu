@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('assets/head') %>
+<%- include('assets/head') %>
 
-    <body class="w-100 h-100 d-flex flex-column min-vh-100">
-    <%- include('assets/header')%>
-    <div class="container form-container">
-        <a href="/changeUserDataOf"><button class="btn btn-primary">Change personal data</button></a>
-        <a href="/user-delete"><button class="btn btn-primary btn-danger">DELETE ACCOUNT</button></a>
-    </div>
-    <%- include('assets/footer') %>
-    </body>
+<body class="w-100 h-100 d-flex flex-column min-vh-100">
+<%- include('assets/header') %>
+<div class="container form-container">
+    <a href="/changeUserDataOf">
+        <button class="btn btn-primary">Change personal data</button>
+    </a>
+    <a href="/user-delete">
+        <button class="btn btn-primary btn-danger">DELETE ACCOUNT</button>
+    </a>
+</div>
+<%- include('assets/footer') %>
+</body>
 </html>

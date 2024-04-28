@@ -1,66 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <%- include('assets/head') %>
-   <meta charset="UTF-8">
-   <title>TrueFace</title>
-   <link rel="stylesheet" type="text/css" href="../public/css/style.css">
-   <link rel="icon" type="image/x-icon" href="/public/sources/icon.png">
-   <style>
-      body {
-         font-family: Arial, sans-serif;
-         background: #f4f4f4;
-         margin: 0;
-         padding: 0;
-      }
+    <%- include('assets/head') %>
+    <meta charset="UTF-8">
+    <title>TrueFace</title>
+    <link rel="stylesheet" type="text/css" href="../public/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/public/sources/icon.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
 
-      .correct{
-         background: green;
-         color: white;
-      }
+        .correct {
+            background: green;
+            color: white;
+        }
 
-      .wrong{
-         background: #bf2b00;
-         color: white;
-      }
+        .wrong {
+            background: #bf2b00;
+            color: white;
+        }
 
-   </style>
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
-<%- include('assets/header')%>
+<%- include('assets/header') %>
 <table>
-   <thead>
-   <tr>
-      <th>Név</th>
-      <th>Email</th>
-   </tr>
-   </thead>
-   <tbody>
-   <% if (users && users.rows && users.rows.length > 0) { %>
-   <% users.rows.forEach(function(user) { %>
-      <tr>
-         <td><%= user[1] %></td>
-         <td><%= user[2] %></td>
-         <td><form action="/deleteUser<%= user[0]%>" method="post">
-            <input type="hidden" name="postId" value="<%= user[0]%>">
-            <button type="submit" class="btn btn-primary btn-post-hold">Felhasználó törlése</button>
-         </form>
-         </td>
-      </tr>
-   <% }); %>
-   <% } else { %>
-      <tr>
-         <td colspan="2">Adatbázis nem elérhető</td>
-      </tr>
-   <% } %>
-   </tbody>
+    <thead>
+    <tr>
+        <th>Név</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (users && users.rows && users.rows.length > 0) { %>
+        <% users.rows.forEach(function(user) { %>
+            <tr>
+                <td><%= user[1] %></td>
+                <td><%= user[2] %></td>
+                <td>
+                    <form action="/deleteUser<%= user[0] %>" method="post">
+                        <input type="hidden" name="postId" value="<%= user[0] %>">
+                        <button type="submit" class="btn btn-primary btn-post-hold">Felhasználó törlése</button>
+                    </form>
+                </td>
+            </tr>
+        <% }); %>
+    <% } else { %>
+        <tr>
+            <td colspan="2">Adatbázis nem elérhető</td>
+        </tr>
+    <% } %>
+    </tbody>
 </table>
 
-<% if(adminHiba){%>
-   <p class="text-danger" style="padding-left: 1%"><%- adminHiba %></p>
+<% if(adminHiba){ %>
+    <p class="text-danger" style="padding-left: 1%"><%- adminHiba %></p>
 <% } %>
 
-<%- include('assets/footer')%>
+<%- include('assets/footer') %>
 </body>
 
 </html>

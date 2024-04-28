@@ -11,7 +11,7 @@ userAuth = (req, res, next) => {
                     message: "Not authorized"
                 })
             } else {
-                if ((decodedToken.role !== "ROLE_STUDENT") && (decodedToken.role !== "ROLE_ADMIN")&& (decodedToken.role !== "ROLE_TEACHER")) {
+                if ((decodedToken.role !== "ROLE_STUDENT") && (decodedToken.role !== "ROLE_ADMIN") && (decodedToken.role !== "ROLE_TEACHER")) {
                     return res.status(401).json({
                         message: "Not authorized"
                     })

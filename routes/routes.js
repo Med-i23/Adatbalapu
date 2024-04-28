@@ -243,7 +243,7 @@ router.get("/otherProfile:id", async (req, res) => {
         });
     }
     const aretheyfriends = await FriendsDAO.areTheyFriends(current_id, id);
-    if (aretheyfriends){
+    if (aretheyfriends) {
         return res.render('otherProfile', {
             otheruser: otheruser,
             current_name: current_name,
@@ -446,7 +446,7 @@ router.post("/deleteUser:id", async (req, res) => {
     const roleArray = await UsersDAO.adminCheck(id);
     const role = roleArray[0];
     //console.log(role);
-    if(role === "ADMIN"){
+    if (role === "ADMIN") {
         return res.render('connection', {
             users: users,
             current_name: current_name,
@@ -456,8 +456,7 @@ router.post("/deleteUser:id", async (req, res) => {
             current_status: current_status,
             adminHiba: "Admin törlése nem megengedett"
         });
-    }
-    else{
+    } else {
         await UsersDAO.deleteUser(id);
         return res.redirect('/connection');
     }
@@ -623,7 +622,7 @@ router.post("/group-join", async (req, res) => {
     let groupId = req.body.groupId;
     const token = req.cookies.jwt;
     if (token) {
-        let current_name,current_birthday,current_role,current_id,current_status;
+        let current_name, current_birthday, current_role, current_id, current_status;
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_name = decodedToken.name;
             current_birthday = decodedToken.birthday;
@@ -631,12 +630,12 @@ router.post("/group-join", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        let isItIn = await GroupsDAO.isUserInGroup(current_id,groupId)
-        if (isItIn){
-            await GroupsDAO.joinToGroup(groupId,current_id)
+        let isItIn = await GroupsDAO.isUserInGroup(current_id, groupId)
+        if (isItIn) {
+            await GroupsDAO.joinToGroup(groupId, current_id)
         }
         return res.redirect('/groups_all');
-    }else {
+    } else {
         return res.redirect("/logout")
     }
 
@@ -668,7 +667,7 @@ router.get("/group-refresh", async (req, res) => {
         // console.log(currentGroupId);
         // console.log(groupPosts.rows);
 
-        let current_group =  await GroupsDAO.getCurrentGroupById(currentGroupId)
+        let current_group = await GroupsDAO.getCurrentGroupById(currentGroupId)
         current_group = current_group.rows[0]
         return res.render('groups', {
             current_name: current_name,
@@ -706,7 +705,7 @@ router.post("/group-checkout", async (req, res) => {
             current_status = decodedToken.status;
         });
         const groups = await GroupsDAO.getGroupsById(current_id);
-        let current_group =  await GroupsDAO.getCurrentGroupById(currentGroupId)
+        let current_group = await GroupsDAO.getCurrentGroupById(currentGroupId)
         current_group = current_group.rows[0]
         const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId);
         //console.log(groupPosts.rows);
@@ -730,7 +729,6 @@ router.post("/group-checkout", async (req, res) => {
         return res.redirect("/group-refresh")
     }
 });
-
 
 
 router.post("/post-add-new-into-roup", async (req, res) => {
@@ -814,7 +812,7 @@ router.get("/people", async (req, res) => {
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
         let users = await UsersDAO.getActualUsers(current_id)
         for (let i = 0; i < users.length; i++) {
-            let friends =  await FriendsDAO.areTheyFriends(current_id, users[i][0]);
+            let friends = await FriendsDAO.areTheyFriends(current_id, users[i][0]);
             users[i].push(friends);
         }
         return res.render('people', {
@@ -960,7 +958,7 @@ router.post("/sendMessage:id", async (req, res) => {
     let current_chat_with = '';
     if (token) {
         let textMessage = req.body.message
-        if (textMessage.trim() !== ""){
+        if (textMessage.trim() !== "") {
             them = req.params.id.split("&")
             jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
                 current_name = decodedToken.name;
@@ -981,7 +979,7 @@ router.post("/sendMessage:id", async (req, res) => {
             await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
                 current_chat_with = value1.rows[0]
             })
-            MessagesDAO.addMessage(parseInt(them[1]), parseInt(them[0]),textMessage,new Date()).then(async _ => {
+            MessagesDAO.addMessage(parseInt(them[1]), parseInt(them[0]), textMessage, new Date()).then(async _ => {
                 await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
                     if (value.rows.length > 0) {
                         current_chat = value.rows
@@ -999,8 +997,8 @@ router.post("/sendMessage:id", async (req, res) => {
                     current_chat_with: current_chat_with
                 });
             })
-        }else {
-            res.redirect("/openChat"+req.params.id)
+        } else {
+            res.redirect("/openChat" + req.params.id)
         }
 
     } else {

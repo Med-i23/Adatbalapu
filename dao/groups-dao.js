@@ -9,17 +9,17 @@ exports.getGroupsById = async (userId) => {
     return await query('SELECT * FROM CSOPORT WHERE LETREHOZO = :userId', [userId]);
 };
 
-exports.getCurrentGroupById= async (currentGroupId)=>{
+exports.getCurrentGroupById = async (currentGroupId) => {
     return await query('SELECT * FROM CSOPORT WHERE CSOPORT.ID = :currentGroupId', [currentGroupId]);
 }
 
-exports.joinToGroup= async (currentGroupId,felhId)=>{
+exports.joinToGroup = async (currentGroupId, felhId) => {
     let role = "USER"
-    return await query('INSERT INTO TAG(CSOPORT_ID, FELH_ID, CSOPORT_ROLE) VALUES(:currentGroupId,:felhId,:role)', [currentGroupId,felhId,role]);
+    return await query('INSERT INTO TAG(CSOPORT_ID, FELH_ID, CSOPORT_ROLE) VALUES(:currentGroupId,:felhId,:role)', [currentGroupId, felhId, role]);
 }
 
-exports.isUserInGroup= async (felhId, groupId)=>{
-    const groupGot = await query('SELECT * FROM TAG WHERE FELH_ID = :felhId AND CSOPORT_ID = :groupId',[felhId, groupId])
+exports.isUserInGroup = async (felhId, groupId) => {
+    const groupGot = await query('SELECT * FROM TAG WHERE FELH_ID = :felhId AND CSOPORT_ID = :groupId', [felhId, groupId])
     return groupGot.rows.length < 1;
 }
 exports.groupCreate = async (nev, felh_id) => {

@@ -4,7 +4,8 @@
 
 <body class="d-flex flex-column min-vh-100">
 <header id="header" style=" padding-bottom: 70px;">
-    <nav class="navbar bg-primary navbar-expand-sm bg-primary border-bottom border-body position-fixed w-100" data-bs-theme="dark" >
+    <nav class="navbar bg-primary navbar-expand-sm bg-primary border-bottom border-body position-fixed w-100"
+         data-bs-theme="dark">
         <a class="navbar-brand border-end border-light p-1" href="#">TrueFace</a>
     </nav>
 </header>
@@ -13,11 +14,16 @@
         <form method="POST" id="register-form" action="/register">
             <fieldset>
                 <legend class="fw-bold text-center">Regisztráció</legend>
-                <label for="name"></label><input class="form-control" type="text" name="name" id="name" placeholder="Teljes név" required>
-                <label for="email"></label><input class="form-control" type="text" name="email" id="email" placeholder="ateemail@cimed.hu" required>
-                <label for="birthday"></label><input class="form-control" type="date" name="birthday" id="birthday" placeholder="" required>
-                <label for="password"></label><input class="form-control" type="password" name="password" id="password" placeholder="Jelszó" required>
-                <label for="password2"></label><input class="form-control" type="password" name="password2" id="password2" placeholder="Jelszó megint" required>
+                <label for="name"></label><input class="form-control" type="text" name="name" id="name"
+                                                 placeholder="Teljes név" required>
+                <label for="email"></label><input class="form-control" type="text" name="email" id="email"
+                                                  placeholder="ateemail@cimed.hu" required>
+                <label for="birthday"></label><input class="form-control" type="date" name="birthday" id="birthday"
+                                                     placeholder="" required>
+                <label for="password"></label><input class="form-control" type="password" name="password" id="password"
+                                                     placeholder="Jelszó" required>
+                <label for="password2"></label><input class="form-control" type="password" name="password2"
+                                                      id="password2" placeholder="Jelszó megint" required>
                 <% if(hibaRegister){ %>
                     <p class="text-danger" style="padding-left: 1%"><%- hibaRegister %></p>
                 <% } %>
@@ -33,8 +39,10 @@
         <form method="POST" id="login-form" action="/login">
             <fieldset>
                 <legend class="fw-bold text-center">Bejelentkezés</legend>
-                <label for="email2"></label><input class="form-control" type="text" name="email" id="email2" placeholder="Email" required>
-                <label for="passwordag"></label><input class="form-control" type="password" name="password" id="passwordag" placeholder="Jelszó" required>
+                <label for="email2"></label><input class="form-control" type="text" name="email" id="email2"
+                                                   placeholder="Email" required>
+                <label for="passwordag"></label><input class="form-control" type="password" name="password"
+                                                       id="passwordag" placeholder="Jelszó" required>
                 <% if(hibaLogin){ %>
                     <p class="text-danger" style="padding-left: 1%"><%- hibaLogin %></p>
                 <% } %>
@@ -43,7 +51,7 @@
         </form>
     </div>
 </div>
-<%- include('assets/footer')%>
+<%- include('assets/footer') %>
 </body>
 
 </html>

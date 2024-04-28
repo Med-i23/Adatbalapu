@@ -1,5 +1,3 @@
-// ki kell majd kulon .js fajlba rakni
-// a modositasnak "popup" textarea
 const modifyButtons = document.querySelectorAll('.btn-post-modify');
 const modifyPopups = document.querySelectorAll('.post-modify-popup');
 const textareaSzovegek = document.querySelectorAll('#modifySzoveg');
@@ -21,12 +19,12 @@ modifyButtons.forEach(function (modifyButton, index) {
 });
 
 
-$(document).ready(function(){
+$(document).ready(function () {
     var isDropdownOpen = false;
 
-    $('.dropdown-toggle').click(function(event) {
+    $('.dropdown-toggle').click(function (event) {
         event.stopPropagation();
-        if(isDropdownOpen) {
+        if (isDropdownOpen) {
             $(this).next('.dropdown-menu').hide();
             isDropdownOpen = false;
         } else {
@@ -35,7 +33,7 @@ $(document).ready(function(){
         }
     });
 
-    $(document).click(function() {
+    $(document).click(function () {
         $('.dropdown-menu').hide();
         isDropdownOpen = false;
     });

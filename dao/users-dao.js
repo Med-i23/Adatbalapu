@@ -24,7 +24,7 @@ exports.getUsers = async () => {
 }
 exports.getActualUsers = async (current_id) => {
     let users = await query('SELECT * FROM FELHASZNALO')
-    users.rows = users.rows.filter((filter)=>(filter[0] !== 1 && filter[0] !== current_id))
+    users.rows = users.rows.filter((filter) => (filter[0] !== 1 && filter[0] !== current_id))
     return users.rows;
 }
 exports.getUsersById = async (id) => {
