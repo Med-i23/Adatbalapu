@@ -7,7 +7,7 @@ const textareaSzovegek = document.querySelectorAll('#modifySzoveg');
 //minden node listben, minden modify buttonhoz sajat textareat rendel,
 //így külön külön műkszik
 //a querySelectorcsak egyet tud kezelni, ezért nem működött a többi
-modifyButtons.forEach(function(modifyButton, index) {
+modifyButtons.forEach(function (modifyButton, index) {
     let temp = textareaSzovegek[index].value;
     modifyButton.addEventListener('click', function (event) {
         event.preventDefault();
@@ -19,3 +19,27 @@ modifyButtons.forEach(function(modifyButton, index) {
         }
     });
 });
+
+
+$(document).ready(function(){
+    var isDropdownOpen = false;
+
+    $('.dropdown-toggle').click(function(event) {
+        event.stopPropagation();
+        if(isDropdownOpen) {
+            $(this).next('.dropdown-menu').hide();
+            isDropdownOpen = false;
+        } else {
+            $(this).next('.dropdown-menu').show();
+            isDropdownOpen = true;
+        }
+    });
+
+    $(document).click(function() {
+        $('.dropdown-menu').hide();
+        isDropdownOpen = false;
+    });
+
+});
+
+
