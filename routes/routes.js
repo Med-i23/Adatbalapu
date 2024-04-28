@@ -445,7 +445,7 @@ router.post("/deleteUser:id", async (req, res) => {
     const users = await UsersDAO.getUsers();
     const roleArray = await UsersDAO.adminCheck(id);
     const role = roleArray[0];
-    console.log(role);
+    //console.log(role);
     if(role === "ADMIN"){
         return res.render('connection', {
             users: users,
@@ -663,7 +663,7 @@ router.get("/group-refresh", async (req, res) => {
         const isThisOwnGroups = true;
         const groupCheckOut = true;
         const currentGroupId = req.query.currentGroupId;
-        console.log(currentGroupId);
+        //console.log(currentGroupId);
         const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId)
         // console.log(currentGroupId);
         // console.log(groupPosts.rows);
