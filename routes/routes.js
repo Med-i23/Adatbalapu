@@ -930,44 +930,49 @@ router.post("/sendMessage:id", async (req, res) => {
     let current_chat_with = '';
     if (token) {
         let textMessage = req.body.message
-        them = req.params.id.split("&")
-        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-            current_name = decodedToken.name;
-            current_birthday = decodedToken.birthday;
-            current_role = decodedToken.role;
-            current_id = decodedToken.id;
-            current_status = decodedToken.status;
-        });
-        const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
-        const users = await UsersDAO.getActualUsers(current_id)
-        await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
-            if (value.rows.length > 0) {
-                current_chat = value.rows
-            } else {
-                current_chat = []
-            }
-        })
-        await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
-            current_chat_with = value1.rows[0]
-        })
-        MessagesDAO.addMessage(parseInt(them[1]), parseInt(them[0]),textMessage,new Date()).then(async _ => {
+        if (textMessage.trim() !== ""){
+            them = req.params.id.split("&")
+            jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+                current_name = decodedToken.name;
+                current_birthday = decodedToken.birthday;
+                current_role = decodedToken.role;
+                current_id = decodedToken.id;
+                current_status = decodedToken.status;
+            });
+            const usersfriends = await FriendsDAO.getUsersFriendsById(current_id)
+            const users = await UsersDAO.getActualUsers(current_id)
             await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
                 if (value.rows.length > 0) {
                     current_chat = value.rows
+                } else {
+                    current_chat = []
                 }
             })
-            return res.render('messages', {
-                current_name: current_name,
-                current_role: current_role,
-                current_id: current_id,
-                current_birthday: current_birthday,
-                current_status: current_status,
-                usersfriends: usersfriends.rows,
-                users: users,
-                current_chat: current_chat,
-                current_chat_with: current_chat_with
-            });
-        })
+            await UsersDAO.getUsersById(parseInt(them[0])).then(value1 => {
+                current_chat_with = value1.rows[0]
+            })
+            MessagesDAO.addMessage(parseInt(them[1]), parseInt(them[0]),textMessage,new Date()).then(async _ => {
+                await MessagesDAO.messagesOf(parseInt(them[0]), parseInt(them[1])).then(value => {
+                    if (value.rows.length > 0) {
+                        current_chat = value.rows
+                    }
+                })
+                return res.render('messages', {
+                    current_name: current_name,
+                    current_role: current_role,
+                    current_id: current_id,
+                    current_birthday: current_birthday,
+                    current_status: current_status,
+                    usersfriends: usersfriends.rows,
+                    users: users,
+                    current_chat: current_chat,
+                    current_chat_with: current_chat_with
+                });
+            })
+        }else {
+            res.redirect("/openChat"+req.params.id)
+        }
+
     } else {
         return res.redirect("/logout")
     }
