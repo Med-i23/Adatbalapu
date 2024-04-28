@@ -537,6 +537,7 @@ router.get("/groups_all", async (req, res) => {
         const isThisOwnGroups = false;
         const groupCheckOut = false;
         const groupPosts = [];
+
         return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
@@ -547,7 +548,8 @@ router.get("/groups_all", async (req, res) => {
             groups: groups,
             isThisOwnGroups: isThisOwnGroups,
             groupCheckOut: groupCheckOut,
-            groupPosts: groupPosts
+            groupPosts: groupPosts,
+            currentGroup: []
         });
     } else {
         return res.redirect("/groups_all")
@@ -574,7 +576,6 @@ router.get("/groups_own", async (req, res) => {
         const isThisOwnGroups = true;
         const groupCheckOut = false;
         const groupPosts = [];
-
         return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
@@ -584,7 +585,8 @@ router.get("/groups_own", async (req, res) => {
             groups: groups,
             isThisOwnGroups: isThisOwnGroups,
             groupCheckOut: groupCheckOut,
-            groupPosts: groupPosts
+            groupPosts: groupPosts,
+            currentGroup: []
         });
     } else {
         return res.redirect("/groups_own")
@@ -666,6 +668,8 @@ router.get("/group-refresh", async (req, res) => {
         // console.log(currentGroupId);
         // console.log(groupPosts.rows);
 
+        let current_group =  await GroupsDAO.getCurrentGroupById(currentGroupId)
+        current_group = current_group.rows[0]
         return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
@@ -676,7 +680,8 @@ router.get("/group-refresh", async (req, res) => {
             isThisOwnGroups: isThisOwnGroups,
             groupCheckOut: groupCheckOut,
             groupPosts: groupPosts,
-            currentGroupId: currentGroupId
+            currentGroupId: currentGroupId,
+            currentGroup: current_group
         });
     } else {
         return res.redirect("/group-checkout")
@@ -703,7 +708,6 @@ router.post("/group-checkout", async (req, res) => {
         const groups = await GroupsDAO.getGroupsById(current_id);
         let current_group =  await GroupsDAO.getCurrentGroupById(currentGroupId)
         current_group = current_group.rows[0]
-        console.log(current_group)
         const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId);
         //console.log(groupPosts.rows);
         const isThisOwnGroups = true;
