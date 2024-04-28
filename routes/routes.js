@@ -61,7 +61,7 @@ router.get("/main", async (req, res) => {
         });
 
         const posts = await PostsDAO.getPosts();
-        const birthdays = await UsersDAO.getUsersBirthday();
+        const birthdays = await UsersDAO.getUsersBirthday(current_id);
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
         //Átírni a szüliket-> csak friendek láthassák + ne látszódjon a saját, DELETED_USER
         return res.render('main', {
@@ -617,6 +617,28 @@ router.post("/group-delete", async (req, res) => {
     await GroupsDAO.groupDelete(groupId);
     return res.redirect('/groups_own');
 });
+router.post("/group-join", async (req, res) => {
+    let groupId = req.body.groupId;
+    const token = req.cookies.jwt;
+    if (token) {
+        let current_name,current_birthday,current_role,current_id,current_status;
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        let isItIn = await GroupsDAO.isUserInGroup(current_id,groupId)
+        if (isItIn){
+            await GroupsDAO.joinToGroup(groupId,current_id)
+        }
+        return res.redirect('/groups_all');
+    }else {
+        return res.redirect("/logout")
+    }
+
+});
 
 
 router.get("/group-refresh", async (req, res) => {
@@ -679,6 +701,9 @@ router.post("/group-checkout", async (req, res) => {
             current_status = decodedToken.status;
         });
         const groups = await GroupsDAO.getGroupsById(current_id);
+        let current_group =  await GroupsDAO.getCurrentGroupById(currentGroupId)
+        current_group = current_group.rows[0]
+        console.log(current_group)
         const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId);
         //console.log(groupPosts.rows);
         const isThisOwnGroups = true;
@@ -694,7 +719,8 @@ router.post("/group-checkout", async (req, res) => {
             isThisOwnGroups: isThisOwnGroups,
             groupCheckOut: groupCheckOut,
             currentGroupId: currentGroupId,
-            groupPosts: groupPosts
+            groupPosts: groupPosts,
+            currentGroup: current_group
         });
     } else {
         return res.redirect("/group-refresh")

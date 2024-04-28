@@ -5,14 +5,15 @@
 <%- include('assets/header') %>
 
 <div class="container form-container">
-    <a href="/groups_own"><button class="btn btn-primary">Saját csoportok</button></a>
-    <a href="/groups_all"><button class="btn btn-primary">Összes csoport</button></a>
+    <a href="/groups_own">
+        <button class="btn btn-primary">Saját csoportok</button>
+    </a>
+    <a href="/groups_all">
+        <button class="btn btn-primary">Összes csoport</button>
+    </a>
 </div>
-<% if(current_role === 'ADMIN'){ %>
-    <div class="connectionLink"><a href="/connection">Connection proof</a></div>
-<% } %>
 
-<%if (isThisOwnGroups && !groupCheckOut){%>
+<% if (isThisOwnGroups && !groupCheckOut){ %>
 
     <div class="post" style="max-width: 20%; margin: 2vh 0% 2vh 5%">
         <h3>Csoport létrehozása</h3>
@@ -27,105 +28,108 @@
 
     <div class="flex-grid-groups">
         <% groups.rows.forEach(function(group){ %>
-            <div style="border: 1px solid black">
-                <p><%= group[1] %></p>
+        <div class="card">
 
-                <%if((current_id === group[2] && isThisOwnGroups) || current_role === "ADMIN" ){%>
-                    <form action="/group-delete" method="post">
-                        <input type="hidden" name="groupId" value="<%= group[0] %>">
-                        <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
-                    </form>
-                    <form action="/group-checkout" method="post">
-                        <input type="hidden" name="groupId" value="<%= group[0] %>">
-                        <button type="submit" class="btn btn-primary">Megtekintés</button>
-                    </form>
-                <%}%>
-
-            </div>
-        <% }) %>
-    </div>
-
-<%}%>
-
-
-<%if(!isThisOwnGroups && !groupCheckOut){%>
-<div class="flex-grid-groups">
-    <% groups.rows.forEach(function(group){ %>
-        <div style="border: 1px solid black">
-            <p><%= group[1] %></p>
-
-            <%if((current_id === group[2] && isThisOwnGroups) || current_role === "ADMIN" ){%>
-                <form action="/group-delete" method="post">
+            <% if((current_id === group[2] && isThisOwnGroups) || current_role === "ADMIN" ){ %>
+                <form action="/group-checkout" method="post" class="card-header">
+                    <input type="hidden" name="groupId" value="<%= group[0] %>">
+                    <button type="submit" class="border"><%= group[1] %></button>
+                </form>
+                <form action="/group-delete" method="post" class="card-footer">
                     <input type="hidden" name="groupId" value="<%= group[0] %>">
                     <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
                 </form>
-                <form action="/group-checkout" method="post">
-                    <input type="hidden" name="groupId" value="<%= group[0] %>">
-                    <button type="submit" class="btn btn-primary">Megtekintés</button>
-                </form>
-            <%}%>
+
+            <% } %>
 
         </div>
-    <% }) %>
-</div>
-<%}%>
-<%if(groupCheckOut){%>
-    <div class="flex-grid-center">
-        <h2>Posztok</h2>
+        <% }) %>
+    </div>
 
-        <h3>Poszt létrehozása</h3>
-        <div class="post">
+<% } %>
+
+<% if(!isThisOwnGroups && !groupCheckOut){ %>
+    <div class="flex-grid-groups">
+        <% groups.rows.forEach(function(group){ %>
+        <div class="card">
+            <% if((current_id === group[2] && isThisOwnGroups) || current_role === "ADMIN" ){ %>
+                <form action="/group-checkout" method="post" class="card-header">
+                    <input type="hidden" name="groupId" value="<%= group[0] %>">
+                    <button type="submit" class="border "><%= group[1] %></button>
+                </form>
+                <div class="card-footer flex-grid">
+                    <form action="/group-delete" method="post" >
+                        <input type="hidden" name="groupId" value="<%= group[0] %>">
+                        <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
+                    </form>
+                    <form action="/group-join" method="post" >
+                        <input type="hidden" name="groupId" value="<%= group[0] %>">
+                        <button type="submit" class="btn btn-primary btn-success">Join</button>
+                    </form>
+                </div>
+            <% } %>
+
+        </div>
+        <% }) %>
+    </div>
+<% } %>
+<% if(groupCheckOut){ %>
+<div class="flex-grid-center">
+    <div class="card">
+        <h1 class="card-header"><%= currentGroup[1] %></h1>
+    </div>
+    <div class="card">
+        <h3 class="card-header">Poszt létrehozása</h3>
+        <div class="post card-body">
             <form action="/post-add-new-into-roup" method="post">
-                <input type="hidden" name="currentGroupId" value="<%=currentGroupId%>">
+                <input type="hidden" name="currentGroupId" value="<%= currentGroupId %>">
                 <textarea name="posztSzoveg" id="posztSzoveg" cols="40" rows="5"></textarea>
                 <button type="submit" class="btn-middle btn btn-primary mt-2">Létrehozás</button>
             </form>
         </div>
-
-        <%if(groupPosts.rows.length > 0){%>
-
-        <%groupPosts.rows.forEach(function (groupPost){%>
-
-            <div class="post">
-
-                <h3><a href="/otherProfile<%=groupPost[1]%>"> <%=groupPost[6]%> </a></h3>
-                <h4><%= groupPost[3] %></h4>
-                <p style="font-size: 1.75vh">Kedvelések száma:<%=groupPost[4]%> </p>
-                <div class="flex-grid-center-post-inside">
-                    <form style="margin-bottom: 10px" action="/post-like-group" method="post">
-                        <input type="hidden" name="postId" value="<%=groupPost[0]%>">
-                        <input type="hidden" name="currentGroupId" value="<%=groupPost[2]%>">
-                        <button type="submit" class="btn btn-primary">Kedvelés</button>
-                    </form>
-                    <% if(current_id === groupPost[1]){ %>
-                        <button class="btn btn-primary btn-post-modify">Módosítás</button>
-
-                        <div class="post-modify-popup">
-                            <form action="/post-modify-group" method="post">
-                                <textarea name="modifySzoveg" id="modifySzoveg" cols="40"
-                                          rows="5"><%= groupPost[3] %></textarea>
-                                <input type="hidden" name="postId" value="<%= groupPost[0] %>">
-                                <input type="hidden" name="currentGroupId" value="<%=groupPost[2]%>">
-                                <button type="submit" class="btn btn-primary">Mentés</button>
-                            </form>
-                        </div>
-                    <% } %>
-                    <% if(current_id === groupPost[1] || current_role === 'ADMIN'){ %>
-                        <form action="/post-delete-group" method="post">
-                            <input type="hidden" name="postId" value="<%= groupPost[0] %>">
-                            <input type="hidden" name="currentGroupId" value="<%=groupPost[2]%>">
-                            <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
-                        </form>
-                    <% } %>
-                </div>
-            </div>
-
-        <% })}} %>
-
     </div>
 
+    <% if(groupPosts.rows.length > 0){ %>
 
+    <% groupPosts.rows.forEach(function (groupPost){ %>
 
+    <div class="post">
+
+        <h3><a href="/otherProfile<%= groupPost[1] %>"> <%= groupPost[6] %> </a></h3>
+        <h4><%= groupPost[3] %></h4>
+        <p style="font-size: 1.75vh">Kedvelések száma:<%= groupPost[4] %> </p>
+        <div class="flex-grid-center-post-inside">
+            <form style="margin-bottom: 10px" action="/post-like-group" method="post">
+                <input type="hidden" name="postId" value="<%= groupPost[0] %>">
+                <input type="hidden" name="currentGroupId" value="<%= groupPost[2] %>">
+                <button type="submit" class="btn btn-primary">Kedvelés</button>
+            </form>
+            <% if(current_id === groupPost[1]){ %>
+                <button class="btn btn-primary btn-post-modify">Módosítás</button>
+
+                <div class="post-modify-popup">
+                    <form action="/post-modify-group" method="post">
+                                <textarea name="modifySzoveg" id="modifySzoveg" cols="40"
+                                          rows="5"><%= groupPost[3] %></textarea>
+                        <input type="hidden" name="postId" value="<%= groupPost[0] %>">
+                        <input type="hidden" name="currentGroupId" value="<%= groupPost[2] %>">
+                        <button type="submit" class="btn btn-primary">Mentés</button>
+                    </form>
+                </div>
+            <% } %>
+            <% if(current_id === groupPost[1] || current_role === 'ADMIN'){ %>
+                <form action="/post-delete-group" method="post">
+                    <input type="hidden" name="postId" value="<%= groupPost[0] %>">
+                    <input type="hidden" name="currentGroupId" value="<%= groupPost[2] %>">
+                    <button type="submit" class="btn btn-primary btn-post-hold">Törlés</button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+
+    <% })}} %>
+
+</div>
 
 
 <%- include('assets/footer') %>
