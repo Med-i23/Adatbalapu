@@ -6,12 +6,17 @@
 <%- include('assets/header') %>
 <div class="container form-container">
     <a href="/changeUserDataOf">
-        <button class="btn btn-primary">Change personal data</button>
+        <button class="btn btn-primary">Adatok módosítása</button>
     </a>
     <a href="/user-delete">
-        <button class="btn btn-primary btn-danger">DELETE ACCOUNT</button>
+        <button class="btn btn-primary btn-danger">FIÓK TÖRLÉSE</button>
     </a>
+    <h1>Kép feltöltése</h1>
+    <form action="/uploadProfilePic" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <button type="submit">Kép feltöltése</button>
+    </form>
+
 </div>
 <%- include('assets/footer') %>
 </body>
-</html>

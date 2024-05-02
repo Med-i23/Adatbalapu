@@ -7,6 +7,7 @@ const FriendsDAO = require('../dao/friends-dao');
 const GroupsDAO = require('../dao/groups-dao');
 const MessagesDAO = require('../dao/messages-dao');
 const NotificationsDAO = require('../dao/notifications-dao');
+const PicturesDAO = require("../dao/pictures-dao");
 const common = require("../dao/common")
 
 const jwt = require('jsonwebtoken')
@@ -14,6 +15,22 @@ const jwtSecret = require("./../config/auth.js");
 const {getGroups} = require("../dao/groups-dao");
 const {TIMESTAMP2} = require("mysql/lib/protocol/constants/types");
 const router = express.Router();
+
+const multer = require('multer');
+const path = require('path');
+
+
+//image uploader initailize
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Rename file if needed
+    }
+});
+
+const upload = multer({ storage: storage });
 
 //main region
 router.get("/", async (req, res) => {
@@ -1047,4 +1064,30 @@ router.post("/deleteNotif:id", async (req, res) => {
 
 
 //end-region
+
+//image-region
+router.post("/uploadProfilePic", upload.single("image"), async (req, res) => {
+        const token = req.cookies.jwt;
+        let current_name;
+        let current_birthday;
+        let current_role;
+        let current_status;
+        let current_id;
+        if (token) {
+            jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+                current_name = decodedToken.name;
+                current_birthday = decodedToken.birthday;
+                current_role = decodedToken.role;
+                current_id = decodedToken.id;
+                current_status = decodedToken.status;
+            });
+        }
+        let picName = req.file.filename;
+        await PicturesDAO.createPicture(current_id, null, picName);
+        return res.redirect('/profile');
+    }
+);
+
+//end-region
+
 module.exports = router;
