@@ -5,13 +5,10 @@
 <body class="w-100 h-100 d-flex flex-column min-vh-100">
 <%- include('assets/header') %>
 <div class="container form-container">
-    <a href="/changeUserDataOf">
-        <button class="btn btn-primary">Adatok módosítása</button>
-    </a>
-    <a href="/user-delete">
-        <button class="btn btn-primary btn-danger">FIÓK TÖRLÉSE</button>
-    </a>
-    <a href="/pictures"><button>Fényképek</button></a>
+    <a href="/changeUserDataOf"><button class="btn btn-primary">Adatok módosítása</button></a>
+    <a href="/user-delete"><button class="btn btn-primary btn-danger">FIÓK TÖRLÉSE</button></a>
+    <a href="/pictures"><button class="btn btn-primary">Fényképek</button></a>
+    <a href="/albums"><button class="btn btn-primary">Albumok</button></a>
     <h1>Kép feltöltése</h1>
     <form action="/uploadProfilePic" method="POST" enctype="multipart/form-data">
         <input type="file" name="image">

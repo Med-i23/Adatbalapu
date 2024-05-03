@@ -18,7 +18,7 @@ const router = express.Router();
 
 const multer = require('multer');
 const path = require('path');
-const {getOwnPictures} = require("../dao/pictures-dao");
+const {getOwnPictures, getAlbumPictures, getOwnAlbums} = require("../dao/pictures-dao");
 
 
 //image uploader initailize
@@ -1133,6 +1133,34 @@ router.get("/pictures", async (req, res) => {
         current_birthday: current_birthday,
         current_status: current_status,
         pictures: pics
+    });
+});
+
+router.get("/albums", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    let albums = await getOwnAlbums(current_id)
+    return res.render('albums',{
+        current_name: current_name,
+        current_role: current_role,
+        current_id: current_id,
+        current_birthday: current_birthday,
+        current_status: current_status,
+        albums: albums
     });
 });
 //split-image-region

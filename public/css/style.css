@@ -101,9 +101,10 @@
 /*button:hover {*/
 /*    background: #0056b3;*/
 /*}*/
-body{
+body {
     position: relative;
 }
+
 /*main-be a posztokhoz*/
 .flex-grid {
     display: flex;
@@ -116,14 +117,14 @@ body{
 
 /*Csoportokhoz*/
 
- .flex-grid-groups{
-     display: flex;
-     flex-direction: row;
-     justify-content: space-around;
-     flex-wrap: nowrap;
-     gap: 10px;
-     align-items: flex-start;
- }
+.flex-grid-groups {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: flex-start;
+}
 
 .flex-grid-center {
     flex: 0.5;
@@ -180,10 +181,12 @@ body{
 .post-modify-popup {
     display: none;
 }
-.make_max{
+
+.make_max {
     max-width: 100vh;
 }
-svg #prof_guy{
+
+svg #prof_guy {
     fill: #ffff;
     transition: fill 0.25s ease;
 }
@@ -191,7 +194,9 @@ svg #prof_guy{
 svg:hover {
     fill: lightgray;
 }
+a{
 
+}
 /* Scrollbar
 ::-webkit-scrollbar {
     width: 10px;

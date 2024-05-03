@@ -6,9 +6,9 @@
 <%- include('assets/header') %>
 
 <div class="container-fluid">
-    <% pictures.forEach(pic =>{ %>
-        <img class="img-thumbnail" src="uploads/<%= pic[3] %>" alt="picture" width="10%" height="10%" data-bs-toggle="modal" data-bs-target="#imageModal">
-    <% }) %>
+    <% for (let i = 0; i < pictures.length; i++) {%>
+        <img class="img-thumbnail" src="uploads/<%= pictures[i][3] %>" alt="picture" width="10%" height="10%" data-bs-toggle="modal" data-bs-target="#imageModal">
+    <% } %>
 
     <div class="modal fade position-relative" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
