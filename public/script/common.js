@@ -1,7 +1,6 @@
 const modifyButtons = document.querySelectorAll('.btn-post-modify');
 const modifyPopups = document.querySelectorAll('.post-modify-popup');
 const textareaSzovegek = document.querySelectorAll('#modifySzoveg');
-
 //minden node listben, minden modify buttonhoz sajat textareat rendel,
 //így külön külön műkszik
 //a querySelectorcsak egyet tud kezelni, ezért nem működött a többi
@@ -20,7 +19,7 @@ modifyButtons.forEach(function (modifyButton, index) {
 
 
 $(document).ready(function () {
-    var isDropdownOpen = false;
+    let isDropdownOpen = false;
 
     $('.dropdown-toggle').click(function (event) {
         event.stopPropagation();
@@ -40,4 +39,9 @@ $(document).ready(function () {
 
 });
 
+
+$('.img-thumbnail').on('click', function() {
+    var imageSrc = $(this).attr('src');
+    $('#modalImage').attr('src', imageSrc);
+});
 

@@ -18,6 +18,7 @@ const router = express.Router();
 
 const multer = require('multer');
 const path = require('path');
+const {getOwnPictures} = require("../dao/pictures-dao");
 
 
 //image uploader initailize
@@ -229,16 +230,32 @@ router.post("/register", async (req, res) => {
 //profile-region
 router.get("/profile", async (req, res) => {
     const token = req.cookies.jwt;
-    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token){
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+
+
+
         return res.render('profile', {
-            current_name: decodedToken.name,
-            current_birthday: decodedToken.birthday,
-            current_role: decodedToken.role,
-            current_id: decodedToken.id,
-            current_status: decodedToken.status,
-            errors: []
-        })
-    });
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            images:[]
+        });
+    }
+
 });
 
 router.get("/otherProfile:id", async (req, res) => {
@@ -1085,8 +1102,43 @@ router.post("/uploadProfilePic", upload.single("image"), async (req, res) => {
         let picName = req.file.filename;
         await PicturesDAO.createPicture(current_id, null, picName);
         return res.redirect('/profile');
+        //a path félrevezető, a profile picet úgy tudjuk megoldani a jelenlegi táblákkal, hogy létrehozunk egy default posztot
+        // ami ha idként megvan adva akkor az = azzal hogy a kép profile picje a usernek
     }
 );
+
+//end-region
+router.get("/pictures", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    let pics = await getOwnPictures(current_id)
+    return res.render('pictures',{
+        current_name: current_name,
+        current_role: current_role,
+        current_id: current_id,
+        current_birthday: current_birthday,
+        current_status: current_status,
+        pictures: pics
+    });
+});
+//split-image-region
+
+
+
 
 //end-region
 
