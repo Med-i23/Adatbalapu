@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('assets/head') %>
+
+<body class="w-100 h-100 d-flex flex-column min-vh-100">
+<%- include('assets/header') %>
+
+<div class="container mt-5">
+    <h1>Create New Album</h1>
+    <form action="/createAlbum" method="POST">
+        <div class="mb-3">
+            <label for="albumName" class="form-label">Album név</label>
+            <input type="text" class="form-control" id="albumName" name="albumName" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Válassz ki képeket</label>
+            <% for (let i = 0; i < pictures.length; i++) {%>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="pic_<%= pictures[i][0] %>" name="selectedPictures" value="<%= pictures[i][0] %>">
+                    <label class="form-check-label" for="pic_<%= pictures[i][0] %>"><img src="uploads/<%= pictures[i][3] %>" alt="Picture" style="max-width: 100px;"></label>
+                </div>
+            <% }; %>
+        </div>
+        <button type="submit" class="btn btn-primary">Album létrehozása</button>
+    </form>
+</div>
+
+<%- include('assets/footer') %>
+</body>

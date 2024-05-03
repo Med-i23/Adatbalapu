@@ -5,8 +5,14 @@
 <body class="w-100 h-100 d-flex flex-column min-vh-100">
 <%- include('assets/header') %>
 
+<div>
+    <a href="/albumCreate">
+        <button class="btn btn-primary">Új album</button>
+    </a>
+</div>
+
 <div class="container-fluid">
-    <% for (let i = 0; i < albums.length; i++) {%>
+    <% for (let i = 0; i < albums.length; i++) { %>
         <div class="text-primary"> <%= albums[i][2] %></div>
     <% } %>
 </div>
