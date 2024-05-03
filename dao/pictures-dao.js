@@ -26,3 +26,7 @@ exports.getOwnAlbums = async (felh_id) => {
     let quearyese = await query('SELECT * FROM ALBUM WHERE FELH_ID = :felh_id', [felh_id]);
     return quearyese.rows
 }
+
+exports.getLatestAlbumGenerate = async () => {
+    return await query('SELECT * FROM ALBUM ORDER BY ID DESC');
+}

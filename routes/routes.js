@@ -1083,7 +1083,7 @@ router.post("/deleteNotif:id", async (req, res) => {
 //end-region
 
 //image-region
-router.post("/uploadProfilePic", upload.single("image"), async (req, res) => {
+router.post("/uploadPic", upload.single("image"), async (req, res) => {
         const token = req.cookies.jwt;
         let current_name;
         let current_birthday;
@@ -1102,8 +1102,6 @@ router.post("/uploadProfilePic", upload.single("image"), async (req, res) => {
         let picName = req.file.filename;
         await PicturesDAO.createPicture(current_id, null, picName);
         return res.redirect('/profile');
-        //a path félrevezető, a profile picet úgy tudjuk megoldani a jelenlegi táblákkal, hogy létrehozunk egy default posztot
-        // ami ha idként megvan adva akkor az = azzal hogy a kép profile picje a usernek
     }
 );
 
@@ -1204,15 +1202,15 @@ router.post("/createAlbum", async (req, res) => {
     }
 
     const { albumName, selectedPictures } = req.body;
-    const albumId = await PicturesDAO.createAlbum(current_id, albumName);
-    console.log(albumId);
+    await PicturesDAO.createAlbum(current_id, albumName);
+
+    const albumId = await PicturesDAO.getLatestAlbumGenerate();
 
     if (selectedPictures && selectedPictures.length > 0) {
         for (const picId of selectedPictures) {
-            await PicturesDAO.addPicToAlbum(picId, albumId);
+            await PicturesDAO.addPicToAlbum(picId, albumId.rows[0][0]);
         }
     }
-
     return res.redirect('/albums');
 });
 
