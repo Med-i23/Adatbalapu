@@ -76,9 +76,9 @@
         <div class="card-header">
             <h1><%= currentGroup[1] %></h1>
             <span class="float-end">Tagok száma: <%= memberNumber%>
-                <form method="post" action="/members"><label>
+                <form method="post" action="/membersAll"><label>
                     <input type="hidden" value="<%= currentGroup[0] %>"  name="groupId" >
-                    </label><button type="submit" class="btn btn-primary" href="/members"> Tagok</button>
+                    </label><button type="submit" class="btn btn-primary"> Tagok</button>
                 </form>
             </span>
         </div>

@@ -23,15 +23,15 @@ const {getOwnPictures, getOwnAlbums} = require("../dao/pictures-dao");
 
 //image uploader initailize
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, 'uploads/');
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Rename file if needed
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage});
 
 //main region
 router.get("/", async (req, res) => {
@@ -236,7 +236,7 @@ router.get("/profile", async (req, res) => {
     let current_role;
     let current_status;
     let current_id;
-    if (token){
+    if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_name = decodedToken.name;
             current_birthday = decodedToken.birthday;
@@ -245,17 +245,15 @@ router.get("/profile", async (req, res) => {
             current_status = decodedToken.status;
         });
 
-
-
         return res.render('profile', {
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
             current_birthday: current_birthday,
             current_status: current_status,
-            images:[]
+            images: []
         });
-    }else{
+    } else {
         return res.redirect('/logout');
     }
 
@@ -302,27 +300,30 @@ router.get("/otherProfile:id", async (req, res) => {
             })
         }
 
-
-    }else{
+    } else {
         return res.redirect('/logout');
     }
-
 
 
 });
 
 router.get("/changeUserDataOf", async (req, res) => {
     const token = req.cookies.jwt;
-    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        return res.render('changeUserDataOf', {
-            current_name: decodedToken.name,
-            current_birthday: decodedToken.birthday,
-            current_role: decodedToken.role,
-            current_id: decodedToken.id,
-            current_status: decodedToken.status,
-            errors: []
-        })
-    });
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            return res.render('changeUserDataOf', {
+                current_name: decodedToken.name,
+                current_birthday: decodedToken.birthday,
+                current_role: decodedToken.role,
+                current_id: decodedToken.id,
+                current_status: decodedToken.status,
+                errors: []
+            })
+        });
+    } else {
+        return res.redirect('/logout');
+    }
+
 });
 
 router.post("/changeUserDataOf:name", async (req, res) => {
@@ -330,98 +331,107 @@ router.post("/changeUserDataOf:name", async (req, res) => {
     let errors = [];
     let {name, email, birthday, password, re_password} = req.body;
     let current_email, current_name, beNev, beSzul, beMail, beJel;
-    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        current_email = decodedToken.email
-        current_name = decodedToken.name
-        beSzul = new Date(decodedToken.birthday).toISOString().slice(0, 10)
-    });
-    beNev = current_name
-    beMail = current_email
-    let currentUser = await UsersDAO.getUserByEmail(current_email);
-
-    if (currentUser.rows.length > 0) {
-        beJel = currentUser.rows[0][4]
-    }
-    if (name.trim() !== "") {
-        beNev = name.trim()
-    }
-    if (birthday.trim() !== "") {
-        beSzul = new Date(birthday).toISOString().slice(0, 10)
-    }
-    if (email.trim() !== "") {
-        beMail = email
-    }
-    const vanemail = await UsersDAO.getUserEmail(email)
-    if (!common.isDateValid(beSzul)) {
-        if (errors.length === 0) {
-            errors.push({hibaChanges: "Érvényes születési dátumot adj meg!"})
-        }
-    }
-    if (vanemail.rows.length > 0) {
-        if (errors.length === 0) {
-            errors.push({hibaChanges: "Ezen az email-en már létezik fiók!"})
-        }
-    }
-    if (password !== re_password && password.trim() !== "") {
-        if (errors.length === 0) {
-            errors.push({hibaChanges: "Jelszó nem egyezik!"})
-        }
-    }
-    const injectCheck = name + email + password;
-    const regex = /['=*?#-]/g;
-    if (regex.test(injectCheck)) {
-        if (errors.length === 0) {
-            errors.push({hibaChanges: "Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"})
-        }
-    }
-    if (errors.length === 0) {
-        bcrypt.hash(password, 10).then((hash) => {
-            if (password.trim() === "") {
-                hash = beJel
-            }
-            UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(() => {
-                errors.push({success: "Sikeres adatmódosítás"})
-                res.clearCookie('jwt')
-                const token = jwt.sign({
-                        id: currentUser.rows[0][0],
-                        name: beNev,
-                        email: beMail,
-                        birthday: beSzul,
-                        status: currentUser.rows[0][5],
-                        role: currentUser.rows[0][6]
-                    },
-                    jwtSecret.jwtSecret
-                );
-                res.cookie("jwt", token, {
-                    httpOnly: true
-                });
-
-                return res.render("changeUserDataOf", {
-                    current_name: beNev, errors: errors
-                })
-            })
-        }).catch(err => {
-            if (errors.length === 0) {
-                errors.push({hibaChanges: "Sikeretelen adatmódosítás"})
-            }
-            return res.status(500).send("Internal Server Error");
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_email = decodedToken.email
+            current_name = decodedToken.name
+            beSzul = new Date(decodedToken.birthday).toISOString().slice(0, 10)
         });
+        beNev = current_name
+        beMail = current_email
+        let currentUser = await UsersDAO.getUserByEmail(current_email);
+
+        if (currentUser.rows.length > 0) {
+            beJel = currentUser.rows[0][4]
+        }
+        if (name.trim() !== "") {
+            beNev = name.trim()
+        }
+        if (birthday.trim() !== "") {
+            beSzul = new Date(birthday).toISOString().slice(0, 10)
+        }
+        if (email.trim() !== "") {
+            beMail = email
+        }
+        const vanemail = await UsersDAO.getUserEmail(email)
+        if (!common.isDateValid(beSzul)) {
+            if (errors.length === 0) {
+                errors.push({hibaChanges: "Érvényes születési dátumot adj meg!"})
+            }
+        }
+        if (vanemail.rows.length > 0) {
+            if (errors.length === 0) {
+                errors.push({hibaChanges: "Ezen az email-en már létezik fiók!"})
+            }
+        }
+        if (password !== re_password && password.trim() !== "") {
+            if (errors.length === 0) {
+                errors.push({hibaChanges: "Jelszó nem egyezik!"})
+            }
+        }
+        const injectCheck = name + email + password;
+        const regex = /['=*?#-]/g;
+        if (regex.test(injectCheck)) {
+            if (errors.length === 0) {
+                errors.push({hibaChanges: "Egyik mező sem tartalmazhat speciális karatert! (', =, ?, *, #, -)"})
+            }
+        }
+        if (errors.length === 0) {
+            bcrypt.hash(password, 10).then((hash) => {
+                if (password.trim() === "") {
+                    hash = beJel
+                }
+                UsersDAO.updateUser(beNev, beMail, beSzul, hash, current_email).then(() => {
+                    errors.push({success: "Sikeres adatmódosítás"})
+                    res.clearCookie('jwt')
+                    const token = jwt.sign({
+                            id: currentUser.rows[0][0],
+                            name: beNev,
+                            email: beMail,
+                            birthday: beSzul,
+                            status: currentUser.rows[0][5],
+                            role: currentUser.rows[0][6]
+                        },
+                        jwtSecret.jwtSecret
+                    );
+                    res.cookie("jwt", token, {
+                        httpOnly: true
+                    });
+
+                    return res.render("changeUserDataOf", {
+                        current_name: beNev, errors: errors
+                    })
+                })
+            }).catch(err => {
+                if (errors.length === 0) {
+                    errors.push({hibaChanges: "Sikeretelen adatmódosítás"})
+                }
+                return res.status(500).send("Internal Server Error");
+            });
+        } else {
+            return res.render("changeUserDataOf", {
+                current_name: beNev, errors: errors
+            })
+        }
     } else {
-        return res.render("changeUserDataOf", {
-            current_name: beNev, errors: errors
-        })
+        return res.redirect('/logout');
     }
 
 })
 
 router.get("/user-delete", async (req, res) => {
     const token = req.cookies.jwt
-    jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
-        UsersDAO.deleteUser(decodedToken.id).then(() => {
-            res.clearCookie('jwt')
-            res.redirect('/')
-        })
-    });
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            UsersDAO.deleteUser(decodedToken.id).then(() => {
+                res.clearCookie('jwt')
+                res.redirect('/')
+            })
+        });
+    } else {
+        return res.redirect('/logout');
+    }
+
 })
 
 // end-region
@@ -465,7 +475,7 @@ router.get("/connection", async (req, res) => {
             current_status: current_status,
             adminHiba: null
         });
-    }else{
+    } else {
         return res.redirect('login');
     }
 });
@@ -503,7 +513,7 @@ router.post("/deleteUser:id", async (req, res) => {
             await UsersDAO.deleteUser(id);
             return res.redirect('/connection');
         }
-    }else{
+    } else {
         return res.redirect('login');
     }
 
@@ -515,7 +525,6 @@ router.post("/deleteUser:id", async (req, res) => {
 //region-posts
 
 router.post("/post-add-new", async (req, res) => {
-
     const token = req.cookies.jwt;
     let current_id;
 
@@ -523,39 +532,53 @@ router.post("/post-add-new", async (req, res) => {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_id = decodedToken.id;
         });
-    }
+        let posztSzoveg = req.body.posztSzoveg;
 
-    let posztSzoveg = req.body.posztSzoveg;
+        if (posztSzoveg.length === 0) {
+            return res.redirect('/main');
+        }
 
-    if (posztSzoveg.length === 0) {
+        await PostsDAO.postCreate(null, posztSzoveg, current_id);
         return res.redirect('/main');
+    } else {
+        return res.redirect('/logout');
     }
-
-    await PostsDAO.postCreate(null, posztSzoveg, current_id);
-    return res.redirect('/main');
-
-
 });
 router.post("/post-like", async (req, res) => {
     let postId = req.body.postId;
-    await PostsDAO.postAddLike(postId);
-    return res.redirect('/main');
+    const token = req.cookies.jwt;
+    if (token) {
+        await PostsDAO.postAddLike(postId);
+        return res.redirect('/main');
+    } else {
+        return res.redirect('/logout');
+    }
+
 
 });
 
 router.post("/post-modify", async (req, res) => {
     let postId = req.body.postId;
     let postSzoveg = req.body.modifySzoveg;
-    await PostsDAO.postModify(postSzoveg, postId);
-    return res.redirect('/main');
-
+    const token = req.cookies.jwt;
+    if (token) {
+        await PostsDAO.postModify(postSzoveg, postId);
+        return res.redirect('/main');
+    } else {
+        return res.redirect('/logout');
+    }
 });
 
 
 router.post("/post-delete", async (req, res) => {
     let postId = req.body.postId;
-    await PostsDAO.postDelete(postId);
-    return res.redirect('/main');
+    const token = req.cookies.jwt;
+    if (token) {
+        await PostsDAO.postDelete(postId);
+        return res.redirect('/main');
+    } else {
+        return res.redirect('/logout');
+    }
 });
 
 
@@ -599,7 +622,7 @@ router.get("/groups_all", async (req, res) => {
             currentGroup: []
         });
     } else {
-        return res.redirect("/groups_all")
+        return res.redirect('/logout');
     }
 });
 
@@ -636,7 +659,7 @@ router.get("/groups_own", async (req, res) => {
             currentGroup: []
         });
     } else {
-        return res.redirect("/groups_own")
+        return res.redirect('/logout');
     }
 });
 router.post("/group-create-new", async (req, res) => {
@@ -648,23 +671,28 @@ router.post("/group-create-new", async (req, res) => {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_id = decodedToken.id;
         });
-    }
+        let csoportNeve = req.body.csoportNeve;
 
-    let csoportNeve = req.body.csoportNeve;
+        if (csoportNeve.length === 0) {
+            return res.redirect('/groups_own');
+        }
 
-    if (csoportNeve.length === 0) {
+        await GroupsDAO.groupCreate(csoportNeve, current_id);
         return res.redirect('/groups_own');
+    } else {
+        return res.redirect('/logout');
     }
-
-    await GroupsDAO.groupCreate(csoportNeve, current_id);
-    return res.redirect('/groups_own');
-
 
 });
 router.post("/group-delete", async (req, res) => {
     let groupId = req.body.groupId;
-    await GroupsDAO.groupDelete(groupId);
-    return res.redirect('/groups_own');
+    const token = req.cookies.jwt;
+    if (token) {
+        await GroupsDAO.groupDelete(groupId);
+        return res.redirect('/groups_own');
+    } else {
+        return res.redirect('/logout');
+    }
 });
 router.post("/group-join", async (req, res) => {
     let groupId = req.body.groupId;
@@ -733,7 +761,7 @@ router.get("/group-refresh", async (req, res) => {
             memberNumber
         });
     } else {
-        return res.redirect("/group-checkout")
+        return res.redirect('/logout');
     }
 });
 
@@ -778,7 +806,7 @@ router.post("/group-checkout", async (req, res) => {
             memberNumber
         });
     } else {
-        return res.redirect("/group-refresh")
+        return res.redirect('/logout');
     }
 });
 
@@ -793,22 +821,30 @@ router.post("/post-add-new-into-roup", async (req, res) => {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_id = decodedToken.id;
         });
-    }
+        let posztSzoveg = req.body.posztSzoveg;
+        if (posztSzoveg.length === 0) {
+            return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+        }
 
-    let posztSzoveg = req.body.posztSzoveg;
-    if (posztSzoveg.length === 0) {
+        await PostsDAO.postCreate(currentGroupId, posztSzoveg, current_id);
         return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    } else {
+        return res.redirect('/logout');
     }
 
-    await PostsDAO.postCreate(currentGroupId, posztSzoveg, current_id);
-    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+
 });
 
 router.post("/post-like-group", async (req, res) => {
     let postId = req.body.postId;
     let currentGroupId = req.body.currentGroupId;
-    await PostsDAO.postAddLike(postId);
-    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    const token = req.cookies.jwt;
+    if (token) {
+        await PostsDAO.postAddLike(postId);
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    } else {
+        return res.redirect('/logout');
+    }
 
 });
 
@@ -816,16 +852,28 @@ router.post("/post-modify-group", async (req, res) => {
     let postId = req.body.postId;
     let postSzoveg = req.body.modifySzoveg;
     let currentGroupId = req.body.currentGroupId;
-    await PostsDAO.postModify(postSzoveg, postId);
-    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+
+    const token = req.cookies.jwt;
+    if (token) {
+        await PostsDAO.postModify(postSzoveg, postId);
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    } else {
+        return res.redirect('/logout');
+    }
+
 });
 
 router.post("/post-delete-group", async (req, res) => {
     let postId = req.body.postId;
     let currentGroupId = req.body.currentGroupId;
-    await PostsDAO.postDelete(postId);
-    return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
 
+    const token = req.cookies.jwt;
+    if (token) {
+        await PostsDAO.postDelete(postId);
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    } else {
+        return res.redirect('/logout');
+    }
 });
 
 //end-region
@@ -843,6 +891,7 @@ router.post("/post-delete-group", async (req, res) => {
 //         })
 //     });
 // });
+
 //people-region
 
 router.get("/people", async (req, res) => {
@@ -1093,8 +1142,14 @@ router.get("/notifications", async (req, res) => {
 
 router.post("/deleteNotif:id", async (req, res) => {
     let id = req.params.id;
-    await NotificationsDAO.deleteNotification(id);
-    return res.redirect('/notifications');
+    const token = req.cookies.jwt;
+    if (token) {
+        await NotificationsDAO.deleteNotification(id);
+        return res.redirect('/notifications');
+    } else {
+        return res.redirect("/logout")
+    }
+
 });
 
 
@@ -1116,10 +1171,13 @@ router.post("/uploadPic", upload.single("image"), async (req, res) => {
                 current_id = decodedToken.id;
                 current_status = decodedToken.status;
             });
+            let picName = req.file.filename;
+            await PicturesDAO.createPicture(current_id, null, picName);
+            return res.redirect('/profile');
+        } else {
+            return res.redirect("/logout")
         }
-        let picName = req.file.filename;
-        await PicturesDAO.createPicture(current_id, null, picName);
-        return res.redirect('/profile');
+
     }
 );
 
@@ -1139,17 +1197,18 @@ router.get("/pictures", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+        let pics = await getOwnPictures(current_id)
+        return res.render('pictures', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            pictures: pics
+        });
+    } else {
+        return res.redirect("/logout")
     }
-
-    let pics = await getOwnPictures(current_id)
-    return res.render('pictures',{
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        pictures: pics
-    });
 });
 
 
@@ -1168,18 +1227,19 @@ router.get("/albumCreate", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+        let pics = await getOwnPictures(current_id)
+        //console.log(pics);
+        return res.render('albumCreate', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            pictures: pics
+        });
+    } else {
+        return res.redirect("/logout")
     }
-
-    let pics = await getOwnPictures(current_id)
-    //console.log(pics);
-    return res.render('albumCreate',{
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        pictures: pics
-    });
 });
 
 router.get("/albums", async (req, res) => {
@@ -1197,18 +1257,21 @@ router.get("/albums", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+        let albums = await PicturesDAO.getOwnAlbums(current_id)
+        return res.render('albums', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            albums: albums,
+            selectedAlbum: null
+        });
+    } else {
+        return res.redirect("/logout")
     }
 
-    let albums = await PicturesDAO.getOwnAlbums(current_id)
-    return res.render('albums',{
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        albums: albums,
-        selectedAlbum: null
-    });
+
 });
 
 router.get("/albums:id", async (req, res) => {
@@ -1228,20 +1291,23 @@ router.get("/albums:id", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+        let pics = await PicturesDAO.getAlbumPicsById(id);
+        console.log(pics);
+        let albums = await PicturesDAO.getOwnAlbums(current_id)
+        return res.render('albums', {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            albums: albums,
+            selectedAlbum: pics.rows
+        });
+    } else {
+        return res.redirect("/logout")
     }
 
-    let pics = await PicturesDAO.getAlbumPicsById(id);
-    console.log(pics);
-    let albums = await PicturesDAO.getOwnAlbums(current_id)
-    return res.render('albums',{
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        albums: albums,
-        selectedAlbum: pics.rows
-    });
+
 });
 
 
@@ -1252,33 +1318,30 @@ router.post("/createAlbum", async (req, res) => {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_id = decodedToken.id;
         });
-    }
+        const {albumName, selectedPictures} = req.body;
+        await PicturesDAO.createAlbum(current_id, albumName);
 
-    const { albumName, selectedPictures } = req.body;
-    await PicturesDAO.createAlbum(current_id, albumName);
+        const albumId = await PicturesDAO.getLatestAlbumGenerate();
 
-    const albumId = await PicturesDAO.getLatestAlbumGenerate();
-
-    if (selectedPictures && selectedPictures.length > 0) {
-        for (const picId of selectedPictures) {
-            await PicturesDAO.addPicToAlbum(picId, albumId.rows[0][0]);
+        if (selectedPictures && selectedPictures.length > 0) {
+            for (const picId of selectedPictures) {
+                await PicturesDAO.addPicToAlbum(picId, albumId.rows[0][0]);
+            }
         }
+        return res.redirect('/albums');
+    } else {
+        return res.redirect("/logout")
     }
-    return res.redirect('/albums');
 });
-
 
 
 //split-image-region
 
 
-
-
 //end-region
 
 //members-region
-
-router.post("/members", async (req, res) => {
+router.post("/membersAll", async (req, res) => {
     const token = req.cookies.jwt;
     let currentGroupId = req.body.groupId
     let current_name;
@@ -1298,16 +1361,16 @@ router.post("/members", async (req, res) => {
         //console.log(currentGroupId)
         //console.log(members)
         let isUserOwner = await GroupsDAO.isUserOwnerInGroup(currentGroupId, current_id)
-        return res.render("members",{
+        return res.render("members", {
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
             current_birthday: current_birthday,
             current_status: current_status,
-            members, isUserOwner
+            members, isUserOwner, currentGroupId
         });
 
-    }else {
+    } else {
         return res.redirect('/logout')
     }
 
@@ -1329,15 +1392,128 @@ router.post("/removeFromGroup", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-    await GroupsDAO.removeMemberFromGroup(groupFrom,userToDel)
-        return  res.redirect('/members');
-
-    }else {
+        await GroupsDAO.removeMemberFromGroup(groupFrom, userToDel)
+        let members = await GroupsDAO.getMembersOfGroup(groupFrom)
+        let isUserOwner = await GroupsDAO.isUserOwnerInGroup(groupFrom, current_id)
+        return res.render("members", {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            groupFrom, members, isUserOwner
+        });
+    } else {
         return res.redirect('/logout')
     }
 
 })
-//ahol token ellenőrzést kell csinálni, ott átkell írni hogy akárki ne tudjon belső oldalakra jutni !important guys
+//end-region
+
+//friends-region
+
+router.get("/friends", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        let friends = await FriendsDAO.getUsersFriendsById(current_id)
+        friends = friends.rows
+
+        return res.render("friends", {
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            friends
+        });
+
+    } else {
+        return res.redirect('/logout')
+    }
+})
+
+router.post("/block", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let friendId = req.body.friendId
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        await FriendsDAO.blockFriend(current_id,friendId)
+        return res.redirect('/friends')
+    } else {
+        return res.redirect('/logout')
+    }
+})
+
+router.post("/unblock", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let friendId = req.body.friendId
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        await FriendsDAO.unblockFriend(current_id,friendId)
+        return res.redirect('/friends')
+    } else {
+        return res.redirect('/logout')
+    }
+})
+
+router.post("/removeFriend", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let friendId = req.body.friendId
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        await FriendsDAO.deleteFriendOf(current_id,friendId)
+        return res.redirect('/friends')
+    } else {
+        return res.redirect('/logout')
+    }
+})
+
+
 //end-region
 
 module.exports = router;

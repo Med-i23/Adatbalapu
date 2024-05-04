@@ -9,10 +9,11 @@
         <div class="card flex-column">
             <div class="card-header">
                 <%= member[0] %>
+            <% if (isUserOwner){%>
                 <form action="/removeFromGroup" method="post">
-                    <input type="hidden" value="<%= member[3] %>" name="userToDel">
-                    <input type="hidden" value="<%= member[2] %>" name="groupFrom">
-                    <button type="submit">
+                    <input type="hidden" value="<%= member[2] %>" name="userToDel">
+                    <input type="hidden" value="<%= member[3] %>" name="groupFrom">
+                    <button type="submit" class="btn">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#000000"
                              version="1.1" id="Capa_1" width="20px" height="20px" color="red" viewBox="0 0 485 485" xml:space="preserve" class="trash">
                                 <g>
@@ -24,44 +25,11 @@
                             </svg>
                     </button>
                 </form>
+                <%}%>
             </div>
         </div>
-        <div class="card flex-column">
-            <div class="card-header">
-                <%= member[0] %>
-            </div>
-        </div>
-        <div class="card flex-column">
-            <div class="card-header">
-                <%= member[0] %>
-            </div>
-        </div>
-        <div class="card flex-column">
-            <div class="card-header">
-                <%= member[0] %>
-            </div>
-        </div>
-        <div class="card flex-column">
-            <div class="card-header">
-                <%= member[0] %>
-            </div>
-        </div>
-        <div class="card flex-column">
-            <div class="card-header">
-                <%= member[0] %>
-            </div>
-        </div>
-        <div class="card flex-column">
-            <div class="card-header">
-                <%= member[0] %>
-            </div>
-        </div>
-
-    <%
-    }) %>
+    <%}) %>
 </div>
-
-
 <%- include('assets/footer') %>
 </body>
 </html>

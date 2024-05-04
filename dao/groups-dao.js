@@ -51,10 +51,16 @@ exports.getMembersOfGroup = async (groupId) => {
 };
 
 exports.isUserOwnerInGroup = async (groupId,userId) => {
-    let q = await query('SELECT ROLE FROM TAG INNER JOIN CSOPORT on Csoport.ID = TAG.CSOPORT_ID INNER JOIN FELHASZNALO ON FELHASZNALO.ID = TAG.FELH_ID WHERE CSOPORT_ID = :groupId AND TAG.FELH_ID = :userId', [groupId,userId]);
-    return q.rows[0][0] === "owner"
+    let q = await query('SELECT CSOPORT_ROLE FROM TAG INNER JOIN CSOPORT on Csoport.ID = TAG.CSOPORT_ID INNER JOIN FELHASZNALO ON FELHASZNALO.ID = TAG.FELH_ID WHERE CSOPORT_ID = :groupId AND TAG.FELH_ID = :userId', [groupId,userId]);
+    if (typeof q.rows[0] !== 'undefined'){
+        return q.rows[0][0] === "owner";
+    }else {
+        return false
+    }
 };
 
 exports.removeMemberFromGroup = async (groupId, userId) => {
+    let q = await query('SELECT * FROM TAG WHERE CSOPORT_ID = :groupId AND FELH_ID = :userId', [groupId, userId]);
+    console.log(q.rows)
     await query('DELETE FROM TAG WHERE CSOPORT_ID = :groupId AND FELH_ID = :userId', [groupId, userId]);
 };

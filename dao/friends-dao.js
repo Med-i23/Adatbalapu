@@ -15,3 +15,18 @@ exports.areTheyFriends = async (felh1_id, felh2_id) => {
 exports.getUsersFriendsById = async (id) => {
     return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id', [id]);
 };
+
+exports.deleteFriendOf = async (felh_id, friend_id) => {
+     await query('DELETE FROM ISMEROS WHERE FELH1_ID = :felh_id and FELH2_ID = :friend_id', [felh_id, friend_id]);
+     await query('DELETE FROM ISMEROS WHERE FELH1_ID = :friend_id and FELH2_ID = :felh_id', [friend_id,felh_id]);
+};
+
+exports.blockFriend = async (felh_id, friend_id) => {
+    let text = "disabled"
+    await query('UPDATE ISMEROS SET BARATI_ALLAPOT = :text  WHERE FELH1_ID = :felh_id and FELH2_ID = :friend_id', [text,felh_id, friend_id]);
+};
+
+exports.unblockFriend = async (felh_id, friend_id) => {
+    let text = "active"
+    await query('UPDATE ISMEROS SET BARATI_ALLAPOT = :text  WHERE FELH1_ID = :felh_id and FELH2_ID = :friend_id', [text,felh_id, friend_id]);
+};

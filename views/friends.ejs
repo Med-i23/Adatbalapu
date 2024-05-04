@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('assets/head') %>
+
+<body class="w-100 h-100 d-flex flex-column min-vh-100">
+<%- include('assets/header') %>
+<div class="d-flex flex-row justify-content-around">
+    <% friends.forEach(friend =>{ %>
+        <div class="card flex-column">
+            <div class="card-header">
+                <h5 class="text-center <%= friend[9] === 'disabled' ? "text-danger" : "text-success"%>"><%= friend[1] %></h5>
+                <h6 class="text-center">Currently: <%= friend[9] === 'disabled' ? "blocked" : "unblocked"%></h6>
+                <div style="display: flex; justify-content: space-between;">
+                    <form action="/block" method="post">
+                        <input type="hidden" name="friendId" value="<%= friend[8] %>">
+                        <button class="btn btn-primary" type="submit">Block</button>
+                    </form>
+                    <form action="/unblock" method="post">
+                        <input type="hidden" name="friendId" value="<%= friend[8] %>">
+                        <button class="btn btn-primary" type="submit">Unblock</button>
+                    </form>
+                    <form action="/removeFriend" method="post">
+                        <input type="hidden" name="friendId" value="<%= friend[8] %>">
+                        <button class="btn btn-primary" type="submit">Remove</button>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
+    <% }) %>
+</div>
+<%- include('assets/footer') %>
+</body>
+</html>
