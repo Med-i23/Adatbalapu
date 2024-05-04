@@ -1289,7 +1289,7 @@ router.post("/removeFromGroup", async (req, res) => {
     }
 
 })
-
+//ahol token ellenőrzést kell csinálni, ott átkell írni hogy akárki ne tudjon belső oldalakra jutni !important guys
 //end-region
 
 module.exports = router;
