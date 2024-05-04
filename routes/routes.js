@@ -80,6 +80,7 @@ router.get("/main", async (req, res) => {
 
         const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday(current_id);
+        console.log(birthdays)
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
         //Átírni a szüliket-> csak friendek láthassák + ne látszódjon a saját, DELETED_USER
         return res.render('main', {
@@ -703,6 +704,7 @@ router.get("/group-refresh", async (req, res) => {
 
         let current_group = await GroupsDAO.getCurrentGroupById(currentGroupId)
         current_group = current_group.rows[0]
+        let memberNumber = await GroupsDAO.getMemberNumberOfGroup(currentGroupId)
         return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
@@ -714,7 +716,8 @@ router.get("/group-refresh", async (req, res) => {
             groupCheckOut: groupCheckOut,
             groupPosts: groupPosts,
             currentGroupId: currentGroupId,
-            currentGroup: current_group
+            currentGroup: current_group,
+            memberNumber
         });
     } else {
         return res.redirect("/group-checkout")
@@ -745,6 +748,7 @@ router.post("/group-checkout", async (req, res) => {
         //console.log(groupPosts.rows);
         const isThisOwnGroups = true;
         const groupCheckOut = true;
+        let memberNumber = await GroupsDAO.getMemberNumberOfGroup(currentGroupId)
         //console.log(currentGroupId);
         return res.render('groups', {
             current_name: current_name,
@@ -757,7 +761,8 @@ router.post("/group-checkout", async (req, res) => {
             groupCheckOut: groupCheckOut,
             currentGroupId: currentGroupId,
             groupPosts: groupPosts,
-            currentGroup: current_group
+            currentGroup: current_group,
+            memberNumber
         });
     } else {
         return res.redirect("/group-refresh")

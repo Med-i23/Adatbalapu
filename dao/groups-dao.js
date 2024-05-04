@@ -1,3 +1,4 @@
+const {timeSince} = require("./common");
 const query = require("./common.js").query;
 let format = "yyyy-mm-dd"
 
@@ -29,6 +30,20 @@ exports.groupCreate = async (nev, felh_id) => {
 exports.groupDelete = async (groupId) => {
     await query('DELETE FROM CSOPORT WHERE ID = :groupId', [groupId]);
 }
+
 exports.getGroupsPosts = async (groupId) => {
-    return await query('SELECT * FROM POSZT WHERE CSOPORT_ID = :groupId ORDER BY POSZT.TIME DESC', [groupId]);
+    let q = await query('SELECT * FROM POSZT WHERE CSOPORT_ID = :groupId ORDER BY POSZT.TIME DESC', [groupId]);
+    for (let i = 0; i < q.rows.length; i++) {
+        q.rows[i][5] = timeSince(q.rows[i][5])
+    }
+    return q
+};
+
+exports.getMemberNumberOfGroup = async (groupId) => {
+    let q = await query('SELECT COUNT(ID) FROM TAG INNER JOIN CSOPORT on Csoport.ID = TAG.CSOPORT_ID where CSOPORT_ID = :groupId', [groupId]);
+    return q.rows[0][0]
+};
+
+exports.getMembersOfGroup = async (groupId) => {
+    return await query('SELECT * FROM TAG INNER JOIN CSOPORT on Csoport.ID = TAG.CSOPORT_ID INNER JOIN FELHASZNALO ON FELHASZNALO.ID = TAG.FELH_ID', [groupId]);
 };

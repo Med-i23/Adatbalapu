@@ -44,4 +44,3 @@ $('.img-thumbnail').on('click', function() {
     var imageSrc = $(this).attr('src');
     $('#modalImage').attr('src', imageSrc);
 });
-

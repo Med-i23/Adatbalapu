@@ -44,7 +44,7 @@ exports.getUserEmail = async (email) => {
 };
 
 exports.getUsersBirthday = async (id) => {
-    return await query('SELECT NEV, SZULDATUM, ID FROM ISMEROS INNER JOIN FELHASZNALO ON FELH1_ID = FELHASZNALO.ID where ISMEROS.FELH1_ID != :id GROUP BY ID, SZULDATUM, NEV', [id]);
+    return await query('SELECT NEV, SZULDATUM, ID FROM ISMEROS INNER JOIN FELHASZNALO ON FELH2_ID = FELHASZNALO.ID where ISMEROS.FELH1_ID = :id GROUP BY ID, SZULDATUM, NEV', [id]);
 };
 
 
