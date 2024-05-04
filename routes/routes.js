@@ -18,7 +18,7 @@ const router = express.Router();
 
 const multer = require('multer');
 const path = require('path');
-const {getOwnPictures, getAlbumPictures, getOwnAlbums} = require("../dao/pictures-dao");
+const {getOwnPictures, getOwnAlbums} = require("../dao/pictures-dao");
 
 
 //image uploader initailize
@@ -255,6 +255,8 @@ router.get("/profile", async (req, res) => {
             current_status: current_status,
             images:[]
         });
+    }else{
+        return res.redirect('/logout');
     }
 
 });
@@ -276,29 +278,35 @@ router.get("/otherProfile:id", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+
+        const aretheyfriends = await FriendsDAO.areTheyFriends(current_id, id);
+        if (aretheyfriends) {
+            return res.render('otherProfile', {
+                otheruser: otheruser,
+                current_name: current_name,
+                current_role: current_role,
+                current_id: current_id,
+                current_birthday: current_birthday,
+                current_status: current_status,
+                friends: true
+            })
+        } else {
+            return res.render('otherProfile', {
+                otheruser: otheruser,
+                current_name: current_name,
+                current_role: current_role,
+                current_id: current_id,
+                current_birthday: current_birthday,
+                current_status: current_status,
+                friends: null
+            })
+        }
+
+
+    }else{
+        return res.redirect('/logout');
     }
-    const aretheyfriends = await FriendsDAO.areTheyFriends(current_id, id);
-    if (aretheyfriends) {
-        return res.render('otherProfile', {
-            otheruser: otheruser,
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            friends: true
-        })
-    } else {
-        return res.render('otherProfile', {
-            otheruser: otheruser,
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            friends: null
-        })
-    }
+
 
 
 });
@@ -434,10 +442,20 @@ router.get("/connection", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-    }
 
-    const users = await UsersDAO.getUsers();
-    if (users) {
+
+        const users = await UsersDAO.getUsers();
+        if (users) {
+            return res.render('connection', {
+                users: users,
+                current_name: current_name,
+                current_role: current_role,
+                current_id: current_id,
+                current_birthday: current_birthday,
+                current_status: current_status,
+                adminHiba: null
+            });
+        }
         return res.render('connection', {
             users: users,
             current_name: current_name,
@@ -447,16 +465,9 @@ router.get("/connection", async (req, res) => {
             current_status: current_status,
             adminHiba: null
         });
+    }else{
+        return res.redirect('login');
     }
-    return res.render('connection', {
-        users: users,
-        current_name: current_name,
-        current_role: current_role,
-        current_id: current_id,
-        current_birthday: current_birthday,
-        current_status: current_status,
-        adminHiba: null
-    });
 });
 
 router.post("/deleteUser:id", async (req, res) => {
@@ -475,26 +486,28 @@ router.post("/deleteUser:id", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
+        const users = await UsersDAO.getUsers();
+        const roleArray = await UsersDAO.adminCheck(id);
+        const role = roleArray[0];
+        if (role === "ADMIN") {
+            return res.render('connection', {
+                users: users,
+                current_name: current_name,
+                current_role: current_role,
+                current_id: current_id,
+                current_birthday: current_birthday,
+                current_status: current_status,
+                adminHiba: "Admin törlése nem megengedett"
+            });
+        } else {
+            await UsersDAO.deleteUser(id);
+            return res.redirect('/connection');
+        }
+    }else{
+        return res.redirect('login');
     }
 
-    const users = await UsersDAO.getUsers();
-    const roleArray = await UsersDAO.adminCheck(id);
-    const role = roleArray[0];
-    //console.log(role);
-    if (role === "ADMIN") {
-        return res.render('connection', {
-            users: users,
-            current_name: current_name,
-            current_role: current_role,
-            current_id: current_id,
-            current_birthday: current_birthday,
-            current_status: current_status,
-            adminHiba: "Admin törlése nem megengedett"
-        });
-    } else {
-        await UsersDAO.deleteUser(id);
-        return res.redirect('/connection');
-    }
+
 });
 
 //end-region
@@ -1186,16 +1199,51 @@ router.get("/albums", async (req, res) => {
         });
     }
 
-    let albums = await getOwnAlbums(current_id)
+    let albums = await PicturesDAO.getOwnAlbums(current_id)
     return res.render('albums',{
         current_name: current_name,
         current_role: current_role,
         current_id: current_id,
         current_birthday: current_birthday,
         current_status: current_status,
-        albums: albums
+        albums: albums,
+        selectedAlbum: null
     });
 });
+
+router.get("/albums:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    let id = req.params.id;
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    }
+
+    let pics = await PicturesDAO.getAlbumPicsById(id);
+    console.log(pics);
+    let albums = await PicturesDAO.getOwnAlbums(current_id)
+    return res.render('albums',{
+        current_name: current_name,
+        current_role: current_role,
+        current_id: current_id,
+        current_birthday: current_birthday,
+        current_status: current_status,
+        albums: albums,
+        selectedAlbum: pics.rows
+    });
+});
+
 
 router.post("/createAlbum", async (req, res) => {
     const token = req.cookies.jwt;
