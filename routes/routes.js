@@ -1228,4 +1228,68 @@ router.post("/createAlbum", async (req, res) => {
 
 //end-region
 
+//members-region
+
+router.post("/members", async (req, res) => {
+    const token = req.cookies.jwt;
+    let currentGroupId = req.body.groupId
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+        let members = await GroupsDAO.getMembersOfGroup(currentGroupId)
+        //console.log(currentGroupId)
+        //console.log(members)
+        let isUserOwner = await GroupsDAO.isUserOwnerInGroup(currentGroupId, current_id)
+        return res.render("members",{
+            current_name: current_name,
+            current_role: current_role,
+            current_id: current_id,
+            current_birthday: current_birthday,
+            current_status: current_status,
+            members, isUserOwner
+        });
+
+    }else {
+        return res.redirect('/logout')
+    }
+
+})
+router.post("/removeFromGroup", async (req, res) => {
+    const token = req.cookies.jwt;
+    let groupFrom = req.body.groupFrom
+    let userToDel = req.body.userToDel
+    let current_name;
+    let current_birthday;
+    let current_role;
+    let current_status;
+    let current_id;
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_name = decodedToken.name;
+            current_birthday = decodedToken.birthday;
+            current_role = decodedToken.role;
+            current_id = decodedToken.id;
+            current_status = decodedToken.status;
+        });
+    await GroupsDAO.removeMemberFromGroup(groupFrom,userToDel)
+        return  res.redirect('/members');
+
+    }else {
+        return res.redirect('/logout')
+    }
+
+})
+
+//end-region
+
 module.exports = router;

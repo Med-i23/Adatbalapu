@@ -198,8 +198,13 @@ svg #prof_guy {
     transition: fill 0.25s ease;
 }
 
-svg:hover {
+svg:hover #prof_guy {
     fill: lightgray;
+}
+
+.trash{
+    fill: red;
+    pointer-events: visible;
 }
 a{
 
