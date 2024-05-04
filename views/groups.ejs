@@ -44,10 +44,12 @@
 <% } %>
 
 <% if(!isThisOwnGroups && !groupCheckOut){ %>
+
+
     <div class="flex-grid-groups">
         <% groups.rows.forEach(function(group){ %>
             <div class="card">
-                <% if((current_id === group[2] && isThisOwnGroups) || current_role === "ADMIN" ){ %>
+                <% if(!isThisOwnGroups || current_role === "ADMIN" ){ %>
                     <form action="/group-checkout" method="post" class="card-header">
                         <input type="hidden" name="groupId" value="<%= group[0] %>">
                         <button type="submit" class="border "><%= group[1] %></button>
