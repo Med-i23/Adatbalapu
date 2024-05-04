@@ -1,8 +1,13 @@
+const {timeSince} = require("./common");
 const query = require("./common.js").query;
 let format = "yyyy-mm-dd"
 
 exports.getNotifacationsOfUser = async (id) => {
-    return await query('SELECT * FROM ERTESITES WHERE FELH_ID = :id ORDER BY TIME DESC', [id]);
+    let q =  await query('SELECT * FROM ERTESITES WHERE FELH_ID = :id ORDER BY TIME DESC', [id]);
+    for (let i = 0; i < q.rows.length; i++) {
+        q.rows[i][3] = timeSince(q.rows[i][3])
+    }
+    return q
 };
 
 exports.deleteNotification = async (id) => {
