@@ -183,7 +183,15 @@ body {
 }
 
 .make_max {
-    max-width: 100vh;
+
+}
+
+.text-start {
+    text-align: start !important;
+}
+
+.text-end {
+    text-align: end !important;
 }
 
 svg #prof_guy {

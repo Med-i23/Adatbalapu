@@ -80,7 +80,7 @@ router.get("/main", async (req, res) => {
 
         const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday(current_id);
-        console.log(birthdays)
+
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
         //Átírni a szüliket-> csak friendek láthassák + ne látszódjon a saját, DELETED_USER
         return res.render('main', {
@@ -1158,7 +1158,7 @@ router.get("/albumCreate", async (req, res) => {
     }
 
     let pics = await getOwnPictures(current_id)
-    console.log(pics);
+    //console.log(pics);
     return res.render('albumCreate',{
         current_name: current_name,
         current_role: current_role,

@@ -4,9 +4,8 @@
 
 <body class="w-100 h-100 d-flex flex-column min-vh-100">
 <%- include('assets/header') %>
-<div class="flex-grid">
-    <div class="container form-container flex-column">
-
+<div class="d-flex flex-row justify-content-around">
+    <div class="form-container flex-column col-md-2">
         <% for (let i = 0; i < usersfriends.length; i++) { %>
             <div>
                 <a href="/openChat<%= usersfriends[i][0] %>&<%= current_id %>">
@@ -14,17 +13,16 @@
                 </a>
             </div>
         <% } %>
-
     </div>
-    <div class="flex-grid-center-post-inside justify-content-around">
+    <div class="form-container flex-column col-md-10">
         <% if (current_chat !== '' ){ %>
             <div class="card">
                 <div class="card-header">Chatting with: <%= current_chat_with[1] %></div>
                 <div class="card-body">
                     <% for (let i = 0; i < current_chat.length; i++) { %>
-                        <div class="card">
+                        <div class="card <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>">
                             <div class="card-header <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>"> <%= current_chat[i][1] === current_id ? current_name : current_chat_with[1] %></div>
-                            <div class="card-body make_max <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>"><span class="card-text" title="<%= current_chat[i][4]%>"><%= current_chat[i][3] %></span></div>
+                            <div class="card-body make_max flex-column <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>" title="<%= current_chat[i][4] %>"><%= current_chat[i][3] %></div>
                         </div>
                     <% } %>
                 </div>
@@ -39,6 +37,8 @@
         <% } %>
     </div>
 </div>
+
+
 <%- include('assets/footer') %>
 </body>
 </html>
