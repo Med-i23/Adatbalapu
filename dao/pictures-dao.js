@@ -17,9 +17,8 @@ exports.addPicToAlbum = async (fenykep_id,album_id) => {
     await query('INSERT INTO ALBUMKEP(FENYKEP_ID, ALBUM_ID) VALUES (:fenykep_id,:album_id)', [fenykep_id,album_id]);
 }
 
-exports.getAlbumPictures = async (album_id) => {
-    let q = await query('SELECT * FROM ALBUMKEP WHERE ALBUM_ID = :album_id', [album_id]);
-    return q.rows
+exports.getAlbumPicsById = async (album_id) => {
+    return await query('SELECT FAJL_NEV FROM ALBUMKEP INNER JOIN FENYKEP ON ALBUMKEP.FENYKEP_ID = FENYKEP.ID WHERE ALBUMKEP.ALBUM_ID = :album_id', [album_id]);
 }
 
 exports.getOwnAlbums = async (felh_id) => {

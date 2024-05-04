@@ -13,10 +13,17 @@
 
 <div class="container-fluid">
     <% for (let i = 0; i < albums.length; i++) { %>
-        <div class="text-primary"> <%= albums[i][2] %></div>
+        <div class="text-primary"><a href="/albums<%= albums[i][0] %>"><%= albums[i][2] %></a></div>
     <% } %>
 </div>
 
+<% if(selectedAlbum){ %>
+    <% for (let i = 0; i < selectedAlbum.length; i++) {%>
+        <div class="pics">
+            <img src="uploads/<%= selectedAlbum[i][0]%>" alt="albPic">
+        </div>
+    <% }; %>
+<% } %>
 
 <%- include('assets/footer') %>
 </body>
