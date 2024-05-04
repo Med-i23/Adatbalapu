@@ -7,6 +7,7 @@ exports.getGroups = async () => {
 };
 
 exports.getGroupsById = async (userId) => {
+   //console.log("a userid: " + userId);
     return await query('SELECT * FROM CSOPORT WHERE LETREHOZO = :userId', [userId]);
 };
 
