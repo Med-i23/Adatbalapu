@@ -13,6 +13,10 @@ exports.createAlbum = async (felh_id,album_name) => {
     await query('INSERT INTO ALBUM(FELH_ID, NEV) VALUES (:felh_id,:album_name)', [felh_id,album_name]);
 }
 
+exports.deleteAlbum = async (id) => {
+    await query('DELETE FROM ALBUM WHERE ID = :id', [id]);
+}
+
 exports.addPicToAlbum = async (fenykep_id,album_id) => {
     await query('INSERT INTO ALBUMKEP(FENYKEP_ID, ALBUM_ID) VALUES (:fenykep_id,:album_id)', [fenykep_id,album_id]);
 }

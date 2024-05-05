@@ -10,10 +10,16 @@
     <a href="/pictures"><button class="btn btn-primary">Fényképek</button></a>
     <a href="/albums"><button class="btn btn-primary">Albumok</button></a>
     <h1>Kép feltöltése</h1>
-    <form action="/uploadPic" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image">
-        <button type="submit">Kép feltöltése</button>
-    </form>
+    <div class="picUpload">
+        <form action="/uploadPic" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image">
+            <button type="submit">Kép feltöltése</button>
+        </form>
+
+        <% if(picHiba){%>
+            <p class="text-danger" style="padding-left: 1%"><%- picHiba %></p>
+        <%}%>
+    </div>
 
 
 </div>

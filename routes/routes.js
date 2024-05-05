@@ -245,13 +245,15 @@ router.get("/profile", async (req, res) => {
             current_status = decodedToken.status;
         });
 
+
         return res.render('profile', {
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
             current_birthday: current_birthday,
             current_status: current_status,
-            images: []
+            images: [],
+            picHiba: null
         });
     } else {
         return res.redirect('/logout');
@@ -1171,7 +1173,21 @@ router.post("/uploadPic", upload.single("image"), async (req, res) => {
                 current_id = decodedToken.id;
                 current_status = decodedToken.status;
             });
-            let picName = req.file.filename;
+            if (!req.file) {
+
+                return res.render('profile', {
+                    current_name: current_name,
+                    current_role: current_role,
+                    current_id: current_id,
+                    current_birthday: current_birthday,
+                    current_status: current_status,
+                    images: [],
+                    picHiba: 'Válassz ki képet'
+                });
+            }
+                let picName = req.file.filename;
+
+
             await PicturesDAO.createPicture(current_id, null, picName);
             return res.redirect('/profile');
         } else {
@@ -1334,6 +1350,16 @@ router.post("/createAlbum", async (req, res) => {
     }
 });
 
+router.post("/deleteAlbum:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let id = req.params.id;
+    if (token) {
+        await PicturesDAO.deleteAlbum(id);
+        return res.redirect('/albums');
+    } else {
+        return res.redirect("/logout")
+    }
+});
 
 //split-image-region
 

@@ -13,14 +13,28 @@
 
 <div class="container-fluid">
     <% for (let i = 0; i < albums.length; i++) { %>
-        <div class="text-primary"><a href="/albums<%= albums[i][0] %>"><%= albums[i][2] %></a></div>
+        <div class="text-primary">
+            <table>
+                <tr>
+                    <td>
+                        <button type="button" class="btn btn-info"><a
+                                    href="/albums<%= albums[i][0] %>"><%= albums[i][2] %></a></button>
+                    </td>
+                    <td>
+                        <form action="/deleteAlbum<%= albums[i][0] %>" method="POST">
+                            <button class="btn btn-primary btn-danger">Törlés</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
     <% } %>
 </div>
 
 <% if(selectedAlbum){ %>
-    <% for (let i = 0; i < selectedAlbum.length; i++) {%>
+    <% for (let i = 0; i < selectedAlbum.length; i++) { %>
         <div class="pics">
-            <img src="uploads/<%= selectedAlbum[i][0]%>" alt="albPic">
+            <img src="uploads/<%= selectedAlbum[i][0] %>" alt="albPic">
         </div>
     <% }; %>
 <% } %>
