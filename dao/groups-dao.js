@@ -64,3 +64,9 @@ exports.removeMemberFromGroup = async (groupId, userId) => {
     console.log(q.rows)
     await query('DELETE FROM TAG WHERE CSOPORT_ID = :groupId AND FELH_ID = :userId', [groupId, userId]);
 };
+
+exports.friendSuggestion = async (userId) => {
+    let q = await query('SELECT * FROM TAG INNER JOIN CSOPORT ON CSOPORT.ID = tag.CSOPORT_ID WHERE TAG.FELH_ID = :userId', [userId]);
+    console.log(q.rows)
+    return ''
+}

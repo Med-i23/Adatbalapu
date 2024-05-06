@@ -77,7 +77,17 @@ router.get("/main", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-
+        let users = await UsersDAO.getActualUsers(current_id)
+        for (let i = 0; i < users.length; i++) {
+            let friends = await FriendsDAO.areTheyFriends(current_id, users[i][0]);
+            users[i].push(friends);
+        }
+        let suggestable = []
+        for (let i = 0; i < users.length; i++) {
+            if (users[i][7] === false && Math.random() > 0.8){
+                suggestable.push(users[i])
+            }
+        }
         const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday(current_id);
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
@@ -93,7 +103,8 @@ router.get("/main", async (req, res) => {
             posts: posts,
             birthdays: birthdays,
             usersfriends: usersfriends,
-            comments: comments
+            comments: comments,
+            suggestable
         });
     } else {
         return res.redirect("/")
@@ -247,15 +258,12 @@ router.get("/profile", async (req, res) => {
             current_status = decodedToken.status;
         });
 
-
         return res.render('profile', {
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
             current_birthday: current_birthday,
-            current_status: current_status,
-            images: [],
-            picHiba: null
+            current_status: current_status
         });
     } else {
         return res.redirect('/logout');
@@ -1027,6 +1035,12 @@ router.get("/people", async (req, res) => {
             let friends = await FriendsDAO.areTheyFriends(current_id, users[i][0]);
             users[i].push(friends);
         }
+        let suggestable = []
+        for (let i = 0; i < users.length; i++) {
+            if (users[i][7] === false && Math.random() > 0.7){
+                suggestable.push(users[i])
+            }
+        }
         return res.render('people', {
             current_name: current_name,
             current_role: current_role,
@@ -1282,14 +1296,16 @@ router.post("/uploadPic", upload.single("image"), async (req, res) => {
                 current_id = decodedToken.id;
                 current_status = decodedToken.status;
             });
-            if (!req.file) {
+            let pics = await getOwnPictures(current_id)
 
-                return res.render('profile', {
+            if (!req.file) {
+                return res.render('pictures', {
                     current_name: current_name,
                     current_role: current_role,
                     current_id: current_id,
                     current_birthday: current_birthday,
                     current_status: current_status,
+                    pictures: pics,
                     images: [],
                     picHiba: 'Válassz ki képet'
                 });
@@ -1298,7 +1314,7 @@ router.post("/uploadPic", upload.single("image"), async (req, res) => {
 
 
             await PicturesDAO.createPicture(current_id, null, picName);
-            return res.redirect('/profile');
+            return res.redirect('/pictures');
         } else {
             return res.redirect("/logout")
         }
@@ -1323,13 +1339,16 @@ router.get("/pictures", async (req, res) => {
             current_status = decodedToken.status;
         });
         let pics = await getOwnPictures(current_id)
+        console.log(pics);
         return res.render('pictures', {
             current_name: current_name,
             current_role: current_role,
             current_id: current_id,
             current_birthday: current_birthday,
             current_status: current_status,
-            pictures: pics
+            pictures: pics,
+            images: [],
+            picHiba: null
         });
     } else {
         return res.redirect("/logout")

@@ -5,7 +5,6 @@
 <body class="w-100 h-100 d-flex flex-column min-vh-100">
 <%- include('assets/header') %>
 <div class="container form-container flex-grid">
-
     <% for (let i = 0; i < users.length; i++){ %>
         <div>
             <div><a href="otherProfile<%= users[i][0] %>"><%= users[i][1] %></a></div>
@@ -18,7 +17,6 @@
             <% } %>
         </div>
     <% } %>
-
 </div>
 <%- include('assets/footer') %>
 </body>
