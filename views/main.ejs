@@ -46,14 +46,30 @@
                         <input type="text" name="kommentInput" id="kommentInput">
                         <input type="hidden" name="postId" value="<%= posts[0] %>">
                         <button type="submit" class="btn btn-primary">Komment hozzáadása</button>
-                        <% if (comments){ %>
-                        <% comments.rows.forEach(komment => { %>
-                        <% if (komment[1] === posts[0]){ %>
-                        <p><%= komment[6] %>: <%= komment[3] %></p>
-                        <% } %>
-                        <% }) %>
-                        <% } %>
+<!--                        <% if (comments){ %>-->
+<!--                        <% comments.rows.forEach(komment => { %>-->
+<!--                        <% if (komment[1] === posts[0]){ %>-->
+<!--                        <p><%= komment[6] %>: <%= komment[3] %></p>-->
+<!--                        <% } %>-->
+<!--                        <% }) %>-->
+<!--                        <% } %>-->
                     </form>
+
+                    <% if (comments){ %>
+                        <% comments.rows.forEach(komment => { %>
+                            <% if (komment[1] === posts[0]){ %>
+                                <p><%= komment[6] %>: <%= komment[3] %></p>
+                                <form action="/post-remove-comment" method="post">
+                                    <input type="hidden" name="postIdd" id="postIdd" value="<%= posts[0] %>">
+                                    <input type="hidden" name="kommentId" id="kommentId" value="<%= komment[0] %>">
+                                    <button type="submit" class="btn btn-danger">Komment törlése</button>
+
+                                </form>
+                            <% } %>
+                        <% }) %>
+                    <% } %>
+
+
                     <form style="margin-bottom: 10px" action="/post-like" method="post">
                         <input type="hidden" name="postId" value="<%= posts[0] %>">
                         <button type="submit" class="btn btn-primary">Kedvelés</button>

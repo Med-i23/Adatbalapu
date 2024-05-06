@@ -584,19 +584,19 @@ router.post("/post-delete", async (req, res) => {
         return res.redirect('/logout');
     }
 });
+
 router.post("/post-add-comment", async (req, res) => {
     let postId = req.body.postId;
     let szoveg = req.body.kommentInput;
 
     if (szoveg.length < 3) {
-        console.log("Rövid a komment!!!", szoveg);
+        //console.log("Rövid a komment!!!", szoveg);
         return res.redirect('/main');
     }
 
-    console.log("a szoveg: " + szoveg);
+    //console.log("a szoveg: " + szoveg);
     const token = req.cookies.jwt;
     let current_id;
-
 
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
@@ -608,7 +608,7 @@ router.post("/post-add-comment", async (req, res) => {
     } else {
         return res.redirect('/logout');
     }
-})
+});
 
 
 //end-region
@@ -771,7 +771,8 @@ router.get("/group-refresh", async (req, res) => {
         const isThisOwnGroups = true;
         const groupCheckOut = true;
         const currentGroupId = req.query.currentGroupId;
-        //console.log(currentGroupId);
+
+        //console.log("currentGroupId: "+currentGroupId);
         const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId)
         // console.log(currentGroupId);
         // console.log(groupPosts.rows);
@@ -853,7 +854,7 @@ router.post("/post-add-new-into-roup", async (req, res) => {
     const token = req.cookies.jwt;
     let current_id;
 
-    //console.log(currentGroupId);
+    //console.log("currentGroupId 2: " + currentGroupId);
     if (token) {
         jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
             current_id = decodedToken.id;
@@ -885,13 +886,58 @@ router.post("/post-like-group", async (req, res) => {
 });
 
 
+router.post("/post-remove-comment-inGroup", async (req, res) => {
+    let postId = req.body.postIdd;
+    let currentGroupId = req.body.currentGroupIdd;
+    let kommentId = req.body.kommentId;
+
+    //console.log(postId, currentGroupId, kommentId)
+
+    const token = req.cookies.jwt;
+    let current_id;
+
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_id = decodedToken.id;
+        });
+
+        await PostsDAO.postRemoveComment(kommentId, postId, current_id);
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    } else {
+        return res.redirect('/logout');
+    }
+})
+router.post("/post-remove-comment", async (req, res) => {
+    let postId = req.body.postIdd;
+    let kommentId = req.body.kommentId;
+
+    //console.log(postId, currentGroupId, kommentId)
+
+    const token = req.cookies.jwt;
+
+    let current_id;
+
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_id = decodedToken.id;
+        });
+
+        await PostsDAO.postRemoveComment(kommentId, postId, current_id);
+        return res.redirect('/main');
+    } else {
+        return res.redirect('/logout');
+    }
+})
+
 
 router.post("/post-add-comment-inGroup", async (req, res) => {
     let postId = req.body.postId;
     let szoveg = req.body.kommentInput;
     let currentGroupId = req.body.currentGroupId;
     if (szoveg.length < 3) {
-        console.log("Rövid a komment!!!", szoveg);
+        //console.log("Rövid a komment!!!", szoveg);
         return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
     }
 
@@ -1419,7 +1465,7 @@ router.post("/deleteAlbum:id", async (req, res) => {
     const token = req.cookies.jwt;
     let id = req.params.id;
     if (token) {
-       await PicturesDAO.deleteAlbum(id);
+        await PicturesDAO.deleteAlbum(id);
         return res.redirect('/albums');
     } else {
         return res.redirect("/logout")
@@ -1430,8 +1476,8 @@ router.post("/albumPicRemove:id", async (req, res) => {
     const token = req.cookies.jwt;
     let nameId;
     if (token) {
-        nameId  = req.params.id.split("&");
-            console.log(nameId);
+        nameId = req.params.id.split("&");
+        console.log(nameId);
         await PicturesDAO.albumPicRemove(parseInt(nameId[0]), parseInt(nameId[1]));
         return res.redirect('/albums');
     } else {
