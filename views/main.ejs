@@ -74,12 +74,15 @@
                         <% comments.rows.forEach(komment => { %>
                             <% if (komment[1] === posts[0]){ %>
                                 <p><%= komment[6] %>: <%= komment[3] %></p>
+
+                                <%if(current_id === komment[2] || current_role === 'ADMIN'){%>
                                 <form action="/post-remove-comment" method="post">
                                     <input type="hidden" name="postIdd" id="postIdd" value="<%= posts[0] %>">
                                     <input type="hidden" name="kommentId" id="kommentId" value="<%= komment[0] %>">
                                     <button type="submit" class="btn btn-danger">Komment törlése</button>
 
                                 </form>
+                                <%}%>
                             <% } %>
                         <% }) %>
                     <% } %>
