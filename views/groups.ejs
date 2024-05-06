@@ -75,9 +75,9 @@
     <div class="card">
         <div class="card-header">
             <h1><%= currentGroup[1] %></h1>
-            <span class="float-end">Tagok száma: <%= memberNumber%>
+            <span class="float-end">Tagok száma: <%= memberNumber %>
                 <form method="post" action="/membersAll"><label>
-                    <input type="hidden" value="<%= currentGroup[0] %>"  name="groupId" >
+                    <input type="hidden" value="<%= currentGroup[0] %>" name="groupId">
                     </label><button type="submit" class="btn btn-primary"> Tagok</button>
                 </form>
             </span>
@@ -104,13 +104,27 @@
                 <h3><a href="/otherProfile<%= groupPost[1] %>"> <%= groupPost[6] %> </a></h3>
                 <h4><%= groupPost[3] %></h4>
                 <h6 class="text-secondary"><%= groupPost[5] %></h6>
-                <p style="font-size: 1.75vh">Kedvelések száma:<%= groupPost[4] %> </p>
+                <p style="font-size: 1.75vh">Kedvelések száma: <%= groupPost[4] %> </p>
                 <div class="flex-grid-center-post-inside">
+                    <form style="margin-bottom: 10px" action="/post-add-comment-inGroup" method="post">
+                        <input type="hidden" name="currentGroupId" value="<%= groupPost[2] %>">
+                        <input type="text" name="kommentInput" id="kommentInput">
+                        <input type="hidden" name="postId" value="<%= groupPost[0] %>">
+                        <button type="submit" class="btn btn-primary">Komment hozzáadása</button>
+                        <% if (comments){ %>
+                        <% comments.rows.forEach(komment => { %>
+                        <% if (komment[1] === groupPost[0]){ %>
+                        <p><%= komment[6] %>: <%= komment[3] %></p>
+                        <% } %>
+                        <% }) %>
+                        <% } %>
+                    </form>
                     <form style="margin-bottom: 10px" action="/post-like-group" method="post">
                         <input type="hidden" name="postId" value="<%= groupPost[0] %>">
                         <input type="hidden" name="currentGroupId" value="<%= groupPost[2] %>">
                         <button type="submit" class="btn btn-primary">Kedvelés</button>
                     </form>
+
                     <% if(current_id === groupPost[1]){ %>
                         <button class="btn btn-primary btn-post-modify">Módosítás</button>
 
