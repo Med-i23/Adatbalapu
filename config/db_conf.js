@@ -12,4 +12,4 @@ Cseréld ki a username-t meg a password-öt az orania-sodra és utána ezt a sor
 
 H-s azonosítót sajátodra cseréld ofc, majd egy jelszót kér amit ha beírsz egy üres konzolba visz (siker)
 Hagyd nyitva ezt az ablakot amíg az adatbázist el akarod érninp
- */
+*/
