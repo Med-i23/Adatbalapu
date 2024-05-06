@@ -41,10 +41,24 @@
                 <h4 class="border-top border-bottom"><%= posts[3] %></h4>
                 <p style="font-size: 1.75vh">Kedvelések száma: <%= posts[4] %></p>
                 <div class="flex-grid-center-post-inside">
+
+                    <form style="margin-bottom: 10px" action="/post-add-comment" method="post">
+                        <input type="text" name="kommentInput" id="kommentInput">
+                        <input type="hidden" name="postId" value="<%= posts[0] %>">
+                        <button type="submit" class="btn btn-primary">Komment hozzáadása</button>
+                        <%if (comments){%>
+                            <%comments.rows.forEach(komment => {%>
+                            <%if (komment[1] === posts[0]){ %>
+                            <p><%=komment[6]%>: <%=komment[3]%></p>
+                        <%}%>
+                            <%})%>
+                        <%}%>
+                    </form>
                     <form style="margin-bottom: 10px" action="/post-like" method="post">
                         <input type="hidden" name="postId" value="<%= posts[0] %>">
                         <button type="submit" class="btn btn-primary">Kedvelés</button>
                     </form>
+
                     <% if(current_id === posts[1]){ %>
                         <button class="btn btn-primary btn-post-modify">Módosítás</button>
 
@@ -56,6 +70,8 @@
                                 <button type="submit" class="btn btn-primary">Mentés</button>
                             </form>
                         </div>
+
+
                     <% } %>
                     <% if(current_id === posts[1] || current_role === 'ADMIN'){ %>
                         <form action="/post-delete" method="post">

@@ -26,3 +26,11 @@ exports.postDelete = async (postId) => {
 exports.postModify = async (szoveg, postId) => {
     await query("UPDATE POSZT SET SZOVEG = :szoveg WHERE ID = :postId", [szoveg, postId]);
 }
+
+exports.postAddComment = async (postId, felh_Id, szoveg) => {
+    await query('INSERT INTO KOMMENT (POSZT_ID, FELH_ID, SZOVEG, TIME) VALUES (:postId, :felh_Id, :szoveg, SYSTIMESTAMP)', [postId, felh_Id, szoveg]);
+}
+
+exports.getComments = async () => {
+   return await query('SELECT * FROM KOMMENT INNER JOIN FELHASZNALO ON FELHASZNALO.ID = KOMMENT.FELH_ID');
+}

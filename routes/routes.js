@@ -80,8 +80,9 @@ router.get("/main", async (req, res) => {
 
         const posts = await PostsDAO.getPosts();
         const birthdays = await UsersDAO.getUsersBirthday(current_id);
-
         const usersfriends = await FriendsDAO.getUsersFriendsById(current_id);
+        const comments = await PostsDAO.getComments();
+        //console.log("kommentek: " + getComments.rows);
         //Átírni a szüliket-> csak friendek láthassák + ne látszódjon a saját, DELETED_USER
         return res.render('main', {
             current_name: current_name,
@@ -91,7 +92,8 @@ router.get("/main", async (req, res) => {
             current_status: current_status,
             posts: posts,
             birthdays: birthdays,
-            usersfriends: usersfriends
+            usersfriends: usersfriends,
+            comments: comments
         });
     } else {
         return res.redirect("/")
@@ -582,6 +584,31 @@ router.post("/post-delete", async (req, res) => {
         return res.redirect('/logout');
     }
 });
+router.post("/post-add-comment", async (req, res) => {
+    let postId = req.body.postId;
+    let szoveg = req.body.kommentInput;
+
+    if (szoveg.length < 3) {
+        console.log("Rövid a komment!!!", szoveg);
+        return res.redirect('/main');
+    }
+
+    console.log("a szoveg: " + szoveg);
+    const token = req.cookies.jwt;
+    let current_id;
+
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_id = decodedToken.id;
+        });
+
+        await PostsDAO.postAddComment(postId, current_id, szoveg);
+        return res.redirect('/main');
+    } else {
+        return res.redirect('/logout');
+    }
+})
 
 
 //end-region
@@ -1185,7 +1212,7 @@ router.post("/uploadPic", upload.single("image"), async (req, res) => {
                     picHiba: 'Válassz ki képet'
                 });
             }
-                let picName = req.file.filename;
+            let picName = req.file.filename;
 
 
             await PicturesDAO.createPicture(current_id, null, picName);
@@ -1309,6 +1336,7 @@ router.get("/albums:id", async (req, res) => {
             current_status = decodedToken.status;
         });
         let pics = await PicturesDAO.getAlbumPicsById(id);
+        console.log(pics);
         let albums = await PicturesDAO.getOwnAlbums(current_id)
         return res.render('albums', {
             current_name: current_name,
@@ -1501,7 +1529,7 @@ router.post("/block", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        await FriendsDAO.blockFriend(current_id,friendId)
+        await FriendsDAO.blockFriend(current_id, friendId)
         return res.redirect('/friends')
     } else {
         return res.redirect('/logout')
@@ -1524,7 +1552,7 @@ router.post("/unblock", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        await FriendsDAO.unblockFriend(current_id,friendId)
+        await FriendsDAO.unblockFriend(current_id, friendId)
         return res.redirect('/friends')
     } else {
         return res.redirect('/logout')
@@ -1547,7 +1575,7 @@ router.post("/removeFriend", async (req, res) => {
             current_id = decodedToken.id;
             current_status = decodedToken.status;
         });
-        await FriendsDAO.deleteFriendOf(current_id,friendId)
+        await FriendsDAO.deleteFriendOf(current_id, friendId)
         return res.redirect('/friends')
     } else {
         return res.redirect('/logout')
