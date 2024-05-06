@@ -35,8 +35,8 @@
     <% for (let j = 0; j < selectedAlbum.length; j++) { %>
         <div class="pics">
             <img src="uploads/<%= selectedAlbum[j][0] %>" alt="albPic">
-            <form action="/deleteAlbumPic<%= selectedAlbum[j][1] %>&<%= albumId%>" method="POST">
-                <button class="btn btn-primary btn-danger">Törlés</button>
+            <form action="/albumPicRemove<%= selectedAlbum[j][1] %>&<%= albumId%>" method="POST">
+                <button class="btn btn-primary btn-danger">DELETE</button>
             </form>
         </div>
     <% }; %>

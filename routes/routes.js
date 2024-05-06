@@ -1309,7 +1309,6 @@ router.get("/albums:id", async (req, res) => {
             current_status = decodedToken.status;
         });
         let pics = await PicturesDAO.getAlbumPicsById(id);
-        console.log(pics);
         let albums = await PicturesDAO.getOwnAlbums(current_id)
         return res.render('albums', {
             current_name: current_name,
@@ -1356,26 +1355,25 @@ router.post("/deleteAlbum:id", async (req, res) => {
     const token = req.cookies.jwt;
     let id = req.params.id;
     if (token) {
-        await PicturesDAO.deleteAlbum(id);
+       await PicturesDAO.deleteAlbum(id);
         return res.redirect('/albums');
     } else {
         return res.redirect("/logout")
     }
 });
 
-router.post("/deleteAlbumPic:id", async (req, res) => {
+router.post("/albumPicRemove:id", async (req, res) => {
     const token = req.cookies.jwt;
     let nameId;
     if (token) {
         nameId  = req.params.id.split("&");
-        console.log(nameId);
-        await PicturesDAO.deleteAlbumPic(nameId[0], nameId[1]);
+            console.log(nameId);
+        await PicturesDAO.albumPicRemove(parseInt(nameId[0]), parseInt(nameId[1]));
         return res.redirect('/albums');
     } else {
         return res.redirect("/logout")
     }
 });
-
 
 
 //split-image-region

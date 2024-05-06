@@ -17,8 +17,8 @@ exports.deleteAlbum = async (id) => {
     await query('DELETE FROM ALBUM WHERE ID = :id', [id]);
 }
 
-exports.deleteAlbumPic = async (feny_id, album_id) => {
-    await query('DELETE FROM ALBUMKEP WHERE ALBUM_ID = :album_id AND FENYKEP_ID = :feny_id', [ album_id, feny_id]);
+exports.albumPicRemove = async (feny_id, album_id) => {
+    await query('DELETE FROM ALBUMKEP WHERE FENYKEP_ID = :feny_id AND ALBUM_ID = :album_id', [feny_id, album_id]);
 }
 
 exports.addPicToAlbum = async (fenykep_id,album_id) => {
