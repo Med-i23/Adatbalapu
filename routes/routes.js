@@ -1339,7 +1339,6 @@ router.get("/pictures", async (req, res) => {
             current_status = decodedToken.status;
         });
         let pics = await getOwnPictures(current_id)
-        console.log(pics);
         return res.render('pictures', {
             current_name: current_name,
             current_role: current_role,
@@ -1437,7 +1436,6 @@ router.get("/albums:id", async (req, res) => {
             current_status = decodedToken.status;
         });
         let pics = await PicturesDAO.getAlbumPicsById(id);
-        console.log(pics);
         let albums = await PicturesDAO.getOwnAlbums(current_id)
         return res.render('albums', {
             current_name: current_name,
@@ -1496,7 +1494,6 @@ router.post("/albumPicRemove:id", async (req, res) => {
     let nameId;
     if (token) {
         nameId = req.params.id.split("&");
-        console.log(nameId);
         await PicturesDAO.albumPicRemove(parseInt(nameId[0]), parseInt(nameId[1]));
         return res.redirect('/albums');
     } else {
