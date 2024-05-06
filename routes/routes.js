@@ -644,6 +644,7 @@ router.get("/groups_all", async (req, res) => {
         const isThisOwnGroups = false;
         const groupCheckOut = false;
         const groupPosts = [];
+        const comments = await PostsDAO.getComments();
 
         return res.render('groups', {
             current_name: current_name,
@@ -656,7 +657,8 @@ router.get("/groups_all", async (req, res) => {
             isThisOwnGroups: isThisOwnGroups,
             groupCheckOut: groupCheckOut,
             groupPosts: groupPosts,
-            currentGroup: []
+            currentGroup: [],
+            comments: comments
         });
     } else {
         return res.redirect('/logout');
@@ -683,6 +685,7 @@ router.get("/groups_own", async (req, res) => {
         const isThisOwnGroups = true;
         const groupCheckOut = false;
         const groupPosts = [];
+        const comments = await PostsDAO.getComments();
         return res.render('groups', {
             current_name: current_name,
             current_role: current_role,
@@ -693,7 +696,8 @@ router.get("/groups_own", async (req, res) => {
             isThisOwnGroups: isThisOwnGroups,
             groupCheckOut: groupCheckOut,
             groupPosts: groupPosts,
-            currentGroup: []
+            currentGroup: [],
+            comments: comments
         });
     } else {
         return res.redirect('/logout');
@@ -779,6 +783,7 @@ router.get("/group-refresh", async (req, res) => {
         const groupPosts = await GroupsDAO.getGroupsPosts(currentGroupId)
         // console.log(currentGroupId);
         // console.log(groupPosts.rows);
+        const comments = await PostsDAO.getComments();
 
         let current_group = await GroupsDAO.getCurrentGroupById(currentGroupId)
         current_group = current_group.rows[0]
@@ -795,6 +800,7 @@ router.get("/group-refresh", async (req, res) => {
             groupPosts: groupPosts,
             currentGroupId: currentGroupId,
             currentGroup: current_group,
+            comments: comments,
             memberNumber
         });
     } else {
@@ -827,6 +833,7 @@ router.post("/group-checkout", async (req, res) => {
         const isThisOwnGroups = true;
         const groupCheckOut = true;
         let memberNumber = await GroupsDAO.getMemberNumberOfGroup(currentGroupId)
+        const comments = await PostsDAO.getComments();
         //console.log(currentGroupId);
         return res.render('groups', {
             current_name: current_name,
@@ -840,6 +847,7 @@ router.post("/group-checkout", async (req, res) => {
             currentGroupId: currentGroupId,
             groupPosts: groupPosts,
             currentGroup: current_group,
+            comments: comments,
             memberNumber
         });
     } else {
@@ -882,8 +890,36 @@ router.post("/post-like-group", async (req, res) => {
     } else {
         return res.redirect('/logout');
     }
-
 });
+
+
+
+router.post("/post-add-comment-inGroup", async (req, res) => {
+    let postId = req.body.postId;
+    let szoveg = req.body.kommentInput;
+    let currentGroupId = req.body.currentGroupId;
+    if (szoveg.length < 3) {
+        console.log("Rövid a komment!!!", szoveg);
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    }
+
+    //console.log("a szoveg: " + szoveg);
+    const token = req.cookies.jwt;
+    let current_id;
+
+
+    if (token) {
+        jwt.verify(token, jwtSecret.jwtSecret, (err, decodedToken) => {
+            current_id = decodedToken.id;
+        });
+
+        await PostsDAO.postAddComment(postId, current_id, szoveg);
+        return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
+    } else {
+        return res.redirect('/logout');
+    }
+})
+
 
 router.post("/post-modify-group", async (req, res) => {
     let postId = req.body.postId;
