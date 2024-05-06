@@ -1506,6 +1506,7 @@ router.get("/friends", async (req, res) => {
             current_birthday: current_birthday,
             current_status: current_status,
             friends
+
         });
 
     } else {
