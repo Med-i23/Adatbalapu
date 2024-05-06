@@ -18,7 +18,7 @@
     <div class="form-container flex-column col-md-7">
         <% if (current_chat !== '' ){ %>
             <div class="card">
-                <div class="card-header">Chatting with: <%= current_chat_with[1] %></div>
+                <div class="card-header">Vele beszélsz: <%= current_chat_with[1] %></div>
                 <div class="card-body">
                     <% for (let i = 0; i < current_chat.length; i++) { %>
                         <div class="card <%= current_chat[i][1] === current_id ? 'text-end' : 'text-start' %>">
@@ -29,9 +29,9 @@
                 </div>
                 <div class="card-footer">
                     <form method="post" action="/sendMessage<%= current_chat_with[0] %>&<%= current_id %>">
-                        <label for="message">Your message: </label>
+                        <label for="message">Üzeneteid: </label>
                         <textarea type="text" id="message" name="message" class="form-control"></textarea>
-                        <button class="btn btn-outline-primary" type="submit">Send message</button>
+                        <button class="btn btn-outline-primary" type="submit">Üzenet küldése</button>
                     </form>
                 </div>
             </div>

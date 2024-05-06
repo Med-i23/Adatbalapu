@@ -8,15 +8,15 @@
     <form method="post" action="/changeUserDataOf<%= current_name %>">
         <fieldset>
             <legend class="fw-bold text-center">Adat módosítás</legend>
-            <label for="name" class="form-label">Full name:</label>
+            <label for="name" class="form-label">Teljes név:</label>
             <input type="text" class="form-control" name="name" id="name" placeholder="Teljes név">
             <label for="email" class="form-label">E-mail:</label>
             <input type="text" class="form-control" name="email" id="email" placeholder="ateemail@cimed.hu">
-            <label for="birthday" class="form-label"> Date of birth</label>
+            <label for="birthday" class="form-label"> Születési dátum:</label>
             <input type="date" class="form-control" name="birthday" id="birthday">
-            <label for="password" class="form-label">Password:</label>
+            <label for="password" class="form-label">Jelszó:</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="******">
-            <label for="re_password" class="form-label">Password again:</label>
+            <label for="re_password" class="form-label">Jelszó ismétlése:</label>
             <input type="password" class="form-control" id="re_password" name="re_password" placeholder="******">
             <% if(typeof errors[0] !== "undefined"){
             if(typeof errors[0].hibaChanges !== "undefined"){ %>
@@ -33,7 +33,7 @@
                     <polyline points="17 21 17 13 7 13 7 21"/>
                     <polyline points="7 3 7 8 15 8"/>
                 </svg>
-                <span class="ms-2">Save changes</span></button>
+                <span class="ms-2">Módosítások mentése</span></button>
         </fieldset>
     </form>
 

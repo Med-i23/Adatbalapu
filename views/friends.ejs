@@ -9,19 +9,19 @@
         <div class="card flex-column">
             <div class="card-header">
                 <h5 class="text-center <%= friend[9] === 'disabled' ? "text-danger" : "text-success"%>"><%= friend[1] %></h5>
-                <h6 class="text-center">Currently: <%= friend[9] === 'disabled' ? "blocked" : "unblocked"%></h6>
+                <h6 class="text-center">Jelenleg: <%= friend[9] === 'disabled' ? "blocked" : "unblocked"%></h6>
                 <div style="display: flex; justify-content: space-between;">
                     <form action="/block" method="post">
                         <input type="hidden" name="friendId" value="<%= friend[8] %>">
-                        <button class="btn btn-primary" type="submit">Block</button>
+                        <button class="btn btn-primary" type="submit">Blokkolás</button>
                     </form>
                     <form action="/unblock" method="post">
                         <input type="hidden" name="friendId" value="<%= friend[8] %>">
-                        <button class="btn btn-primary" type="submit">Unblock</button>
+                        <button class="btn btn-primary" type="submit">Feloldás</button>
                     </form>
                     <form action="/removeFriend" method="post">
                         <input type="hidden" name="friendId" value="<%= friend[8] %>">
-                        <button class="btn btn-primary" type="submit">Remove</button>
+                        <button class="btn btn-primary" type="submit">Eltávolítás</button>
                     </form>
                 </div>
 
