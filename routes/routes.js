@@ -910,7 +910,7 @@ router.post("/post-remove-comment-inGroup", async (req, res) => {
             current_id = decodedToken.id;
         });
 
-        await PostsDAO.postRemoveComment(kommentId, postId, current_id);
+        await PostsDAO.postRemoveComment(kommentId, postId);
         return res.redirect(`/group-refresh?currentGroupId=${currentGroupId}`);
     } else {
         return res.redirect('/logout');
@@ -932,7 +932,7 @@ router.post("/post-remove-comment", async (req, res) => {
             current_id = decodedToken.id;
         });
 
-        await PostsDAO.postRemoveComment(kommentId, postId, current_id);
+        await PostsDAO.postRemoveComment(kommentId, postId);
         return res.redirect('/main');
     } else {
         return res.redirect('/logout');
