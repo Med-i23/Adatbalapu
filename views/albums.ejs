@@ -28,13 +28,16 @@
                 </tr>
             </table>
         </div>
+
     <% } %>
 </div>
-
 <% if(selectedAlbum){ %>
-    <% for (let i = 0; i < selectedAlbum.length; i++) { %>
+    <% for (let j = 0; j < selectedAlbum.length; j++) { %>
         <div class="pics">
-            <img src="uploads/<%= selectedAlbum[i][0] %>" alt="albPic">
+            <img src="uploads/<%= selectedAlbum[j][0] %>" alt="albPic">
+            <form action="/deleteAlbumPic<%= selectedAlbum[j][1] %>&<%= albumId%>" method="POST">
+                <button class="btn btn-primary btn-danger">Törlés</button>
+            </form>
         </div>
     <% }; %>
 <% } %>

@@ -13,7 +13,7 @@ exports.areTheyFriends = async (felh1_id, felh2_id) => {
 };
 
 exports.getUsersFriendsById = async (id) => {
-    return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id', [id]);
+    return await query('SELECT * FROM FELHASZNALO INNER JOIN ISMEROS ON ISMEROS.FELH2_ID = FELHASZNALO.ID WHERE FELH1_ID = :id ORDER BY FELHASZNALO.NEV', [id]);
 };
 
 exports.deleteFriendOf = async (felh_id, friend_id) => {

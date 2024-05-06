@@ -1281,7 +1281,8 @@ router.get("/albums", async (req, res) => {
             current_birthday: current_birthday,
             current_status: current_status,
             albums: albums,
-            selectedAlbum: null
+            selectedAlbum: null,
+            albumId: null
         });
     } else {
         return res.redirect("/logout")
@@ -1317,7 +1318,8 @@ router.get("/albums:id", async (req, res) => {
             current_birthday: current_birthday,
             current_status: current_status,
             albums: albums,
-            selectedAlbum: pics.rows
+            selectedAlbum: pics.rows,
+            albumId: id
         });
     } else {
         return res.redirect("/logout")
@@ -1360,6 +1362,21 @@ router.post("/deleteAlbum:id", async (req, res) => {
         return res.redirect("/logout")
     }
 });
+
+router.post("/deleteAlbumPic:id", async (req, res) => {
+    const token = req.cookies.jwt;
+    let nameId;
+    if (token) {
+        nameId  = req.params.id.split("&");
+        console.log(nameId);
+        await PicturesDAO.deleteAlbumPic(nameId[0], nameId[1]);
+        return res.redirect('/albums');
+    } else {
+        return res.redirect("/logout")
+    }
+});
+
+
 
 //split-image-region
 

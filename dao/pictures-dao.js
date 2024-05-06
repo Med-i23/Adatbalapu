@@ -17,12 +17,16 @@ exports.deleteAlbum = async (id) => {
     await query('DELETE FROM ALBUM WHERE ID = :id', [id]);
 }
 
+exports.deleteAlbumPic = async (feny_id, album_id) => {
+    await query('DELETE FROM ALBUMKEP WHERE ALBUM_ID = :album_id AND FENYKEP_ID = :feny_id', [ album_id, feny_id]);
+}
+
 exports.addPicToAlbum = async (fenykep_id,album_id) => {
     await query('INSERT INTO ALBUMKEP(FENYKEP_ID, ALBUM_ID) VALUES (:fenykep_id,:album_id)', [fenykep_id,album_id]);
 }
 
 exports.getAlbumPicsById = async (album_id) => {
-    return await query('SELECT FAJL_NEV FROM ALBUMKEP INNER JOIN FENYKEP ON ALBUMKEP.FENYKEP_ID = FENYKEP.ID WHERE ALBUMKEP.ALBUM_ID = :album_id', [album_id]);
+    return await query('SELECT FAJL_NEV, ID FROM ALBUMKEP INNER JOIN FENYKEP ON ALBUMKEP.FENYKEP_ID = FENYKEP.ID WHERE ALBUMKEP.ALBUM_ID = :album_id', [album_id]);
 }
 
 exports.getOwnAlbums = async (felh_id) => {
