@@ -37,4 +37,4 @@ exports.getComments = async () => {
 
 exports.postRemoveComment = async (kommentId, postId, felh_Id) => {
     await query('DELETE FROM KOMMENT WHERE ID = :kommentId and POSZT_ID = :postId and FELH_ID = :felh_Id', [kommentId, postId, felh_Id]);
-}
+};
